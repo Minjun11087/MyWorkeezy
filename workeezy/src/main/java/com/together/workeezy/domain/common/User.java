@@ -71,23 +71,18 @@ public class User {
     private Set<ChatSession> tbChatSessions = new LinkedHashSet<>();
 
     @OneToMany
-    @JoinColumn(name = "user_id")
     private Set<LoginHistory> LoginHistories = new LinkedHashSet<>();
 
     @OneToOne
-    @JoinColumn(name = "user_id")
     private RefreshToken RefreshToken;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "user")
     private Set<Reservation> Reservations = new LinkedHashSet<>();
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "user")
     private Set<ReservationModify> ReservationModifies = new LinkedHashSet<>();
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "user")
     private Set<UserSocialLogin> UserSocialLogins = new LinkedHashSet<>();
 
 }

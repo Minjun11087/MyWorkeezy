@@ -14,27 +14,29 @@ import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Getter
-@Setter
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+
+
 @Entity
 @Table(name = "tb_reservation")
+@Getter @Setter
 public class Reservation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id", nullable = false)
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @Size(max = 20)
     @NotNull
     @Column(name = "reservation_no", nullable = false, length = 20)
     private String reservationNo;
@@ -48,19 +50,18 @@ public class Reservation {
     private Instant endDate;
 
     @NotNull
-    @ColumnDefault("'waiting'")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private ReservationStatus status;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_date", nullable = false)
     private Instant createdDate;
 
-    @NotNull
+
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "updated_date", nullable = false)
+    @Column(name = "updated_date")
     private Instant updatedDate;
 
     @NotNull

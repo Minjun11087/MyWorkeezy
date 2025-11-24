@@ -13,13 +13,11 @@ import org.hibernate.type.SqlTypes;
 import java.time.Instant;
 import java.util.Map;
 
-@Getter
-@Setter
+@Getter @Setter
 @Entity
 @Table(name = "tb_reservation_modify")
 public class ReservationModify {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "modify_request_id", nullable = false)
     private Long id;
 
