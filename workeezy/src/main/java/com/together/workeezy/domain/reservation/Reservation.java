@@ -51,6 +51,7 @@ public class Reservation {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("WAITING")
     @Column(name = "status", nullable = false)
     private ReservationStatus status;
 
@@ -58,7 +59,6 @@ public class Reservation {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_date", nullable = false)
     private Instant createdDate;
-
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "updated_date")

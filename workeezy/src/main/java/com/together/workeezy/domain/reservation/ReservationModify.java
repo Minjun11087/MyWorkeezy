@@ -37,10 +37,9 @@ public class ReservationModify {
     private Map<String, Object> afterData;
 
     @NotNull
-    @ColumnDefault("'pending'")
-    @Lob
     @Column(name = "status", nullable = false)
-    private String status;
+    @Enumerated
+    private ReservationModifyStatus status;
 
     @Size(max = 225)
     @Column(name = "reject_reason", length = 225)
