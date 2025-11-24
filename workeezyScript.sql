@@ -171,8 +171,8 @@ CREATE TABLE IF NOT EXISTS tb_place (
 
 # 추천 숙소 테이블 생성
 CREATE TABLE IF NOT EXISTS tb_search_program (
-    searchPG_id BIGINT NOT NULL COMMENT '추천숙소ID',
-    searchPoint INT NULL 		COMMENT '연관도점수',
+    searchPG_id BIGINT NOT NULL AUTO_INCREMENT 	COMMENT '추천숙소ID',
+    searchPoint INT NULL 						COMMENT '연관도점수',
     PRIMARY KEY (searchPG_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='추천 숙소 테이블';
 
@@ -451,6 +451,5 @@ commit;
 
 
 # 수정사항 위 쿼리에 반영하고 DB 서버에 다시 돌렸음. - 11/24 혜지
-
 
 
