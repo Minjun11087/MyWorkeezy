@@ -1,31 +1,33 @@
-CREATE DATABASE workeezy
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_general_ci;
+SET FOREIGN_KEY_CHECKS = 0;
 
-use workeezy;
-
-DROP TABLE IF EXISTS tb_users;
-DROP TABLE IF EXISTS tb_user_social_login;
-DROP TABLE IF EXISTS tb_refresh_tokens;
-DROP TABLE IF EXISTS tb_login_history;
-DROP TABLE IF EXISTS tb_payments;
-DROP TABLE IF EXISTS tb_refund;
-DROP TABLE IF EXISTS tb_payment_logs;
-DROP TABLE IF EXISTS tb_reservation;
-DROP TABLE IF EXISTS tb_reservation_pdf;
-DROP TABLE IF EXISTS tb_tb_receipt_pdf;
-DROP TABLE IF EXISTS tb_reservation_modify;
-DROP TABLE IF EXISTS tb_chat_session;
-DROP TABLE IF EXISTS tb_faq;
-DROP TABLE IF EXISTS tb_notification;
+-- 의존성 있는 테이블 먼저
 DROP TABLE IF EXISTS tb_chat_message;
-DROP TABLE IF EXISTS tb_program;
-DROP TABLE IF EXISTS tb_place;
-DROP TABLE IF EXISTS tb_review;
-DROP TABLE IF EXISTS tb_search_program;
 DROP TABLE IF EXISTS tb_inquiry;
-DROP TABLE IF EXISTS tb_room;
+DROP TABLE IF EXISTS tb_review;
+DROP TABLE IF EXISTS tb_payment_logs;
+DROP TABLE IF EXISTS tb_refund;
+DROP TABLE IF EXISTS tb_receipt_pdf;
+DROP TABLE IF EXISTS tb_reservation_pdf;
+DROP TABLE IF EXISTS tb_reservation_modify;
+DROP TABLE IF EXISTS tb_payments;
 DROP TABLE IF EXISTS tb_search;
+DROP TABLE IF EXISTS tb_room;
+DROP TABLE IF EXISTS tb_notification;
+DROP TABLE IF EXISTS tb_chat_session;
+DROP TABLE IF EXISTS tb_user_social_login;
+DROP TABLE IF EXISTS tb_login_history;
+DROP TABLE IF EXISTS tb_refresh_tokens;
+DROP TABLE IF EXISTS tb_reservation;
+DROP TABLE IF EXISTS tb_place;
+DROP TABLE IF EXISTS tb_program;
+DROP TABLE IF EXISTS tb_search_program;
+
+-- 참조되지 않은 테이블 마지막에 드롭
+DROP TABLE IF EXISTS tb_faq;
+DROP TABLE IF EXISTS tb_users;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 
 # 사용자 테이블 생성
 CREATE TABLE IF NOT EXISTS tb_users (
@@ -69,7 +71,6 @@ CREATE TABLE IF NOT EXISTS tb_reservation (
     created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '예약 생성일',
     updated_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '예약 수정일',
     total_price BIGINT NOT NULL COMMENT '워케이션 총 금액',
-
     PRIMARY KEY (reservation_id),
     UNIQUE KEY uq_reservation_no (reservation_no)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='예약 테이블';
@@ -82,11 +83,9 @@ CREATE TABLE IF NOT EXISTS tb_user_social_login (
     provider_user_id VARCHAR(255) NULL                             COMMENT '소셜 연동 고유 ID',
     email            VARCHAR(100) NULL                             COMMENT '플랫폼에서 받은 이메일',
     created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '연동 날짜',
-
     PRIMARY KEY (social_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='소셜 로그인 테이블';
 
-SHOW VARIABLES LIKE 'character_set%';
 
 # JWT 토큰 테이블 생성
 CREATE TABLE IF NOT EXISTS tb_refresh_tokens (
@@ -137,7 +136,6 @@ CREATE TABLE IF NOT EXISTS tb_refund (
     requested_by    ENUM('user', 'admin') NULL DEFAULT 'user' 							COMMENT '취소 요청자',
     refunded_at     TIMESTAMP NULL 														COMMENT '취소 완료시각',
     created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 						COMMENT '취소 요청시각',
-
     PRIMARY KEY (refund_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='결제 취소 테이블';
 
@@ -171,9 +169,9 @@ CREATE TABLE IF NOT EXISTS tb_place (
 
 # 추천 숙소 테이블 생성
 CREATE TABLE IF NOT EXISTS tb_search_program (
-    searchPG_id BIGINT NOT NULL AUTO_INCREMENT 	COMMENT '추천숙소ID',
+    searchpg_id BIGINT NOT NULL AUTO_INCREMENT 	COMMENT '추천숙소ID',
     searchPoint INT NULL 						COMMENT '연관도점수',
-    PRIMARY KEY (searchPG_id)
+    PRIMARY KEY (searchpg_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='추천 숙소 테이블';
 
 # 객실 테이블 생성
@@ -332,43 +330,7 @@ ALTER TABLE tb_place
 ADD CONSTRAINT fk_place_programd
 		FOREIGN KEY (program_id)
 		REFERENCES tb_program(program_id);
-		
-# 프로그램 FK 설정
--- stay_id FK
-ALTER TABLE tb_program
-ADD CONSTRAINT fk_program_stay
-    FOREIGN KEY (stay_id)
-    REFERENCES tb_place(place_id)
-    ON DELETE SET NULL;
-
--- office_id FK
-ALTER TABLE tb_program
-ADD CONSTRAINT fk_program_office
-    FOREIGN KEY (office_id)
-    REFERENCES tb_place(place_id)
-    ON DELETE SET NULL;
-
--- attraction_id1 FK
-ALTER TABLE tb_program
-ADD CONSTRAINT fk_program_attraction1
-    FOREIGN KEY (attraction_id1)
-    REFERENCES tb_place(place_id)
-    ON DELETE SET NULL;
-
--- attraction_id2 FK
-ALTER TABLE tb_program
-ADD CONSTRAINT fk_program_attraction2
-    FOREIGN KEY (attraction_id2)
-    REFERENCES tb_place(place_id)
-    ON DELETE SET NULL;
-
--- attraction_id3 FK
-ALTER TABLE tb_program
-ADD CONSTRAINT fk_program_attraction3
-    FOREIGN KEY (attraction_id3)
-    REFERENCES tb_place(place_id)
-    ON DELETE SET NULL;
-    
+		    
 # 객실 FK 설정
 ALTER TABLE tb_room
 ADD CONSTRAINT fk_room_place
@@ -377,10 +339,10 @@ ADD CONSTRAINT fk_room_place
   ON DELETE CASCADE;
   
   # 검색 FK 설정
-ALTER TABLE tb_search
+ALTER TABLE tb_search_program
 ADD CONSTRAINT fk_search_project
-  FOREIGN KEY (searchPG_id)
-  REFERENCES tb_search_program(searchPG_id);
+  FOREIGN KEY (searchpg_id)
+  REFERENCES tb_search(search_id);
     
 # 채팅 세션 FK 설정
 ALTER TABLE tb_chat_session
@@ -446,10 +408,40 @@ ADD CONSTRAINT fk_receipt_paymentid
 	REFERENCES tb_payments(payment_id);
 
 commit;
----------------------------------------------------------------------------------------------------------
 
 
+INSERT INTO tb_users (email, user_pwd, user_name, phone, birth, company, user_role) VALUES
+('hong@company.com', '$2a$10$abcdefghijklmnopqrstuvwxyz1234567890', '홍길동', '010-1234-5678', '1990-05-15', '삼성전자', 'user'),
+('kim@company.com', '$2a$10$bcdefghijklmnopqrstuvwxyz1234567890a', '김철수', '010-2345-6789', '1985-03-22', 'LG전자', 'user'),
+('lee@company.com', '$2a$10$cdefghijklmnopqrstuvwxyz1234567890ab', '이영희', '010-3456-7890', '1992-08-10', '현대자동차', 'user'),
+('park@company.com', '$2a$10$defghijklmnopqrstuvwxyz1234567890abc', '박민수', '010-4567-8901', '1988-11-30', '네이버', 'admin'),
+('choi@company.com', '$2a$10$efghijklmnopqrstuvwxyz1234567890abcd', '최지은', '010-5678-9012', '1995-02-18', '카카오', 'user');
 
-# 수정사항 위 쿼리에 반영하고 DB 서버에 다시 돌렸음. - 11/24 혜지
+INSERT INTO tb_program
+(program_id, program_title, program_info, program_people, program_price,
+stay_id, office_id, attraction_id1, attraction_id2, attraction_id3)
+VALUES
+(1, '강릉 워케이션 패키지', '해변 리조트 + 워크센터 + 관광 포함', 10, 300000, 1, 3, 4, 5, NULL),
+(2, '가평 힐링 워케이션', '산속 펜션과 자연 관광', 8, 250000, 2, 3, 4, NULL, NULL),
+(3, '강릉 스페셜', '숙소와 오피스를 함께 제공하는 기본 패키지', 5, 200000, 1, 3, NULL, NULL, NULL),
+(4, '프리워커 패키지', '커피거리 중심의 자유 워케이션', 6, 180000, 1, 3, 5, NULL, NULL),
+(5, '자연 힐링 패키지', '휴식 중심의 워케이션', 4, 150000, 2, 3, NULL, NULL, NULL);
 
+INSERT INTO
+	tb_reservation
+	(
+	user_id, 
+	program_id, 
+	reservation_no, 
+	start_date, 
+	end_date, 
+	status, 
+	total_price
+	)
+	VALUES
+(1, 1, '20251123-000000001', '2025-12-01 15:00:00', '2025-12-05 11:00:00', 'waiting', 450000),
+(2, 2, '20251123-000000002', '2025-12-10 14:00:00', '2025-12-13 11:00:00', 'confirm', 380000),
+(3, 1, '20251123-000000003', '2025-11-30 13:00:00', '2025-12-02 11:00:00', 'cancel', 290000),
+(4, 3, '20251123-000000004', '2025-12-20 16:00:00', '2025-12-25 10:00:00', 'waiting', 650000),
+(5, 4, '20251123-000000005', '2025-12-03 12:00:00', '2025-12-07 10:00:00', 'confirm', 520000);
 
