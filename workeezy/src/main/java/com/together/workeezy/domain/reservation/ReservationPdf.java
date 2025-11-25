@@ -9,13 +9,11 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
-@Getter
-@Setter
+@Getter @Setter
 @Entity
 @Table(name = "tb_reservation_pdf")
 public class ReservationPdf {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pdf_id", nullable = false)
     private Long id;
 

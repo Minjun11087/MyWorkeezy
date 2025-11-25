@@ -1,4 +1,4 @@
-package com.together.workeezy.domain.common;
+package com.together.workeezy.domain.user;
 
 import com.together.workeezy.domain.login.LoginHistory;
 import com.together.workeezy.domain.login.RefreshToken;
@@ -22,6 +22,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tb_users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
@@ -29,7 +30,7 @@ public class User {
 
     @Size(max = 100)
     @NotNull
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String email;
 
     @Size(max = 255)
@@ -43,16 +44,16 @@ public class User {
     private String userName;
 
     @Size(max = 20)
-    @Column(name = "phone", length = 20)
+    @Column(length = 20)
     private String phone;
 
     @NotNull
-    @Column(name = "birth", nullable = false)
+    @Column(nullable = false)
     private LocalDate birth;
 
     @Size(max = 30)
     @NotNull
-    @Column(name = "company", nullable = false, length = 30)
+    @Column(nullable = false, length = 30)
     private String company;
 
     @NotNull
@@ -61,22 +62,10 @@ public class User {
     private Instant updatedAt;
 
     @NotNull
-    @ColumnDefault("'user'")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
-    private String userRole;
-
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private Set<ChatSession> tbChatSessions = new LinkedHashSet<>();
-
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private Set<LoginHistory> LoginHistories = new LinkedHashSet<>();
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private RefreshToken RefreshToken;
+    @ColumnDefault("'user'")
+    private UserRole userRole; // USER, ADMIN
 
     @OneToMany
     @JoinColumn(name = "user_id")
@@ -85,9 +74,5 @@ public class User {
     @OneToMany
     @JoinColumn(name = "user_id")
     private Set<ReservationModify> ReservationModifies = new LinkedHashSet<>();
-
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private Set<UserSocialLogin> UserSocialLogins = new LinkedHashSet<>();
 
 }
