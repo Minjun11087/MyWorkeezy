@@ -2,10 +2,8 @@ package com.together.workeezy.domain.reservation;
 
 import com.together.workeezy.domain.payment.Payment;
 import com.together.workeezy.domain.program.Program;
-import com.together.workeezy.domain.common.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -15,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 
 @Entity
@@ -68,8 +65,8 @@ public class Reservation {
     @Column(name = "total_price", nullable = false)
     private Long totalPrice;
 
-    @OneToMany(mappedBy = "reservation")
-    private Set<Payment> Payments = new LinkedHashSet<>();
+    @OneToOne(mappedBy = "reservation")
+    private Payment Payment;
 
     @OneToMany(mappedBy = "reservation")
     private Set<ReservationModify> ReservationModifies = new LinkedHashSet<>();

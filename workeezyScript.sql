@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS tb_users (
 # 프로그램 테이블 생성
 CREATE TABLE IF NOT EXISTS tb_program (
   program_id     BIGINT NOT NULL AUTO_INCREMENT COMMENT '프로그램ID',
+  searchPG_id    BIGINT NOT NULL                    COMMENT '추천숙소ID',
   program_title  VARCHAR(100) NOT NULL              COMMENT '프로그램명',
   program_info   TEXT NOT NULL                      COMMENT '프로그램정보',
   program_people INT NULL                           COMMENT '참여인원수',
@@ -171,8 +172,8 @@ CREATE TABLE IF NOT EXISTS tb_place (
 
 # 추천 숙소 테이블 생성
 CREATE TABLE IF NOT EXISTS tb_search_program (
-    searchPG_id BIGINT NOT NULL AUTO_INCREMENT 	COMMENT '추천숙소ID',
-    searchPoint INT NULL 						COMMENT '연관도점수',
+    searchPG_id BIGINT NOT NULL COMMENT '추천숙소ID',
+    searchPoint INT NULL 		COMMENT '연관도점수',
     PRIMARY KEY (searchPG_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='추천 숙소 테이블';
 
@@ -190,6 +191,7 @@ CREATE TABLE IF NOT EXISTS tb_room (
 CREATE TABLE IF NOT EXISTS tb_search (
     search_id     BIGINT NOT NULL AUTO_INCREMENT 			COMMENT '검색어ID',
     user_id       BIGINT NOT NULL 							COMMENT '유저ID',
+    searchPG_id   BIGINT NOT NULL 							COMMENT '추천숙소ID',
     search_time   TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP 	COMMENT '검색일시',
     search_phrase VARCHAR(100) NULL 						COMMENT '검색어',
     PRIMARY KEY (search_id)
@@ -368,6 +370,12 @@ ADD CONSTRAINT fk_program_attraction3
     FOREIGN KEY (attraction_id3)
     REFERENCES tb_place(place_id)
     ON DELETE SET NULL;
+
+-- searchPG_id FK
+ALTER TABLE tb_program
+ADD CONSTRAINT fk_program_searchPG
+    FOREIGN KEY (searchPG_id)
+    REFERENCES tb_search_program(searchPG_id);
     
 # 객실 FK 설정
 ALTER TABLE tb_room
@@ -447,9 +455,70 @@ ADD CONSTRAINT fk_receipt_paymentid
 
 commit;
 ---------------------------------------------------------------------------------------------------------
+CREATE TABLE tb_search_program (
+   searchPG_id BIGINT NOT NULL AUTO_INCREMENT,
+   search_id BIGINT NOT NULL,
+   program_id BIGINT NOT NULL,
+   searchPoint	INT	NULL	COMMENT '0~100',
+
+   PRIMARY KEY(searchPG_id),
+
+   CONSTRAINT fk_sp_search
+     FOREIGN KEY (search_id) REFERENCES tb_search(search_id),
+
+   CONSTRAINT fk_sp_program
+     FOREIGN KEY (program_id) REFERENCES tb_program(program_id)
+);
 
 
+CREATE TABLE tb_program (
+   `program_id`	BIGINT	NOT NULL,
+	`program_title`	VARCHAR(100)	NOT NULL,
+	`program_info`	TEXT	NOT NULL,
+	`program_people`	INT	NULL,
+	`program_price`	INT	NULL,
+	`stay_id`	BIGINT	NULL,
+	`office_id`	BIGINT	NULL,
+	`attraction_id1`	BIGINT	NULL	COMMENT '첫번째추천',
+	`attraction_id2`	BIGINT	NULL	COMMENT '두번째추천',
+	`attraction_id3`	BIGINT	NULL	COMMENT '세번째추천',
 
-# 수정사항 위 쿼리에 반영하고 DB 서버에 다시 돌렸음. - 11/24 혜지
+    PRIMARY KEY (program_id),
 
+    -- fk: program references place (SET NULL)
+    CONSTRAINT fk_program_stay
+        FOREIGN KEY (stay_id)
+        REFERENCES tb_place(place_id)
+        ON DELETE SET NULL,
 
+    CONSTRAINT fk_program_office
+        FOREIGN KEY (office_id)
+        REFERENCES tb_place(place_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_program_attraction1
+        FOREIGN KEY (attraction_id1)
+        REFERENCES tb_place(place_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_program_attraction2
+        FOREIGN KEY (attraction_id2)
+        REFERENCES tb_place(place_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_program_attraction3
+        FOREIGN KEY (attraction_id3)
+        REFERENCES tb_place(place_id)
+        ON DELETE SET NULL,
+
+);
+
+CREATE TABLE tb_search (
+    search_id      BIGINT NOT NULL AUTO_INCREMENT COMMENT '검색어ID',
+    user_id        BIGINT NOT NULL COMMENT '유저ID',
+    search_time    TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP COMMENT '검색일시',
+    search_phrase  VARCHAR(100) NULL COMMENT '검색어',
+
+    PRIMARY KEY (search_id),
+
+);
