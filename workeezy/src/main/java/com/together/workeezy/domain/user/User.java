@@ -1,8 +1,5 @@
 package com.together.workeezy.domain.user;
 
-import com.together.workeezy.domain.login.LoginHistory;
-import com.together.workeezy.domain.login.RefreshToken;
-import com.together.workeezy.domain.login.UserSocialLogin;
 import com.together.workeezy.domain.reservation.Reservation;
 import com.together.workeezy.domain.reservation.ReservationModify;
 import jakarta.persistence.*;
