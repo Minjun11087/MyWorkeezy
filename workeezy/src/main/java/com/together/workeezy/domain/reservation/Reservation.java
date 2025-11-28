@@ -10,8 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -66,13 +65,10 @@ public class Reservation {
     @Column(name = "total_price", nullable = false)
     private Long totalPrice;
 
-    @OneToOne(mappedBy = "reservation")
-    private Payment Payment;
+    @OneToMany(mappedBy = "reservation")
+    private List<ReservationModify> reservationModifyList =  new ArrayList<>();
 
     @OneToMany(mappedBy = "reservation")
-    private Set<ReservationModify> ReservationModifies = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "reservation")
-    private Set<ReservationPdf> ReservationPdfs = new LinkedHashSet<>();
+    private List<ReservationPdf> reservationPdfList = new ArrayList<>();
 
 }
