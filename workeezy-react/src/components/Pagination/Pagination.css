@@ -1,0 +1,22 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 40px 0;
+    font-size: 14px;
+}
+
+.page,
+.disabled,
+.next {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: #f6f6f6;
+    cursor: pointer;
+    color: #555;
+}
+
+.active {
+    background: #6a8250;
+    color: white;
+}

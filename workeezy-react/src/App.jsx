@@ -1,11 +1,5 @@
-import "./styles.css";
+import ReviewPage from "./pages/ReviewPage";
+import SearchPage from "./pages/SearchPage.jsx";
 
-import { Frame1 } from "./Frame1/Frame1";
 
-export default function App() {
-  return (
-    <div>
-      <Frame1 />
-    </div>
-  );
-}
+export default function App(){return <SearchPage/>;}

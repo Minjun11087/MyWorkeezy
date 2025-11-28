@@ -1,0 +1,17 @@
+import "./SearchBar.css";
+
+export default function SearchBar({ value, onChange }) {
+    return (
+        <div className="search-wrapper">
+            <div className="search-bar">
+                <input
+                    className="search-input"
+                    placeholder="검색어를 입력하세요"
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                />
+                <i className="fa-solid fa-magnifying-glass search-icon"></i>
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,25 @@
+.header {
+    width: 100%;
+    border-bottom: 1px solid #dedede;
+    background: white;
+}
+
+.header-inner {
+    width: 1200px;
+    margin: 0 auto;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-logo {
+    height: 60px;
+}
+
+.header-right i {
+    font-size: 22px;
+    margin-left: 20px;
+    color: #333;
+    cursor: pointer;
+}

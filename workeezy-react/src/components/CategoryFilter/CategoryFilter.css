@@ -1,0 +1,20 @@
+.category-wrapper {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.category-btn {
+    padding: 6px 16px;
+    font-size: 14px;
+    border-radius: 18px;
+    border: 1px solid #dcdcdc;
+    background: white;
+}
+
+.category-btn.active {
+    background: #6a8250;
+    border-color: #6a8250;
+    color: white;
+}

@@ -1,0 +1,23 @@
+.floating-btns {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.floating-btns button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: #6a8250;
+    color: #fff;
+}
+
+.floating-btns button:hover {
+    background: #6a8250;
+    color: #fff;
+    cursor: pointer;
+}
