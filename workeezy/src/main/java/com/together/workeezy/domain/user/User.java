@@ -12,6 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -66,10 +67,10 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "user_id")
-    private Set<Reservation> Reservations = new LinkedHashSet<>();
+    private List<Reservation> reservations;
 
     @OneToMany
     @JoinColumn(name = "user_id")
-    private Set<ReservationModify> ReservationModifies = new LinkedHashSet<>();
+    private List<ReservationModify> reservationModifys;
 
 }

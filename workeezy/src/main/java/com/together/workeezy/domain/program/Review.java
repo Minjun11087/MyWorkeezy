@@ -1,5 +1,6 @@
 package com.together.workeezy.domain.program;
 
+import com.together.workeezy.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,17 +26,18 @@ public class Review {
     private Program program;
 
     @NotNull
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Size(max = 100)
     @NotNull
     @Column(name = "review_title", nullable = false, length = 100)
-    private String reviewTitle;
+    private String title;
 
     @Lob
     @Column(name = "review_content")
-    private String reviewContent;
+    private String content;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "review_date")

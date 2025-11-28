@@ -19,8 +19,10 @@ public class LoginHistory {
     @Column(name = "history_id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Size(max = 45)
     @NotNull

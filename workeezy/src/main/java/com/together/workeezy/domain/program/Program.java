@@ -1,16 +1,10 @@
 package com.together.workeezy.domain.program;
 
-import com.together.workeezy.domain.search.SearchProgram;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -25,7 +19,7 @@ public class Program {
     @Size(max = 100)
     @NotNull
     @Column(name = "program_title", nullable = false, length = 100)
-    private String programTitle;
+    private String title;
 
     @NotNull
     @Lob
@@ -38,32 +32,19 @@ public class Program {
     @Column(name = "program_price")
     private Integer programPrice;
 
-    @OneToMany(mappedBy = "program")
-    private List<SearchProgram> searchPrograms = new ArrayList<>();
+    @Column(name = "stay_id")
+    private Long stayId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "stay_id")
-    private Place stay;
+    @Column(name = "office_id")
+    private Long officeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "office_id")
-    private Place office;
+    @Column(name = "attraction_id1")
+    private Long attractionId1;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "attraction_id1")
-    private Place attractionId1;
+    @Column(name = "attraction_id2")
+    private Long attractionId2;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "attraction_id2")
-    private Place attractionId2;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "attraction_id3")
-    private Place attractionId3;
+    @Column(name = "attraction_id3")
+    private Long attractionId3;
 
 }

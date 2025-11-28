@@ -12,8 +12,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_user_social_login")
-public class UserSocialLogin {
+@Table(name = "tb_social_login")
+public class SocialLogin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "social_id", nullable = false)

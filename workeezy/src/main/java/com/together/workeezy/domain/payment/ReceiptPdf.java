@@ -1,6 +1,5 @@
-package com.together.workeezy.domain.reservation;
+package com.together.workeezy.domain.payment;
 
-import com.together.workeezy.domain.payment.Payment;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

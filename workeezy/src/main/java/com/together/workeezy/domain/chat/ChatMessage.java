@@ -13,7 +13,6 @@ import java.time.Instant;
 @Entity
 @Table(name = "tb_chat_message")
 public class ChatMessage {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_id", nullable = false)
@@ -23,10 +22,6 @@ public class ChatMessage {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "session_id", nullable = false)
     private ChatSession session;
-
-    @NotNull
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

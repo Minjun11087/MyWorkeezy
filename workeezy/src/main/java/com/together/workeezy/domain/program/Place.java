@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @Entity
@@ -24,15 +21,14 @@ public class Place {
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @Enumerated(EnumType.STRING)
+    @Lob
     @Column(name = "place_type")
-    private PlaceType placeType;
-
+    private String placeType;
 
     @Size(max = 100)
     @NotNull
     @Column(name = "place_name", nullable = false, length = 100)
-    private String placeName;
+    private String name;
 
     @Size(max = 100)
     @Column(name = "place_code", length = 100)
@@ -65,23 +61,5 @@ public class Place {
     @Size(max = 100)
     @Column(name = "attraction_url", length = 100)
     private String attractionUrl;
-
-    @OneToMany(mappedBy = "stay")
-    private Set<Program> stayProgram = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "office")
-    private Set<Program> officeProgram = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "attractionId1")
-    private Set<Program> attraction1Program = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "attractionId2")
-    private Set<Program> attraction2Program = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "attractionId3")
-    private Set<Program> attraction3Program = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "place")
-    private Set<Room> Rooms = new LinkedHashSet<>();
 
 }

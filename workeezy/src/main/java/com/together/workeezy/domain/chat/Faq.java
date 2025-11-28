@@ -7,8 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -31,8 +29,5 @@ public class Faq {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_time")
     private Instant createTime;
-
-    @OneToMany(mappedBy = "faq")
-    private Set<ChatMessage> ChatMessages = new LinkedHashSet<>();
 
 }

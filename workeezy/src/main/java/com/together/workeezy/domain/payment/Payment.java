@@ -1,6 +1,5 @@
 package com.together.workeezy.domain.payment;
 
-import com.together.workeezy.domain.reservation.ReceiptPdf;
 import com.together.workeezy.domain.reservation.Reservation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,8 +9,6 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -43,7 +40,7 @@ public class Payment {
     @NotNull
     @Lob
     @Column(name = "payment_status", nullable = false)
-    private String paymentStatus;
+    private String status;
 
     @Size(max = 50)
     @NotNull

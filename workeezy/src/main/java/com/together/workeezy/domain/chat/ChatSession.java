@@ -1,5 +1,6 @@
 package com.together.workeezy.domain.chat;
 
+import com.together.workeezy.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -7,8 +8,6 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -42,11 +41,5 @@ public class ChatSession {
 
     @Column(name = "closed_time")
     private Instant closedTime;
-
-    @OneToMany(mappedBy = "session")
-    private Set<ChatMessage> ChatMessages = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "session")
-    private Set<Inquiry> Inquiries = new LinkedHashSet<>();
 
 }

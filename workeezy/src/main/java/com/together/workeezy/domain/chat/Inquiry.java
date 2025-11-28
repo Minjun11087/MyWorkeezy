@@ -23,10 +23,6 @@ public class Inquiry {
     @JoinColumn(name = "session_id", nullable = false)
     private ChatSession session;
 
-    @NotNull
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     @Lob
     @Column(name = "category")
     private String category;
