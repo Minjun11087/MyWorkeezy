@@ -28,9 +28,8 @@ public class PaymentLog {
     @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
 
-    @Column(name = "response_data")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Object> responseData;
+    @Column(name = "response_data", columnDefinition = "json")
+    private String responseData;
 
     @NotNull
     @Lob

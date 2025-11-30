@@ -62,7 +62,6 @@ public class User {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
-    @ColumnDefault("'user'")
     private UserRole userRole; // USER, ADMIN
 
     @OneToMany

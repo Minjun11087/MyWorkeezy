@@ -39,15 +39,13 @@ public class Refund {
     private String cancelKey;
 
     @NotNull
-    @ColumnDefault("'pending'")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "refund_status", nullable = false)
-    private String refundStatus;
+    private RefundStatus refundStatus =  RefundStatus.PENDING;
 
-    @ColumnDefault("'user'")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "requested_by")
-    private String requestedBy;
+    private RequestedBy requestedBy = RequestedBy.USER;
 
     @Column(name = "refunded_at")
     private LocalDateTime refundedAt;

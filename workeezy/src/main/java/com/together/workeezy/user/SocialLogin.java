@@ -26,9 +26,9 @@ public class SocialLogin {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "provider")
-    private String provider;
+    private Provider provider;
 
     @Size(max = 255)
     @Column(name = "provider_user_id")

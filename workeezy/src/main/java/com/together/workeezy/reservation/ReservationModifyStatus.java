@@ -1,5 +1,5 @@
 package com.together.workeezy.reservation;
 
 public enum ReservationModifyStatus {
-    PENDING, APPROVED, REJECTED
+    PENDING, APPROVED, REJECTED;
 }

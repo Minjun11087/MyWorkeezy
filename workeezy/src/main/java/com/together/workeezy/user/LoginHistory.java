@@ -42,9 +42,9 @@ public class LoginHistory {
     private String userAgent;
 
     @NotNull
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "login_status", nullable = false)
-    private String loginStatus;
+    private LoginStatus status;
 
     @Size(max = 100)
     @Column(name = "fail_reason", length = 100)

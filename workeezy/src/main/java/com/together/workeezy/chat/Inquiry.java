@@ -25,9 +25,9 @@ public class Inquiry {
     @JoinColumn(name = "session_id", nullable = false)
     private ChatSession session;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private String category;
+    private ChatCategory category;
 
     @Lob
     @Column(name = "inquiry_detail")

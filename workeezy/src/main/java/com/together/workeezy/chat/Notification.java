@@ -38,16 +38,16 @@ public class Notification {
     @Column(name = "noti_msg")
     private String notiMsg;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "noti_type")
-    private String notiType;
+    private NotificationType notiType;
 
     @CreationTimestamp
     @Column(name = "sent_time", updatable = false)
     private LocalDateTime sentTime;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private NotificationStatus status;
 
 }

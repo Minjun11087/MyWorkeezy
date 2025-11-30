@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://workeezy.iptime.org:3306
+    url: jdbc:mysql://workeezy.iptime.org:3306/workeezy
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 

@@ -27,15 +27,13 @@ public class ChatSession {
     private User user;
 
     @NotNull
-    @ColumnDefault("'closed'")
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private SessionStatus status = SessionStatus.CLOSED;
 
     @NotNull
-    @ColumnDefault("1")
     @Column(name = "is_ai_only", nullable = false)
-    private Boolean isAiOnly = false;
+    private Boolean isAiOnly = true;
 
     @CreationTimestamp
     @Column(name = "create_time", updatable = false)

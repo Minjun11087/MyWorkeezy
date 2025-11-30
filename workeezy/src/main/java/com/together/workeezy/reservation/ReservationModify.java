@@ -34,14 +34,13 @@ public class ReservationModify {
     private User user;
 
     @NotNull
-    @Column(name = "after_data", nullable = false)
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Object> afterData;
+    @Column(name = "after_data", nullable = false, columnDefinition = "json")
+    private String afterData;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    @Enumerated
-    private ReservationModifyStatus status;
+    private ReservationModifyStatus status = ReservationModifyStatus.PENDING;
 
     @Size(max = 225)
     @Column(name = "reject_reason", length = 225)

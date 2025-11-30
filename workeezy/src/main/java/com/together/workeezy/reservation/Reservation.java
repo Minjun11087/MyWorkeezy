@@ -13,7 +13,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -52,9 +54,8 @@ public class Reservation {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("WAITING")
     @Column(name = "status", nullable = false)
-    private ReservationStatus status;
+    private ReservationStatus status = ReservationStatus.WAITING;
 
     @NotNull
     @CreationTimestamp
@@ -73,9 +74,9 @@ public class Reservation {
     private Payment Payment;
 
     @OneToMany(mappedBy = "reservation")
-    private Set<ReservationModify> ReservationModifies = new LinkedHashSet<>();
+    private List<ReservationModify> reservationModifys = new ArrayList<>();
 
     @OneToMany(mappedBy = "reservation")
-    private Set<ReservationPdf> ReservationPdfs = new LinkedHashSet<>();
+    private List<ReservationPdf> reservationPdfs = new ArrayList<>();
 
 }

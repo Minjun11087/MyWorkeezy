@@ -31,9 +31,9 @@ public class ChatMessage {
     private Faq faq;
 
     @NotNull
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "sender_role", nullable = false)
-    private String senderRole;
+    private ChatSenderRole senderRole;
 
     @Lob
     @Column(name = "msg_text")
