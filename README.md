@@ -28,7 +28,7 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 - 2025-11-28(금) ~ 2026-01-04(일) : 프로젝트 구현 및 디버깅, AWS 클라우드 배포
 - 2026-01-05(월) ~ 2026-01-08(목) : 베타 테스트, 최종 발표자료 준비
 - 2026-01-09(금) : 프로젝트 발표
-<img width="1096" height="511" alt="image" src="https://github.com/user-attachments/assets/ecd48314-35fc-44d0-bee8-2f4c59b95217" />
+
 
 <br>
 <br>
@@ -81,8 +81,8 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 <br>
 
 ## 🧩 설계
-ERD 설계: [ERD Cloud]([https://www.erdcloud.com/d/63X6sALm9KCksFYod](https://www.erdcloud.com/d/iLyZAD627pXaQg3XA))
-<img width="1642" height="797" alt="image" src="https://github.com/user-attachments/assets/d9d836c4-a685-41bb-91db-57b2d56e1e7f](https://www.erdcloud.com/d/iLyZAD627pXaQg3XA" />
+ERD 설계: [ERD Cloud]([https://www.erdcloud.com/d/63X6sALm9KCksFYod](https://www.erdcloud.com/d/iLyZAD627pXaQg3XA)])
+<img width="1642" height="797" alt="image" src="[https://github.com/user-attachments/assets/d9d836c4-a685-41bb-91db-57b2d56e1e7f](https://www.erdcloud.com/d/iLyZAD627pXaQg3XA" />
 
 
 <br>
@@ -103,4 +103,4 @@ ERD 설계: [ERD Cloud]([https://www.erdcloud.com/d/63X6sALm9KCksFYod](https://w
 <br>
 
 ## 📑 최종 보고서
-[2조(codescape)_최종보고서.pdf](https://github.com/user-attachments/files/22552199/2.codescape._.pdf)
+[2조 workeezy 최종보고서.pdf](https://github.com/user-attachments/files/22552199/2.codescape._.pdf)
