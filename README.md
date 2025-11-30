@@ -81,7 +81,7 @@ Workeezy는 Work + Easy의 합성어로, ‘일은 더 쉽게, 성장은 함께(
 <br>
 
 ## 🧩 설계
-ERD 설계: [ERD Cloud]([https://www.erdcloud.com/d/63X6sALm9KCksFYod](https://www.erdcloud.com/d/iLyZAD627pXaQg3XA)])
+ERD: [ERD Cloud]([https://www.erdcloud.com/d/63X6sALm9KCksFYod](https://www.erdcloud.com/d/iLyZAD627pXaQg3XA)])
 <img width="1642" height="797" alt="image" src="[https://github.com/user-attachments/assets/d9d836c4-a685-41bb-91db-57b2d56e1e7f](https://www.erdcloud.com/d/iLyZAD627pXaQg3XA" />
 
 
@@ -103,4 +103,4 @@ ERD 설계: [ERD Cloud]([https://www.erdcloud.com/d/63X6sALm9KCksFYod](https://w
 <br>
 
 ## 📑 최종 보고서
-[2조 workeezy 최종보고서.pdf](https://github.com/user-attachments/files/22552199/2.codescape._.pdf)
+[2조 workeezy 최종보고서.pdf]([Uploading 2조 Workeezy 최종 보고서.pdf…])
