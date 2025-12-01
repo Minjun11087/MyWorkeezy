@@ -1,5 +1,5 @@
 import "./PageLayout.css";
-import Header from "../components/Header/Header";
+import Header from "./../components/Common/Header";
 
 export default function PageLayout({ children }) {
   return (
