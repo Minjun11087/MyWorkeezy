@@ -1,12 +1,12 @@
 import PageLayout from "../layout/PageLayout";
 import FloatingButtons from "../components/Common/FloatingButtons.jsx";
-import ProgramTitle from "../components/ProgramTitle/ProgramTitle.jsx";
-import ProgramImages from "../components/ProgramImages/ProgramImages.jsx";
-import ProgramReserveBar from "../components/ProgramReserveBar/ProgramReserveBar.jsx";
-import ProgramTabs from "../components/ProgramTabs/ProgramTabs.jsx";
-import ProgramInfo from "../components/ProgramInfo/ProgramInfo.jsx";
-import HotelInfo from "../components/HotelInfo/HotelInfo.jsx";
-import RoomList from "../components/RoomList/RoomList.jsx";
+import ProgramTitle from "../components/Program/ProgramTitle.jsx";
+import ProgramImages from "../components/Program/ProgramImages.jsx";
+import ProgramReserveBar from "../components/Program/ProgramReserveBar.jsx";
+import ProgramTabs from "../components/Program/ProgramTabs.jsx";
+import ProgramInfo from "../components/Program/ProgramInfo.jsx";
+import HotelInfo from "../components/ProgramDetails/HotelInfo.jsx";
+import RoomList from "../components/ProgramDetails/RoomList.jsx";
 
 export default function ProgramDetailPage() {
   const mainImage = "/public/ac95ce1d-57d6-4862-9e4e-fabfadd1e5a2.png";
