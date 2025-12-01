@@ -667,3 +667,9 @@ INSERT INTO tb_payment_logs (payment_id, response_data, event_type, http_status)
 
 
 commit;
+
+ALTER TABLE tb_program
+MODIFY COLUMN program_info VARCHAR(1000);
+commit;
+
+
