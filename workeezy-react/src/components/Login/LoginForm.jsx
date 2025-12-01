@@ -1,6 +1,6 @@
 import "./LoginForm.css";
-import LoginInputs from "../LoginInputs/LoginInputs";
-import LoginOptions from "../LoginOptions/LoginOptions";
+import LoginInputs from "../Login/LoginInputs";
+import LoginOptions from "../Login/LoginOptions";
 import LoginButton from "./LoginButton";
 import SocialLoginButtons from "../Login/SocialLoginButtons";
 
