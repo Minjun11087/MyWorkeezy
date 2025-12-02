@@ -574,13 +574,13 @@ VALUES
 
 # 예약 관련 샘플 데이터
 INSERT INTO tb_reservation
-(user_id, program_id, reservation_no, start_date, end_date, status, total_price)
+(user_id, program_id, reservation_no, start_date, end_date, status, total_price, people_count)
 VALUES
-(1, 1, '20251123-000000001', '2025-12-01 15:00:00', '2025-12-05 11:00:00', 'waiting', 450000),
-(2, 1, '20251123-000000002', '2025-12-10 14:00:00', '2025-12-13 11:00:00', 'confirm', 380000),
-(3, 1, '20251123-000000003', '2025-11-30 13:00:00', '2025-12-02 11:00:00', 'cancel', 290000),
-(4, 1, '20251123-000000004', '2025-12-20 16:00:00', '2025-12-25 10:00:00', 'waiting', 650000),
-(5, 1, '20251123-000000005', '2025-12-03 12:00:00', '2025-12-07 10:00:00', 'confirm', 520000);
+(1, 1, '20251123-000000001', '2025-12-01 15:00:00', '2025-12-05 11:00:00', 'waiting', 450000, 4),
+(2, 1, '20251123-000000002', '2025-12-10 14:00:00', '2025-12-13 11:00:00', 'confirm', 380000, 6),
+(3, 1, '20251123-000000003', '2025-11-30 13:00:00', '2025-12-02 11:00:00', 'cancel', 290000, 6),
+(4, 1, '20251123-000000004', '2025-12-20 16:00:00', '2025-12-25 10:00:00', 'waiting', 650000, 2),
+(5, 1, '20251123-000000005', '2025-12-03 12:00:00', '2025-12-07 10:00:00', 'confirm', 520000, 3);
 
 # 결제 관련 샘플 데이터
 INSERT INTO tb_payments (reservation_id, order_id, payment_key, amount, payment_status, payment_method, approved_at, created_at)
@@ -665,5 +665,6 @@ INSERT INTO tb_payment_logs (payment_id, response_data, event_type, http_status)
 (4, '{"status": "paid", "orderName": "부산 워케이션", "totalAmount": 250000}', 'callback', 200),
 (5, '{"error": "timeout", "message": "결제 시간 초과"}', 'fail', 408);
 
+ALTER TABLE tb_reservation ADD COLUMN people_count INT NOT NULL DEFAULT 1 COMMENT '예약 인원수';
 
 commit;
