@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import ReservationFields from "../ReservationFields/ReservationFields";
-import DraftButton from "../DraftButton/DraftButton";
-import SubmitButton from "../SubmitButton/SubmitButton";
+import ReservationFields from "./ReservationFields";
+import DraftButton from "./DraftButton";
+import SubmitButton from "./SubmitButton";
 import "./ReservationForm.css";
 import axios from "axios";
-import Menubar from "./../Menubar/Menubar";
+import Menubar from "../Common/Menubar";
 
 export default function ReservationForm({ initialData }) {
   const [form, setForm] = useState(

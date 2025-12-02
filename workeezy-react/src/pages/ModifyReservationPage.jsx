@@ -1,4 +1,4 @@
-import ReservationForm from "../components/ReservationForm/ReservationForm";
+import ReservationForm from "../components/Reservation/ReservationForm";
 import PageLayout from "../layout/PageLayout";
 import axios from "axios";
 import { useEffect, useState } from "react";

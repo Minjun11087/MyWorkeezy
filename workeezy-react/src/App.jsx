@@ -3,10 +3,8 @@ import LoginPage from "./pages/LoginPage";
 import ProgramDetailPage from "./pages/ProgramDetailPage";
 import ReviewPage from "./pages/ReviewPage";
 import SearchPage from "./pages/SearchPage";
-import NewReservationForm from "./pages/NewReservationForm";
+import NewReservationPage from "./pages/NewReservationPage.jsx";
 import ModifyReservationPage from "./pages/ModifyReservationPage.jsx";
-import Menubar from "./components/Menubar/Menubar";
-import DraftMenuBar from "./components/DraftMenuBar/DraftMenuBar";
 
 export default function App() {
   return (
@@ -17,11 +15,8 @@ export default function App() {
       <Route path="/program" element={<ProgramDetailPage />} />
       <Route path="/reviews" element={<ReviewPage />} />
       <Route path="/search" element={<SearchPage />} />
-      <Route path="/newreservation" element={<NewReservationForm />} />
+      <Route path="/newreservation" element={<NewReservationPage />} />
       <Route path="/modifyreservation" element={<ModifyReservationPage />} />
-      {/* <Route path="/menubar" element={<Menubar />} /> */}
-      {/* <Route path="/menubar" element={<Menubar isAdmin={true} />} /> */}
-      <Route path="/draftmenubar" element={<DraftMenuBar />} />
     </Routes>
   );
 }

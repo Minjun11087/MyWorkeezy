@@ -1,7 +1,7 @@
 import PageLayout from "../layout/PageLayout";
-import ReservationForm from "./../components/ReservationForm/ReservationForm";
+import ReservationForm from "../components/Reservation/ReservationForm";
 
-export default function NewReservationForm() {
+export default function NewReservationPage() {
   return (
     <PageLayout>
       <ReservationForm />
