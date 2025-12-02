@@ -1,6 +1,8 @@
 package com.together.workeezy.reservation.service;
 
+import com.together.workeezy.program.Place;
 import com.together.workeezy.program.Program;
+import com.together.workeezy.program.Room;
 import com.together.workeezy.reservation.Reservation;
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
 import com.together.workeezy.reservation.repository.ReservationRepository;
@@ -20,7 +22,7 @@ public class ReservationService {
     public Reservation saveReservation(ReservationCreateDto dto) {
 
 
-        // 1️. 유저 조회 (이메일 기준 예시)
+        // 1. 유저 조회 (이메일 기준 예시)
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자를 찾을 수 없습니다."));
 
@@ -47,7 +49,7 @@ public class ReservationService {
         reservation.setEndDate(dto.getEndDate());
         reservation.setOfficeName(dto.getOfficeName()); //program 엔티티에서 참조
         reservation.setRoomType(dto.getRoomType()); // place 엔티티에서 참조
-        reservation.setPeopleCount(dto.getPeopleCount()); // 얘는 컬럼 추가해야함
+        reservation.setPeopleCount(dto.getPeopleCount());
 
         return reservationRepository.save(reservation);
     }
