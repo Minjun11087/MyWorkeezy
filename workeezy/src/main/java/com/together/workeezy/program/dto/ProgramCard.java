@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ProgramCard {
-    private Long id;
-    private String title;
-    private String info;
-    private Integer people;
-    private Integer price;
-    private String photo;   // placePhoto1
+    private Long id;       // program id
+    private String title;  // program title
+    private String photo;  // 대표 이미지 (place_photo1)
+    private Integer price; // program_price
+
+
 }

@@ -14,14 +14,22 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             "SELECT new com.together.workeezy.program.dto.ProgramCard(" +
                     "p.id, " +
                     "p.title, " +
-                    "p.programInfo, " +
-                    "p.programPeople, " +
-                    "p.programPrice, " +
-                    "pl.placePhoto1) " +
-                    "FROM Program p " +
-                    "JOIN Place pl ON pl.program.id = p.id"
+                    "(SELECT pl.placePhoto1 FROM Place pl " +
+                    "WHERE pl.program.id = p.id " +
+                    "AND pl.placeType = 'STAY' " +
+                    "AND pl.id = (" +
+                    "SELECT MIN(pl2.id) FROM Place pl2 " +
+                    "WHERE pl2.program.id = p.id AND pl2.placeType = 'STAY'" +
+                    ")" +
+                    "), " +
+                    "p.programPrice" +
+                    ") " +
+                    "FROM Program p"
     )
+
     List<ProgramCard> findProgramCards();
+
+
 
 
 }
