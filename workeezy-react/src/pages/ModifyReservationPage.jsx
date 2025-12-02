@@ -22,7 +22,18 @@ export default function ModifyReservationPage() {
   }, [id]); // url에 적힌 id값이 바뀌었는지 감지. 렌더링될 때 이게 바뀌었는지 감지!
 
   // reservation이 아직 null로 서버에서 응답이 오기전,
-  if (!reservation) return <div>불러오는 중...</div>;
+  if (!reservation)
+    return (
+      <div>
+        예약 수정 페이지인데 아직 데이터 없어서 그럼........
+        {
+          <h2>
+            이 편지는 영국에서 최초로 시작되어 일년에 한바퀴를 돌면서 받는
+            사람에게 행운을 주었고 지금은 당신에게로 옮겨진 이 편지는...
+          </h2>
+        }
+      </div>
+    );
   // 응답이 오면 아래 리턴 구문 실행!
   return (
     <PageLayout>
