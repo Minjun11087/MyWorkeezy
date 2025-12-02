@@ -1,5 +1,7 @@
 package com.together.workeezy.auth.jwt;
 
+import com.together.workeezy.user.CustomUserDetailsService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,6 +9,9 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -23,10 +28,16 @@ public class JwtTokenProvider {
 
     private Key key;
 
+    public JwtTokenProvider(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
+
+    private final CustomUserDetailsService userDetailsService;
 
     // JWT 생성
     public String createToken(String email, String role) {
@@ -54,6 +65,15 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
+    // Claims 추출
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
@@ -66,4 +86,14 @@ public class JwtTokenProvider {
             return false; // 만료 or 변조
         }
     }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = getClaims(token);
+        String email = claims.getSubject();
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
 }
+
