@@ -2,7 +2,7 @@ import "./PageLayout.css";
 import Header from "../components/Common/Header";
 import Footer from "../components/Common/Footer";
 import { useState } from "react";
-import MenuBar from "../components/Menubar/Menubar";
+import MenuBar from "../components/Common/Menubar";
 
 export default function PageLayout({ children }) {
   const [open, setOpen] = useState(false);
