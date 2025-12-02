@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./MenuBar.css";
 
-export default function MenuBar({ isAdmin = false }) {
+export default function MenuBar({ isAdmin = false, onClose }) {
   const [openItems, setOpenItems] = useState([]); // 펼침 관리
-  const [isOpen, setIsOpen] = useState(true); // 메뉴 자체 열림/닫힘
 
   const userMenu = [
     { title: "Home", path: "/home" },
@@ -42,7 +41,7 @@ export default function MenuBar({ isAdmin = false }) {
 
   const menu = isAdmin ? adminMenu : userMenu;
 
-  // ✅ 처음 한 번만 기본으로 모든 소메뉴 열기
+  // 소메뉴 기본 open
   useEffect(() => {
     const allWithSub = menu.filter((m) => m.sub).map((m) => m.title);
     setOpenItems(allWithSub);
@@ -59,31 +58,20 @@ export default function MenuBar({ isAdmin = false }) {
   };
 
   return (
-    <div className={`menu-bar ${isOpen ? "open" : "close"}`}>
-      <button className="menu-close-btn" onClick={() => setIsOpen(false)}>
+    <div className="menu-bar">
+      <button className="menu-close-btn" onClick={onClose}>
         ✕
       </button>
 
       {menu.map((item, idx) => (
         <div key={idx} className="menu-item">
-          {item.path ? (
-            <Link
-              to={item.path}
-              className={`menu-title ${item.isFooter ? "menu-footer" : ""}`}
-              onClick={() => toggleItem(item.title)}
-            >
-              {item.title}
-            </Link>
-          ) : (
-            <div
-              className={`menu-title ${item.isFooter ? "menu-footer" : ""}`}
-              onClick={() => toggleItem(item.title)}
-            >
-              {item.title}
-            </div>
-          )}
+          <div
+            className={`menu-title ${item.isFooter ? "menu-footer" : ""}`}
+            onClick={() => toggleItem(item.title)}
+          >
+            {item.path ? <Link to={item.path}>{item.title}</Link> : item.title}
+          </div>
 
-          {/* ✅ 각 메뉴별로 독립적으로 열고 닫히게 */}
           {item.sub && openItems.includes(item.title) && (
             <div className="submenu">
               {item.sub.map((sub, subIdx) => (
@@ -91,7 +79,7 @@ export default function MenuBar({ isAdmin = false }) {
                   to={sub.path}
                   key={subIdx}
                   className="submenu-item"
-                  onClick={() => setIsOpen(false)}
+                  onClick={onClose}
                 >
                   {sub.name}
                 </Link>
