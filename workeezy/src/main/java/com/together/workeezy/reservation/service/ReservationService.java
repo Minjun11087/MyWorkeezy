@@ -7,7 +7,6 @@ import com.together.workeezy.reservation.Reservation;
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
 import com.together.workeezy.reservation.repository.ReservationRepository;
 import com.together.workeezy.user.User;
-import com.together.workeezy.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
 
     // 예약 저장 메서드
     public Reservation saveReservation(ReservationCreateDto dto) {
