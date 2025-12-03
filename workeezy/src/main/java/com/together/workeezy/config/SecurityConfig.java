@@ -1,6 +1,6 @@
 package com.together.workeezy.config;
 
-import com.together.workeezy.auth.jwt.JwtAuthenticationFilter;
+import com.together.workeezy.auth.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
