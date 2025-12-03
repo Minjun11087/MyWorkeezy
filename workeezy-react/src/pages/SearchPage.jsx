@@ -12,6 +12,16 @@ export default function SearchPage() {
     const [region, setRegion] = useState("");
     const [programs, setPrograms] = useState([]);
 
+    const handleSearch = () => {
+        axios.get(`http://localhost:8080/api/programs/search?keyword=${search}`)
+            .then(res => {
+                console.log("검색 결과:", res.data);
+                setPrograms(res.data);
+            })
+            .catch(err => console.log(err));
+    };
+
+
     useEffect(() => {
         axios.get("http://localhost:8080/api/programs/cards")
             .then(res => {
@@ -25,7 +35,7 @@ export default function SearchPage() {
     return (
         <PageLayout>
             <h2>Search</h2>
-            <SearchBar value={search} onChange={setSearch}/>
+            <SearchBar value={search} onChange={setSearch} onSearch={handleSearch}/>
             <CategoryFilter active={region} onSelect={setRegion}/>
 
             <div className="search-grid">
