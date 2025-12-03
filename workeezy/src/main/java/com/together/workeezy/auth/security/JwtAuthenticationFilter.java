@@ -23,15 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
 
-        return path.startsWith("/api/auth")
-                || path.startsWith("/api/programs/cards")
-                || path.startsWith("/api/programs/search")
-                || path.startsWith("/api/programs"); // 전체 허용이면 이것도 가능
-    }
 
     @Override
     protected void doFilterInternal(
@@ -67,15 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // 검색 관련
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
 
-        return path.startsWith("/api/auth")
-                || path.startsWith("/api/programs/cards")
-                || path.startsWith("/api/programs/search")
-                || path.startsWith("/api/programs"); // 전체 허용이면 이것도 가능
-    }
 
 }

@@ -10,7 +10,7 @@ import com.together.workeezy.search.entity.SearchProgram;
 import com.together.workeezy.search.dto.SearchResultDto;
 import com.together.workeezy.search.repository.SearchProgramRepository;
 import com.together.workeezy.search.repository.SearchRepository;
-import com.together.workeezy.user.User;
+import com.together.workeezy.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
