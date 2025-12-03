@@ -1,6 +1,6 @@
 package com.together.workeezy.search.repository;
 
-import com.together.workeezy.search.SearchProgram;
+import com.together.workeezy.search.entity.SearchProgram;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

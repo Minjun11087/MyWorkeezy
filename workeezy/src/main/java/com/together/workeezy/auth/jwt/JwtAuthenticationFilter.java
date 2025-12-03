@@ -23,11 +23,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+
+        return path.startsWith("/api/auth")
+                || path.startsWith("/api/programs/cards")
+                || path.startsWith("/api/programs/search")
+                || path.startsWith("/api/programs"); // 전체 허용이면 이것도 가능
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        System.out.println("REQ_URI = " + request.getRequestURI());
+        System.out.println("REQ_METHOD = " + request.getMethod());
+
 
         // Authorization 헤더에서 토큰 꺼내기
         String header = request.getHeader("Authorization");

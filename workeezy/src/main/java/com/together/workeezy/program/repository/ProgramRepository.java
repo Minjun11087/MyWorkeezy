@@ -9,11 +9,24 @@ import java.util.List;
 
 public interface ProgramRepository extends JpaRepository<Program, Long> {
 
+
+
     @Query("""
-        SELECT p FROM Program p
-        WHERE p.title LIKE %:keyword%
-           OR p.programInfo LIKE %:keyword%
-    """)
+    SELECT DISTINCT p
+    FROM Program p
+    JOIN p.places pl
+    WHERE 
+        pl.placeRegion IS NOT NULL
+        AND (
+            p.title LIKE %:keyword%
+            OR pl.placeRegion LIKE %:keyword%
+        )
+""")
     List<Program> searchByKeyword(@Param("keyword") String keyword);
+
+
+
+
+
 
 }
