@@ -11,16 +11,28 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    // 토큰 검증 제외할 URL (화이트리스트)
+    private static final List<String> WHITELIST = List.of(
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/search",
+            "/api/search/",
+            "/api/search/**",
+            "/api/programs/cards"
+    );
 
     @Override
     protected void doFilterInternal(
@@ -29,67 +41,57 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String uri = request.getRequestURI();
-        System.out.println("📌 JwtFilter 요청 경로: " + uri);
-        System.out.println("Authorization HEADER = " + request.getHeader("Authorization"));
+        String requestURI = request.getRequestURI();
+        System.out.println("📌 JwtFilter 요청 경로: " + requestURI);
 
-
-//        String requestURI = request.getRequestURI();
-//        System.out.println("📌 JwtFilter 요청 경로: " + requestURI);
-
-        // 모든 OPTIONS 요청은 인증 스킵 (CORS Preflight)
+        // OPTIONS 요청은 항상 허용 (CORS Preflight)
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 인증 제외 경로
-        if (uri.equals("/api/auth/logout") ||
-                uri.equals("/api/auth/refresh")) {
-
-            System.out.println("➡️ 인증 스킵 (public API): " + uri);
-            filterChain.doFilter(request, response);
-            return;
+        // 화이트리스트 URL은 JWT 인증 스킵
+        for (String pattern : WHITELIST) {
+            if (pathMatcher.match(pattern, requestURI)) {
+                System.out.println("➡️ 인증 스킵 (화이트리스트): " + pattern);
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
-        // 요청 헤더 전체 출력
-        System.out.println("=== Request Headers ===");
-        var headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String header = headerNames.nextElement();
-            System.out.println(header + ": " + request.getHeader(header));
-        }
-        System.out.println("=======================");
-
-        // 이미 인증된 상태면 다시 인증할 필요 없음
+        // 이미 인증된 경우 스킵
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Authorization 헤더에서 토큰 꺼내기
+
             String token = resolveToken(request);
 
-            // 토큰 유효성 확인
             if (token != null && jwtTokenProvider.validateToken(token)) {
-                // 인증 객체 생성
+
+                // Authentication 생성
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
 
-                // request 기반 details 세팅 (IP, 세션 등)
-                UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) authentication;
+                // IP, 세션 정보 같은 부가 정보 넣기
+                UsernamePasswordAuthenticationToken authToken =
+                        (UsernamePasswordAuthenticationToken) authentication;
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 // SecurityContextHolder에 저장
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
                 System.out.println("✅ 인증 성공: " + authentication.getName());
+
             } else {
-                System.out.println("❌ 토큰 없음 또는 유효하지 않음");
+                System.out.println("❌ 유효하지 않은 토큰 또는 토큰 없음");
             }
         }
+        // 🔥 4) 다음 필터로 진행
         filterChain.doFilter(request, response);
     }
 
+    // Authorization 헤더에서 Bearer 토큰 추출
     private String resolveToken(HttpServletRequest request) {
-        String bearer = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
 
-        if (bearer != null && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
         }
         return null;
     }

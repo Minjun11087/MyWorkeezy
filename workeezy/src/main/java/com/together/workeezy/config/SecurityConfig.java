@@ -4,6 +4,7 @@ import com.together.workeezy.auth.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,30 +40,38 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // JWT는 필요 x
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 허용
-//                .cors(cors -> cors.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // JWT 방식에서는 서버가 세션을 만들지 않음 REST API는 STATELESS
+
+                // 경로별 권한 설정
                 .authorizeHttpRequests(auth -> auth
+
+                        // Auth 공개 API
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/refresh").permitAll()
-
-                        // ❌ logout도 나중에 Private 처리 가능하지만 지금은 유지
                         .requestMatchers("/api/auth/logout").permitAll()
 
-                        // 🚨 check-password 인증 필요 -> 삭제!!!
+                        // 비밀번호 재확인(마이페이지용) 보호
                         .requestMatchers("/api/auth/check-password").authenticated()
 
                         // 마이페이지 보호
                         .requestMatchers("/api/user/**").authenticated()
 
-                        // 공개 API
+                        // 공개 데이터 API
                         .requestMatchers("/api/programs/cards").permitAll()
-                        .requestMatchers("/api/programs/search").permitAll()
+                        .requestMatchers("/api/programs/**").permitAll()
+
+                        // 검색 API 전체 공개
+                        .requestMatchers("/api/search").permitAll()
+                        .requestMatchers("/api/search/**").permitAll()
+
+                        // CORS Preflight 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
-                .formLogin(login -> login.disable()) // form 로그인 사용 안 함
-                .httpBasic(basic -> basic.disable()); // Basic Auth 사용 안 함
+                .formLogin(login -> login.disable()) // 기본 로그인 form X
+                .httpBasic(basic -> basic.disable()); // 브라우저 인증 팝업 X (Basic Auth)
 
         // JWT 필터가 스프링 필터 체인 앞에서 토큰 인증 처리
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -86,10 +95,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-//    @Bean
-//    public BCryptPasswordEncoder bCryptPasswordEncoder() { return new BCryptPasswordEncoder(); }
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
