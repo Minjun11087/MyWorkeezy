@@ -1,6 +1,6 @@
-import "./SearchBar.css";
+import "./MainSearchBar.css";
 
-export default function SearchBar() {
+export default function MainSearchBar() {
     return (
         <div className="searchBar">
             <input

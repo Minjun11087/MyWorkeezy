@@ -1,4 +1,4 @@
-import SearchBar from "../Common/SearchBar";
+import MainSearchBar from "./MainSearchBar.jsx";
 import "./HeroSection.css";
 
 export default function HeroSection() {
@@ -9,7 +9,7 @@ export default function HeroSection() {
                 <p className="hero-subtitle">여행과 업무를 동시에, 새로운 경험을 시작하세요.</p>
 
                 <div className="hero-search">
-                    <SearchBar />
+                    <MainSearchBar />
                 </div>
             </div>
         </section>
