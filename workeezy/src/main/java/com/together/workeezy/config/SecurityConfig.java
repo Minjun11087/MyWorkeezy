@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -51,17 +52,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/auth/logout").permitAll()
 
-                        // 비밀번호 재확인(마이페이지용) 보호
+                        // 비밀번호 재확인, 마이페이지용 보호
                         .requestMatchers("/api/auth/check-password").authenticated()
-
-                        // 마이페이지 보호
                         .requestMatchers("/api/user/**").authenticated()
 
                         // 공개 데이터 API
                         .requestMatchers("/api/programs/cards").permitAll()
                         .requestMatchers("/api/programs/**").permitAll()
-
-                        // 검색 API 전체 공개
                         .requestMatchers("/api/search").permitAll()
                         .requestMatchers("/api/search/**").permitAll()
 
@@ -95,7 +92,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

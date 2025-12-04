@@ -119,6 +119,13 @@ public class AuthController {
             ));
         }
 
+        if (userDetails == null) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "success", false,
+                    "message", "unauthorized: token missing or invalid"
+            ));
+        }
+
         boolean result = authService.checkPassword(userDetails.getUser(), rawPassword);
 
         return ResponseEntity.ok(Map.of("success", result));

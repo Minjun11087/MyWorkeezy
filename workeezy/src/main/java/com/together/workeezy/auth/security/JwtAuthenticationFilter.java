@@ -28,10 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> WHITELIST = List.of(
             "/api/auth/login",
             "/api/auth/refresh",
-            "/api/search",
-            "/api/search/",
-            "/api/search/**",
-            "/api/programs/cards"
+            "/api/programs/**",
+            "/api/search/**"
     );
 
     @Override
@@ -59,32 +57,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // 이미 인증된 경우 스킵
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+        String token = resolveToken(request);
 
-            String token = resolveToken(request);
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            // Authentication 생성
+            Authentication auth = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-            if (token != null && jwtTokenProvider.validateToken(token)) {
-
-                // Authentication 생성
-                Authentication authentication = jwtTokenProvider.getAuthentication(token);
-
-                // IP, 세션 정보 같은 부가 정보 넣기
-                UsernamePasswordAuthenticationToken authToken =
-                        (UsernamePasswordAuthenticationToken) authentication;
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // SecurityContextHolder에 저장
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                System.out.println("✅ 인증 성공: " + authentication.getName());
-
-            } else {
-                System.out.println("❌ 유효하지 않은 토큰 또는 토큰 없음");
-            }
+            System.out.println("🔥 JWT 인증 성공: " + auth.getName());
+        } else {
+            System.out.println("❌ JWT 인증 실패 또는 없음");
         }
-        // 🔥 4) 다음 필터로 진행
+        System.out.println("인증 성공 여부 = " +
+                SecurityContextHolder.getContext().getAuthentication());
+
         filterChain.doFilter(request, response);
     }
+
 
     // Authorization 헤더에서 Bearer 토큰 추출
     private String resolveToken(HttpServletRequest request) {
@@ -94,5 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return header.substring(7);
         }
         return null;
+
     }
+
 }
