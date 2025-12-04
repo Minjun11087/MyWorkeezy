@@ -4,7 +4,7 @@ import DraftButton from "./DraftButton";
 import SubmitButton from "./SubmitButton";
 import "./ReservationForm.css";
 import axios from "../../api/axios";
-import Menubar from "../Common/Menubar";
+import DraftMenuBar from "./DraftMenuBar";
 
 export default function ReservationForm({ initialData }) {
   const [form, setForm] = useState(
@@ -110,13 +110,12 @@ export default function ReservationForm({ initialData }) {
       </form>
 
       {isDraftMenuOpen && (
-        <Menubar
+        <DraftMenuBar
           isOpen={isDraftMenuOpen}
           onClose={() => setIsDraftMenuOpen(false)}
           latestDraftId={latestDraftId}
         />
       )}
-      {/* <Menubar /> */}
     </div>
   );
 }
