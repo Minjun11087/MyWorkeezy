@@ -1,10 +1,8 @@
 package com.together.workeezy.reservation.controller;
 
 import com.together.workeezy.auth.jwt.JwtTokenProvider;
-import com.together.workeezy.auth.jwt.JwtTokenProviderForUserId;
 import com.together.workeezy.reservation.service.DraftRedisService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +15,7 @@ import java.util.Map;
 public class DraftController {
 
     private final DraftRedisService draftRedisService;
-    private final JwtTokenProviderForUserId  JwtTokenProviderForUserId;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 임시저장 생성
     @PostMapping("/me")
@@ -25,7 +23,7 @@ public class DraftController {
             @RequestBody Map<String, Object> draftData,
             @RequestHeader("Authorization") String token
     ) {
-        Long userId = JwtTokenProviderForUserId.getUserIdFromToken(token.substring(7)); // Bearer 제거
+        Long userId = jwtTokenProvider.getUserIdFromToken(token.substring(7)); // Bearer 제거
         String key = draftRedisService.saveDraft(userId,draftData);
         return ResponseEntity.ok(Map.of(
                 "message", "임시저장 완료",
@@ -39,7 +37,7 @@ public class DraftController {
             @RequestHeader("Authorization") String token
     ) {
         // 토큰의 userId로 사용자가 누구인지
-        Long userId = JwtTokenProviderForUserId.getUserIdFromToken(token.substring(7));
+        Long userId = jwtTokenProvider.getUserIdFromToken(token.substring(7));
         List<Map<String, Object>> drafts = draftRedisService.getUserDrafts(userId);
         return ResponseEntity.ok(drafts);
     }

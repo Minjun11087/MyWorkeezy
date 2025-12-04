@@ -42,12 +42,13 @@ public class AuthController {
         String email = userDetails.getUsername();
         String role = userDetails.getUser().getRole().name();
         String name = userDetails.getUser().getUserName();
+        Long userId =userDetails.getUser().getId();
 
         // Access Token 생성
-        String accessToken = jwtProvider.createAccessToken(email, role);
+        String accessToken = jwtProvider.createAccessToken(email, role, userId);
 
         // Refresh Token 생성
-        String refreshToken = jwtProvider.createRefreshToken(email, role);
+        String refreshToken = jwtProvider.createRefreshToken(email, role,userId);
 
         // Redis에 refreshToken 저장 (AuthService)
         authService.saveRefreshToken(email, refreshToken);
