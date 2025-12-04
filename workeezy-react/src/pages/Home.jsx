@@ -1,10 +1,10 @@
 import PageLayout from "../layout/PageLayout.jsx";
-import SearchBar from "../components/Common/SearchBar.jsx";
+import HeroSection from "../components/Common/HeroSection.jsx";
 
 export default function Home() {
   return (
     <PageLayout>
-      <SearchBar />
+        <HeroSection/>
     </PageLayout>
   );
 }

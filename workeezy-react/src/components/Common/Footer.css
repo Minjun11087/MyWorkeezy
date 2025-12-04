@@ -1,32 +1,26 @@
-.footer,
-.footer * {
-  box-sizing: border-box;
-}
 .footer {
-  height: 242px;
-  position: relative;
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #eee;
+    padding: 100px 0;
 }
-.footer .workeezy {
-  color: #000000;
-  text-align: left;
-  font-family: "AritaDotumKr-Medium", sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  padding: 50px;
-  margin-top: 100px;
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 80px;
 }
-.footer .info {
-  color: #000000;
-  text-align: left;
-  font-family: "AritaDotumKr-Medium", sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  position: absolute;
-  left: 348px;
-  top: 2px;
-  padding: 50px;
-  margin-top: 100px;
+
+.footer-logo {
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "AritaDotumKr-Medium", sans-serif;
+}
+
+.footer-info {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.7;
+    font-family: "AritaDotumKr-Medium", sans-serif;
 }
