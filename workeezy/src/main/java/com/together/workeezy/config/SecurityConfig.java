@@ -24,6 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     // 인증 매니저
     @Bean
     public AuthenticationManager authenticationManager(
@@ -43,16 +45,27 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/refresh").permitAll()
+
+                        // ❌ logout도 나중에 Private 처리 가능하지만 지금은 유지
+                        .requestMatchers("/api/auth/logout").permitAll()
+
+                        // 🚨 check-password 인증 필요 -> 삭제!!!
+                        .requestMatchers("/api/auth/check-password").authenticated()
+
+                        // 마이페이지 보호
+                        .requestMatchers("/api/user/**").authenticated()
+
+                        // 공개 API
                         .requestMatchers("/api/programs/cards").permitAll()
                         .requestMatchers("/api/programs/search").permitAll()
-                        .anyRequest().authenticated()
-                );
-//                .formLogin(login -> login.disable()) // form 로그인 사용 안 함
-//                .httpBasic(basic -> basic.disable()); // Basic Auth 사용 안 함
 
-                // JWT 필터 등록
-                // JWT 필터가 스프링 필터 체인 앞에서 토큰 인증 처리
-                http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().authenticated()
+                )
+                .formLogin(login -> login.disable()) // form 로그인 사용 안 함
+                .httpBasic(basic -> basic.disable()); // Basic Auth 사용 안 함
+
+        // JWT 필터가 스프링 필터 체인 앞에서 토큰 인증 처리
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -74,9 +87,8 @@ public class SecurityConfig {
         return source;
     }
 
-    //    @Bean
+//    @Bean
 //    public BCryptPasswordEncoder bCryptPasswordEncoder() { return new BCryptPasswordEncoder(); }
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
