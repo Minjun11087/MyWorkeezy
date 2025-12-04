@@ -25,8 +25,11 @@ public class DraftController {
             @RequestHeader("Authorization") String token
     ) {
         Long userId = jwtTokenProvider.getUserIdFromToken(token.substring(7)); // Bearer 제거
-        draftRedisService.saveDraft(userId, draftData);
-        return ResponseEntity.ok(Map.of("message", "임시저장 완료"));
+        String key = draftRedisService.saveDraft(userId,draftData);
+        return ResponseEntity.ok(Map.of(
+                "message", "임시저장 완료",
+                "id", key // 프론트로 key 전달
+        ));
     }
 
     // 임시저장 목록 조회 (GET /api/reservations/draft/me)
@@ -50,7 +53,7 @@ public class DraftController {
         return ResponseEntity.ok(Map.of("message", "임시저장 삭제 완료"));
     }
 
-
+// CORS 허용도 되어 있고, Authorization 헤더 기반 인증 구조도 완벽.
 
 
 }

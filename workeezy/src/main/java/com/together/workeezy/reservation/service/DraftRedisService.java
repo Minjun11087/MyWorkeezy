@@ -22,9 +22,10 @@ public class DraftRedisService {
     private static final String DRAFT_PREFIX = "draft:";
 
     // 임시저장 생성
-    public void saveDraft(Long userId, Object draftData) {
+    public String saveDraft(Long userId, Object draftData) {
         String key = DRAFT_PREFIX + userId + ":" + System.currentTimeMillis(); // draft:hong@naver.com:1733301234567
         draftRedisTemplate.opsForValue().set(key, draftData, 14, TimeUnit.DAYS);
+        return key;
 
     }
 
