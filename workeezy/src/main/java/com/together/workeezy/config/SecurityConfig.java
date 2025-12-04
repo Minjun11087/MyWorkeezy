@@ -1,4 +1,4 @@
-package com.together.workeezy.chat.config;
+package com.together.workeezy.config;
 
 import com.together.workeezy.auth.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;

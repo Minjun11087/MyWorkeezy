@@ -1,4 +1,4 @@
-package com.together.workeezy.chat.config;
+package com.together.workeezy.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
