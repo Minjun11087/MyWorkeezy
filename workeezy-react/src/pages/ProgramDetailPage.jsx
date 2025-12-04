@@ -8,6 +8,7 @@ import HotelInfo from "../components/ProgramDetails/HotelInfo.jsx";
 import RoomList from "../components/ProgramDetails/RoomList.jsx";
 import OfficeList from "../components/ProgramDetails/OfficeList.jsx";
 import ActivityInfo from "../components/ProgramDetails/ActivityInfo.jsx";
+import PageLayout from "../layout/PageLayout.jsx";
 
 export default function ProgramDetailPage() {
   const mainImage = "/public/ac95ce1d-57d6-4862-9e4e-fabfadd1e5a2.png";
