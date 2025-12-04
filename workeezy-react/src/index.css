@@ -16,3 +16,14 @@ body {
 /*    font-family: "Font Awesome 6 Free" !important;*/
 /*}*/
 
+/* 어떤 grid든 부모 폭 안에만 존재 */
+.search-grid,
+.review-grid,
+.program-grid,
+.cards-grid,
+.items-grid {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+}

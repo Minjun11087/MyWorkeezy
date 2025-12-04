@@ -33,7 +33,7 @@ export default function SearchPage() {
   }, []);
 
   return (
-    <PageLayout>
+    <PageLayout normal>
       <h2>Search</h2>
       <SearchBar value={search} onChange={setSearch} onSearch={handleSearch} />
       <CategoryFilter active={region} onSelect={setRegion} />

@@ -50,7 +50,7 @@ export default function ReviewPage() {
   ];
 
   return (
-    <PageLayout>
+    <PageLayout normal>
       <h2>Review</h2>
       <SearchBar value={search} onChange={setSearch} />
       <CategoryFilter active={region} onSelect={setRegion} />

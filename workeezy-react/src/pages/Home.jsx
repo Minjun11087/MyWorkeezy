@@ -3,7 +3,7 @@ import HeroSection from "../components/Common/HeroSection.jsx";
 
 export default function Home() {
   return (
-    <PageLayout>
+    <PageLayout wide>
         <HeroSection/>
     </PageLayout>
   );

@@ -1,31 +1,40 @@
 import "./PageLayout.css";
 import Header from "../components/Common/Header";
 import Footer from "../components/Common/Footer";
-import {useState} from "react";
+import { useState } from "react";
 import MenuBar from "../components/Common/Menubar";
-import FloatingButtons from "../components/Common/FloatingButtons.jsx";
+import FloatingButtons from "../components/Common/FloatingButtons";
 
-export default function PageLayout({children}) {
+export default function PageLayout({ children, wide = false }) {
     const [open, setOpen] = useState(false);
 
     return (
         <div className="layout">
-            {/* Header에 setOpen 넘겨주기 */}
-            <Header onOpenMenu={() => setOpen(true)}/>
-            {/* 오버레이 + 메뉴바 */}
+
+            {/* Header */}
+            <Header onOpenMenu={() => setOpen(true)} />
+
+            {/* 메뉴 오픈 */}
             {open && (
                 <>
-                    {/* 오버레이 (배경 클릭 시 닫힘!) */}
-                    <div className="menu-overlay" onClick={() => setOpen(false)}/>
-
-                    <MenuBar onClose={() => setOpen(false)}
-                             isAdmin={localStorage.getItem("role") === "ADMIN"}/>
+                    <div className="menu-overlay" onClick={() => setOpen(false)} />
+                    <MenuBar
+                        onClose={() => setOpen(false)}
+                        isAdmin={localStorage.getItem("role") === "ADMIN"}
+                    />
                 </>
             )}
 
-            <main className="content">{children}</main>
-            <FloatingButtons/>
-            <Footer/>
+            {/* ★ 폭을 통제하는 핵심 래퍼 */}
+            <main className="content-wrapper">
+                <div className={wide ? "content-wide" : "content-normal"}>
+                    {children}
+                </div>
+            </main>
+
+            {/* Floating & Footer */}
+            <FloatingButtons />
+            <Footer />
         </div>
     );
 }
