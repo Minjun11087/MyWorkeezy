@@ -17,4 +17,6 @@ public class ReservationCreateDto {
     private String officeName;
     private String roomType;
     private int peopleCount;
+
+    private String programTitle;
 }
