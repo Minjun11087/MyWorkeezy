@@ -4,32 +4,66 @@ import ProgramImages from "../components/Program/ProgramImages.jsx";
 import ProgramReserveBar from "../components/Program/ProgramReserveBar.jsx";
 import ProgramTabs from "../components/Program/ProgramTabs.jsx";
 import ProgramInfo from "../components/Program/ProgramInfo.jsx";
-import HotelInfo from "../components/ProgramDetails/HotelInfo.jsx";
 import RoomList from "../components/ProgramDetails/RoomList.jsx";
 import OfficeList from "../components/ProgramDetails/OfficeList.jsx";
 import ActivityInfo from "../components/ProgramDetails/ActivityInfo.jsx";
 
-export default function ProgramDetailPage() {
-  const mainImage = "/public/ac95ce1d-57d6-4862-9e4e-fabfadd1e5a2.png";
-  const subImages = [
-    "/public/a161ab83-1b52-4475-b7e3-f75afb932943.png",
-    "/public/c7209850-7773-481f-af51-511736fcf47d.png",
-    "public/db333417-b310-4ba1-ac03-33cd2b71f553.png",
-    "public/db333417-b310-4ba1-ac03-33cd2b71f553.png",
-  ];
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../api/publicApi.js";
+import PageLayout from "../Layout/PageLayout.jsx";
+import HotelInfo from "../components/ProgramDetails/HotelInfo.jsx"; // axios 설정한 파일
 
-  return (
-    <PageLayout>
-      <ProgramTitle title="부산 영도 워케이션" />
-      <ProgramImages main={mainImage} subs={subImages} />
-      <ProgramReserveBar />
-      <ProgramTabs />
-      <ProgramInfo />
-      <HotelInfo />
-      <RoomList />
-      <OfficeList />
-      <ActivityInfo />
-      <FloatingButtons />
-    </PageLayout>
-  );
+export default function ProgramDetailPage() {
+    const { id } = useParams();
+    const [program, setProgram] = useState(null);
+
+    useEffect(() => {
+        api.get(`/api/programs/${id}`)
+            .then((res) => setProgram(res.data))
+            .catch((err) => console.log(err));
+    }, [id]);
+
+    if (!program) return <div>Loading...</div>;
+    console.log("MAIN IMAGE:", program.mainImage);
+    console.log("SUBS:", program.subImages);
+    return (
+        <PageLayout>
+
+            {/* 1) 제목 */}
+            <ProgramTitle title={program.title} />
+
+            {/* 2) 사진들 */}
+            <ProgramImages
+                mainImage={program.mainImage}
+                subImages={program.subImages}
+            />
+
+            {/* 3) 예약바 */}
+            <ProgramReserveBar />
+
+            {/* 4) 탭 */}
+            <ProgramTabs />
+
+            {/* 5) 프로그램 설명 */}
+            <ProgramInfo info={program.programInfo} />
+
+            {/* 6) 숙소 정보 */}
+            <HotelInfo hotel={program.hotel} />
+
+            {/* 7) 방 리스트 — 숙소의 rooms */}
+            <RoomList rooms={program.hotel?.rooms ?? []} />
+
+            {/* 8) 오피스 목록 */}
+            <OfficeList offices={program.offices} />
+
+            {/* 9) 액티비티 목록 */}
+            <ActivityInfo attractions={program.attractions} />
+
+            {/* 10) Floating 버튼 */}
+            <FloatingButtons />
+        </PageLayout>
+    );
 }
+
+

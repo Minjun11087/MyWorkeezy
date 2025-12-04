@@ -4,6 +4,7 @@ import com.together.workeezy.auth.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,7 +45,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/programs/cards").permitAll()
-                        .requestMatchers("/api/programs/search").permitAll()
+                        .requestMatchers("/api/programs/**").permitAll() // ← 핵심
+                        .requestMatchers("/api/search").permitAll()    // ← 핵심
+                        .requestMatchers("/api/search/**").permitAll() // ← 핵심
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/error/**").permitAll()
+
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .anyRequest().authenticated()
                 );
 //                .formLogin(login -> login.disable()) // form 로그인 사용 안 함

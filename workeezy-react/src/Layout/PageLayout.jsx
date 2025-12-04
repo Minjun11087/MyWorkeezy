@@ -3,6 +3,7 @@ import Header from "../components/Common/Header";
 import Footer from "../components/Common/Footer";
 import { useState } from "react";
 import MenuBar from "../components/Common/Menubar";
+import FloatingButtons from "../components/Common/FloatingButtons.jsx";
 
 export default function PageLayout({ children }) {
   const [open, setOpen] = useState(false);
@@ -24,6 +25,7 @@ export default function PageLayout({ children }) {
 
       <main className="content">{children}</main>
 
+        <FloatingButtons/>
       <Footer />
     </div>
   );

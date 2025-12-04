@@ -11,15 +11,29 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    // 🔥 토큰 검증 제외할 URL (화이트리스트)
+    private static final List<String> WHITELIST = List.of(
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/search",
+            "/api/search/",       // 🔥 추가
+            "/api/search/**",     // 🔥 가장 중요
+            "/api/programs/cards"
+    );
+
 
     @Override
     protected void doFilterInternal(
@@ -28,28 +42,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        System.out.println("📌 JwtFilter 요청 경로: " + request.getRequestURI());
+        String requestURI = request.getRequestURI();
+        System.out.println("📌 JwtFilter 요청 경로: " + requestURI);
 
-        // Authorization 헤더에서 토큰 꺼내기
+        // 🔥 1) 화이트리스트 URL은 JWT 검증 스킵
+        for (String pattern : WHITELIST) {
+            if (pathMatcher.match(pattern, requestURI)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+        }
+
+        // 🔥 2) 화이트리스트 아니면 토큰 검증
         String token = resolveToken(request);
 
-        // 토큰 유효성 확인
         if (token != null && jwtTokenProvider.validateToken(token)) {
-
-            // 인증 객체 생성
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
-
-            // SecurityContextHolder에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
         filterChain.doFilter(request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearer = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
 
-        if(bearer != null && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
         }
         return null;
     }
