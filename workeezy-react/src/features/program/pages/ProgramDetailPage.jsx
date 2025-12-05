@@ -1,18 +1,18 @@
-import FloatingButtons from "../components/Common/FloatingButtons.jsx";
-import ProgramTitle from "../components/Program/ProgramTitle.jsx";
-import ProgramImages from "../components/Program/ProgramImages.jsx";
-import ProgramReserveBar from "../components/Program/ProgramReserveBar.jsx";
-import ProgramTabs from "../components/Program/ProgramTabs.jsx";
-import ProgramInfo from "../components/Program/ProgramInfo.jsx";
-import RoomList from "../components/ProgramDetails/RoomList.jsx";
-import OfficeList from "../components/ProgramDetails/OfficeList.jsx";
-import ActivityInfo from "../components/ProgramDetails/ActivityInfo.jsx";
+import FloatingButtons from "../../../shared/common/FloatingButtons.jsx";
+import ProgramTitle from "../components/ProgramTitle.jsx";
+import ProgramImages from "../components/ProgramImages.jsx";
+import ProgramReserveBar from "../components/ProgramReserveBar.jsx";
+import ProgramTabs from "../components/ProgramTabs.jsx";
+import ProgramInfo from "../components/ProgramInfo.jsx";
+import RoomList from "../components/details/RoomList.jsx";
+import OfficeList from "../components/details/OfficeList.jsx";
+import ActivityInfo from "../components/details/ActivityInfo.jsx";
 
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import api from "../api/publicApi.js";
-import PageLayout from "../Layout/PageLayout.jsx";
-import HotelInfo from "../components/ProgramDetails/HotelInfo.jsx"; // axios 설정한 파일
+import api from "../../../api/axios.js";
+import PageLayout from "../../../Layout/PageLayout.jsx";
+import HotelInfo from "../components/details/HotelInfo.jsx";
 
 export default function ProgramDetailPage() {
     const { id } = useParams();
