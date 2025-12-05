@@ -48,7 +48,7 @@ export default function MenuBar({ isAdmin = false, onClose }) {
             title: "마이페이지",
             sub: [
                 { name: "개인 정보 조회", path: "/profile-check" },
-                { name: "찜 목록", path: "/mypage/likes" },
+                { name: "찜 목록", path: "/likes" },
             ],
         },
         {
@@ -70,7 +70,7 @@ export default function MenuBar({ isAdmin = false, onClose }) {
                 { name: "예약 승인", path: "/admin/approval" },
             ],
         },
-        { title: "프로그램 찾기", path: "/program" },
+        { title: "프로그램 찾기", path: "/search" },
         { title: "리뷰", path: "/reviews" },
         { title: "Admin", isFooter: true, path: "/admin" },
     ];
@@ -96,6 +96,10 @@ export default function MenuBar({ isAdmin = false, onClose }) {
                 ? prev.filter((t) => t !== title)
                 : [...prev, title]
         );
+    };
+
+    const goToLogin = () => {
+        window.location.href = "/login";
     };
 
     return (
@@ -154,7 +158,7 @@ export default function MenuBar({ isAdmin = false, onClose }) {
                         로그아웃
                     </div>
                 ) : (
-                    <div className="logout-title" onClick={() => handleProtectedClick("/login")}>
+                    <div className="logout-title" onClick={goToLogin}>
                         로그인
                     </div>
                 )}
