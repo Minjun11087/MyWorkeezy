@@ -1,11 +1,11 @@
-import PageLayout from "../layout/PageLayout";
-import SearchBar from "../components/Search/SearchBar.jsx";
-import CategoryFilter from "../components/Search/CategoryFilter.jsx";
-import Pagination from "../components/Common/Pagination.jsx";
-import FloatingButtons from "../components/Common/FloatingButtons.jsx";
-import SearchCard from "../components/Search/SearchCard.jsx";
+import PageLayout from "../../../layout/PageLayout.jsx";
+import SearchBar from "../components/SearchBar.jsx";
+import CategoryFilter from "../components/CategoryFilter.jsx";
+import Pagination from "../../../shared/common/Pagination.jsx";
+import FloatingButtons from "../../../shared/common/FloatingButtons.jsx";
+import SearchCard from "../components/SearchCard.jsx";
 
-import publicApi from "../api/publicApi";
+import publicApi from "../../../api/publicApi.js";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
