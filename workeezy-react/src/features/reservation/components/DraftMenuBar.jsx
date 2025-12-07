@@ -9,32 +9,15 @@ export default function DraftMenuBar({
   latestDraftId,
 }) {
   const [openItems, setOpenItems] = useState([]); // 펼침 관리
-  const [draftList, setDraftList] = useState([]); // ✅ 수정: Redis 임시저장 리스트
-  const [loading, setLoading] = useState(false); // ✅ 수정: 로딩 상태
+  const [draftList, setDraftList] = useState([]); // Redis 임시저장 리스트
+  const [loading, setLoading] = useState(false); // 수정: 로딩 상태
 
+  // 임시저장 리스트 메뉴
   const userMenu = [
-    // { title: "Home" },
-    {
-      title: "임시저장 목록", // ✅ 수정: Redis 리스트 표시 영역
-      sub: draftList.map((draft) => ({
-        name: (
-          <>
-            {draft.data.title || "제목 없음"}
-            {draft.id === latestDraftId && (
-              <span className="new-tag"> New!</span> // ✅ New! 표시
-            )}
-          </>
-        ),
-        path: "#",
-      })),
-    },
-  ];
-
-  const adminMenu = [
-    { title: "관리자 예약 관리" },
     {
       title: "임시저장 목록",
       sub: draftList.map((draft) => ({
+        id: draft.id,
         name: (
           <>
             {draft.data.title || "제목 없음"}
@@ -48,9 +31,7 @@ export default function DraftMenuBar({
     },
   ];
 
-  const menu = isAdmin ? adminMenu : userMenu;
-
-  // ✅ 수정: Redis 임시저장 목록 불러오기
+  // Redis 임시저장 목록 불러오기
   useEffect(() => {
     if (!isOpen) return;
     const token = localStorage.getItem("accessToken");
@@ -66,9 +47,9 @@ export default function DraftMenuBar({
       .finally(() => setLoading(false));
   }, [isOpen]);
 
-  const toggleItem = (title) => {
+  const toggleItem = (id) => {
     setOpenItems((prev) =>
-      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
+      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
     );
   };
 
@@ -80,17 +61,24 @@ export default function DraftMenuBar({
 
       {loading && <p>불러오는 중...</p>}
 
-      {menu.map((item, idx) => (
+      {userMenu.map((item, idx) => (
         <div key={idx} className="menu-item">
-          <div className="menu-title" onClick={() => toggleItem(item.title)}>
-            {item.title}
-          </div>
+          <div className="menu-title">{item.title}</div>
 
-          {item.sub && openItems.includes(item.title) && (
+          {/* 서브 목록에서 id 기준으로 토글 */}
+          {item.sub && (
             <div className="submenu">
               {item.sub.map((sub, subIdx) => (
-                <div key={subIdx} className="submenu-item">
+                <div
+                  key={sub.id} //
+                  className="submenu-item"
+                  onClick={() => toggleItem(sub.id)}
+                >
                   {sub.name}
+
+                  {openItems.includes(sub.id) && (
+                    <span className="open-indicator">▼</span>
+                  )}
                 </div>
               ))}
             </div>
