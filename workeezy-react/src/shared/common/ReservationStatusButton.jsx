@@ -1,10 +1,6 @@
 import React from "react";
 import "./ReservationStatusButton.css";
 
-import cancelled from "../../../public/reservationStatusIcons/cancelled.svg";
-import confirmed from "../../../public/reservationStatusIcons/confirmed.svg";
-import pending from "../../../public/reservationStatusIcons/pending.svg";
-
 /**
  * 예약 상태 버튼
  * props:
@@ -12,23 +8,23 @@ import pending from "../../../public/reservationStatusIcons/pending.svg";
  */
 export default function ReservationStatusButton({ status }) {
   let label = "";
-  let icon = null;
+  let icon = "";
   let className = "reservation-status-btn";
 
   switch (status) {
     case "PENDING":
       label = "대기";
-      icon = pending;
+      icon = "/reservationStatusIcons/pending.svg";
       className += " pending";
       break;
     case "CONFIRMED":
       label = "확정";
-      icon = confirmed;
+      icon = "/reservationStatusIcons/confirmed.svg";
       className += " confirmed";
       break;
     case "CANCELLED":
       label = "취소";
-      icon = cancelled;
+      icon = "/reservationStatusIcons/cancelled.svg";
       className += " cancelled";
       break;
     default:

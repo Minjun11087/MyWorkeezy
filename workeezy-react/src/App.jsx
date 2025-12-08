@@ -52,7 +52,7 @@ export default function App() {
       <Route path="/modifyreservation" element={<ModifyReservationPage />} />
 
       <Route
-        path="/adminreservationlist"
+        path="/admin/reservationlist"
         element={<AdimnReservationListPage />}
       />
     </Routes>
