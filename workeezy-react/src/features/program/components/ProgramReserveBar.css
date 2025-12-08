@@ -101,3 +101,12 @@
 .pd-datepicker {
     padding-left: 32px !important; /* 🔥 아이콘만큼 공간 띄우기 */
 }
+/* 예약바를 스크롤 내려도 따라오게 */
+.pd-reserve-wrapper {
+    position: sticky;
+    top: 80px;          /* 헤더 높이에 맞게 조정 - 헤더 없으면 0 또는 16px 정도 */
+    z-index: 50;
+    background: #ffffff;   /* 스크롤 시 뒤 배경이 비치지 않게 */
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}

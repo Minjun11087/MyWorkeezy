@@ -8,14 +8,14 @@ import RoomList from "../components/details/RoomList.jsx";
 import OfficeList from "../components/details/OfficeList.jsx";
 import ActivityInfo from "../components/details/ActivityInfo.jsx";
 
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import api from "../../../api/axios.js";
 import PageLayout from "../../../Layout/PageLayout.jsx";
 import HotelInfo from "../components/details/HotelInfo.jsx";
 
 export default function ProgramDetailPage() {
-    const { id } = useParams();
+    const {id} = useParams();
     const [program, setProgram] = useState(null);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function ProgramDetailPage() {
         <PageLayout>
 
             {/* 1) 제목 */}
-            <ProgramTitle title={program.title} />
+            <ProgramTitle title={program.title}/>
 
             {/* 2) 사진들 */}
             <ProgramImages
@@ -40,22 +40,26 @@ export default function ProgramDetailPage() {
             />
 
             {/* 3) 예약바 */}
+            <div className="pd-reserve-wrapper">
             <ProgramReserveBar
                 rooms={program.hotel?.rooms ?? []}
                 offices={program.offices ?? []}
                 programId={program.id}
             />
+            </div>
 
 
             {/* 4) 탭 */}
-            <ProgramTabs />
+            <ProgramTabs/>
 
             {/* 5) 프로그램 설명 */}
-            <ProgramInfo info={program.programInfo} />
-
+            <section id="program-info">
+                <ProgramInfo info={program.programInfo}/>
+            </section>
             {/* 6) 숙소 정보 */}
-            <HotelInfo hotel={program.hotel} />
-
+            <section id="hotel-info">
+                <HotelInfo hotel={program.hotel}/>
+            </section>
             {/* 7) 방 리스트 — 숙소의 rooms */}
             <RoomList
                 rooms={program.hotel?.rooms ?? []}
@@ -64,14 +68,17 @@ export default function ProgramDetailPage() {
 
 
             {/* 8) 오피스 목록 */}
-            <OfficeList offices={program.offices} />
+            <section id="office-info">
+                <OfficeList offices={program.offices}/>
+            </section>
 
 
-                {/* 9) 액티비티 목록 */}
-            <ActivityInfo attractions={program.attractions} />
-
+            {/* 9) 액티비티 목록 */}
+            <section id="activity-info">
+                <ActivityInfo attractions={program.attractions}/>
+            </section>
             {/* 10) Floating 버튼 */}
-            <FloatingButtons />
+            <FloatingButtons/>
         </PageLayout>
     );
 }

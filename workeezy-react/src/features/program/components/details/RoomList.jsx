@@ -20,6 +20,7 @@ export default function RoomList({ rooms = [], photos }) {
 
     return (
         <div className="pd-rooms">
+            <h3>룸 타입</h3>
             {rooms.map((r, index) => {
                 const imgSrc = getImage(photoList[index]);
 

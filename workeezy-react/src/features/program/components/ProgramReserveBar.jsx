@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./ProgramReserveBar.css";
 
-export default function ProgramReserveBar({ rooms = [], offices = [], programId }) {
+export default function ProgramReserveBar({ rooms = [], offices = [], programId , programPrice}) {
 
     const navigate = useNavigate();
 
@@ -27,10 +27,12 @@ export default function ProgramReserveBar({ rooms = [], offices = [], programId 
                 roomId: roomType,
                 officeId: officeType,
                 checkIn,
-                checkOut
+                checkOut,
+                programPrice
             }
         });
     };
+
 
     return (
         <div className="pd-reserve">
