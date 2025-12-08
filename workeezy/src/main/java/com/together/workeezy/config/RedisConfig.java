@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -18,6 +19,14 @@ public class RedisConfig {
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+
+        // 안전하게 하려면 직렬화 설정 추가
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new StringRedisSerializer());
+
+        template.afterPropertiesSet();
         return template;
     }
 
@@ -37,7 +46,7 @@ public class RedisConfig {
         template.setConnectionFactory(connectionFactory);
 
         // Json 직렬화 설정
-        Jackson2JsonRedisSerializer<Object> serializer  = new Jackson2JsonRedisSerializer<>(Object.class);
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -55,6 +64,5 @@ public class RedisConfig {
         template.setValueSerializer(serializer); // 내가 만든 Json 직렬기로 처리
         template.afterPropertiesSet(); // 이제 설정 끝났으니까 초기화 후 준비!
         return template;
-
     }
 }

@@ -1,15 +1,9 @@
 import axios from "axios";
 
-// 전역 설정
-axios.defaults.withCredentials = true;
-
 const api = axios.create({
-    baseURL: "http://localhost:8080/",
+    baseURL: "http://localhost:8080",
     withCredentials: true,
 });
-
-// 인스턴스 설정 (추가 안전)
-api.defaults.withCredentials = true;
 
 // 요청마다 accessToken 자동 포함
 api.interceptors.request.use(
@@ -77,5 +71,4 @@ api.interceptors.response.use(
         return Promise.reject(err);
     }
 );
-
 export default api;
