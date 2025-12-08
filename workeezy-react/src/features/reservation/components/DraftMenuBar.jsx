@@ -4,53 +4,33 @@ import axios from "../../../api/axios.js";
 
 export default function DraftMenuBar({
   isAdmin = false,
-  isOpen = false, // 기본 false 테스트시 ture로
+  isOpen = false,
   onClose,
   latestDraftId,
 }) {
-  const [openItems, setOpenItems] = useState([]); // 펼침 관리
-  const [draftList, setDraftList] = useState([]); // ✅ 수정: Redis 임시저장 리스트
-  const [loading, setLoading] = useState(false); // ✅ 수정: 로딩 상태
+  const [openItems, setOpenItems] = useState([]);
+  const [draftList, setDraftList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  // 임시저장 리스트 메뉴 구성
   const userMenu = [
-    // { title: "Home" },
     {
-      title: "임시저장 목록", // ✅ 수정: Redis 리스트 표시 영역
+      title: "임시저장 리스트",
       sub: draftList.map((draft) => ({
+        key: draft.key,
         name: (
           <>
-            {draft.title || "제목 없음"}
-            {draft.id === latestDraftId && (
-              <span className="new-tag"> New!</span> // ✅ New! 표시
+            {draft.data.title || "제목 없음"}
+            {draft.key === latestDraftId && (
+              <span className="draft-new-tag"> New!</span>
             )}
           </>
         ),
-        path: "#",
       })),
     },
   ];
 
-  const adminMenu = [
-    { title: "관리자 예약 관리" },
-    {
-      title: "임시저장 목록",
-      sub: draftList.map((draft) => ({
-        name: (
-          <>
-            {draft.title || "제목 없음"}
-            {draft.id === latestDraftId && (
-              <span className="new-tag"> New!</span>
-            )}
-          </>
-        ),
-        path: "#",
-      })),
-    },
-  ];
-
-  const menu = isAdmin ? adminMenu : userMenu;
-
-  // ✅ 수정: Redis 임시저장 목록 불러오기
+  // Redis 임시저장 목록 불러오기
   useEffect(() => {
     if (!isOpen) return;
     const token = localStorage.getItem("accessToken");
@@ -66,31 +46,69 @@ export default function DraftMenuBar({
       .finally(() => setLoading(false));
   }, [isOpen]);
 
-  const toggleItem = (title) => {
+  // 항목 클릭 토글
+  const toggleItem = (id) => {
     setOpenItems((prev) =>
-      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
+      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
     );
   };
 
+  // 임시저장 삭제
+  const handleDelete = async (draftKey) => {
+    if (!window.confirm("이 임시저장을 삭제하시겠습니까?")) return;
+
+    const token = localStorage.getItem("accessToken");
+    try {
+      await axios.delete(
+        `http://localhost:8080/api/reservations/draft/${encodeURIComponent(
+          draftKey
+        )}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setDraftList((prev) =>
+        prev.filter((d) => d.key !== decodeURIComponent(draftKey))
+      );
+      alert("삭제 완료!");
+    } catch (err) {
+      console.error("임시저장 삭제 실패:", err);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
-    <div className={`menu-bar ${isOpen ? "open" : "close"}`}>
-      <button className="menu-close-btn" onClick={onClose}>
+    <div className={`draft-menu-bar ${isOpen ? "open" : "close"}`}>
+      <button className="draft-menu-close-btn" onClick={onClose}>
         ✕
       </button>
 
       {loading && <p>불러오는 중...</p>}
 
-      {menu.map((item, idx) => (
-        <div key={idx} className="menu-item">
-          <div className="menu-title" onClick={() => toggleItem(item.title)}>
-            {item.title}
-          </div>
+      {userMenu.map((item, idx) => (
+        <div key={idx} className="draft-menu-item">
+          <div className="draft-menu-title">{item.title}</div>
 
-          {item.sub && openItems.includes(item.title) && (
-            <div className="submenu">
-              {item.sub.map((sub, subIdx) => (
-                <div key={subIdx} className="submenu-item">
+          {item.sub && (
+            <div className="draft-submenu">
+              {item.sub.map((sub) => (
+                <div
+                  key={sub.key}
+                  className={`draft-submenu-item ${
+                    openItems.includes(sub.key) ? "selected" : ""
+                  }`}
+                  onClick={() => toggleItem(sub.key)}
+                >
                   {sub.name}
+                  <button
+                    className="draft-delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(sub.key);
+                    }}
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
                 </div>
               ))}
             </div>

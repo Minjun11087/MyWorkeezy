@@ -7,7 +7,7 @@ export default function ReservationFields({
   email,
   startDate,
   endDate,
-  office,
+  placeName,
   roomType,
   peopleCount,
   onChange,
@@ -105,8 +105,8 @@ export default function ReservationFields({
         <div className="input">
           <input
             type="text"
-            name="office"
-            value={office}
+            name="placeName"
+            value={placeName}
             onChange={onChange}
             placeholder="오피스명을 입력하세요"
             className="value"

@@ -16,6 +16,10 @@ import ModifyReservationPage from "./features/reservation/pages/ModifyReservatio
 import LikesPage from "./features/profile/pages/LikesPage.jsx";
 import AdimnReservationListPage from "./features/reservation/pages/AdminReservationListPage.jsx";
 
+import Forbidden from "./shared/error/Forbidden.jsx";
+import ServerError from "./shared/error/ServerError.jsx";
+import NotFound from "./shared/error/NotFound.jsx";
+
 export default function App() {
   if (window.Kakao && !window.Kakao.isInitialized()) {
     window.Kakao.init("b915b18542b9776646e5434c83e959c9");
@@ -55,11 +59,16 @@ export default function App() {
       {/* 예약 */}
       <Route path="/newreservation" element={<NewReservationPage />} />
       <Route path="/modifyreservation" element={<ModifyReservationPage />} />
-
       <Route
         path="/admin/reservationlist"
         element={<AdimnReservationListPage />}
       />
+      {/* 에러 페이지 */}
+      <Route path="/403" element={<Forbidden />} />
+      <Route path="/500" element={<ServerError />} />
+
+      {/* 404 자동 이동 */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

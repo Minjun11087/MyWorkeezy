@@ -47,13 +47,14 @@ public class JwtTokenProvider {
     }
 
     // Access Token 생성
-    public String createAccessToken(String email, String role) {
+    public String createAccessToken(String email, String role, Long userId) {
 
         Date now = new Date();
         Date expiry = new Date(now.getTime() + accessExpiration);
 
         return Jwts.builder()
                 .setSubject(email) // 토큰 주인(email)
+                .claim("userId", userId)
                 .claim("role", role) // role을 claim에 넣는다
                 .setIssuedAt(now)
                 .setExpiration(expiry)
@@ -62,13 +63,14 @@ public class JwtTokenProvider {
     }
 
     // Refresh Token 생성
-    public String createRefreshToken(String email, String role) {
+    public String createRefreshToken(String email, String role, Long userId) {
 
         Date now = new Date();
         Date expiry = new Date(now.getTime() + refreshExpiration);
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("userId", userId)
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
@@ -128,5 +130,10 @@ public class JwtTokenProvider {
         return refreshExpiration;
     }
 
-}
+    public Long getUserIdFromToken(String token) { return getClaims(token).get("userId", Long.class);
+
+
+
+}}
+
 
