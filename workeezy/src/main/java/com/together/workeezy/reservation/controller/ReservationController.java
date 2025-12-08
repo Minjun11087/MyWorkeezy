@@ -25,15 +25,13 @@ public class ReservationController {
             Authentication authentication) {
 
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("🔥 현재 인증 정보: " + auth);
-        System.out.println("🔥 권한 목록: " + auth.getAuthorities());
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println("🔥 현재 인증 정보: " + auth);
+//        System.out.println("🔥 권한 목록: " + auth.getAuthorities());
 
         System.out.println("🚀 예약 요청 도착");
         System.out.println("👤 사용자: " + authentication.getName());
         System.out.println("📦 DTO: " + dto);
-
-
         // 개별 필드 확인 로그 추가
         System.out.println("🧾 userName = " + dto.getUserName());
         System.out.println("🏢 company = " + dto.getCompany());

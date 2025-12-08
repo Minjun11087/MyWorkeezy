@@ -27,14 +27,13 @@ public class ReservationService {
     // 예약 신청
     public Reservation createNewReservation(ReservationCreateDto dto, String email) {
 
-        // 1️⃣ 사용자 조회
+        // 사용자 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 유저가 존재하지 않습니다."));
-//
-//        // 2️⃣ 프로그램 조회
-//        Program program = programRepository.findById(dto.getProgramId())
-//                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 프로그램이 존재하지 않습니다."));
-        Program program = null; // TODO: 프론트에서 programId 연동 후 다시 복구
+
+        // 프로그램 조회
+        Program program = programRepository.findById(dto.getProgramId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 프로그램이 존재하지 않습니다."));
 
         // 3️⃣ 룸 조회 (roomType Enum 문자열 변환)
         RoomType roomType;
@@ -47,6 +46,7 @@ public class ReservationService {
         Room room = (Room) roomRepository.findByRoomType(roomType)
                 .orElseThrow(() -> new IllegalArgumentException("해당 타입의 룸이 존재하지 않습니다."));
 
+        
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setProgram(program);
@@ -54,7 +54,10 @@ public class ReservationService {
         reservation.setStartDate(dto.getStartDate());
         reservation.setEndDate(dto.getEndDate());
         reservation.setPeopleCount(dto.getPeopleCount());
-        reservation.setStatus(ReservationStatus.waiting);
+        reservation.setStatus(ReservationStatus.waiting); // 기본 - 대기상태
+
+        System.out.println("✅ 예약 저장 완료: " + dto.getProgramId() + " / " + dto.getRoomType());
+
 
         return reservationRepository.save(reservation);
 

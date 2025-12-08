@@ -1,6 +1,7 @@
 import "./ReservationFields.css";
 
 export default function ReservationFields({
+  programId,
   userName,
   company,
   phone,
@@ -14,6 +15,20 @@ export default function ReservationFields({
 }) {
   return (
     <>
+      {/* 프로그램 ID  */}
+      <div className="program-id">
+        <div className="div">프로그램 ID</div>
+        <div className="input">
+          <input
+            type="text"
+            name="programId"
+            value={programId || ""}
+            onChange={onChange}
+            readOnly
+            className="value"
+          />
+        </div>
+      </div>
       {/* 신청자명 */}
       <div className="user-name">
         <div className="div">신청자명</div>

@@ -5,25 +5,30 @@ import SubmitButton from "./SubmitButton.jsx";
 import "./ReservationForm.css";
 import axios from "../../../api/axios.js";
 import DraftMenuBar from "./DraftMenuBar";
-import MenuBar from "./../../../shared/common/Menubar";
+// import { useLocation } from "react-router-dom"; // 부모 reserveBar의 state로 전달된 값 받을 용도
 
 export default function ReservationForm({ initialData }) {
+  // const location = useLocation();
+  // const { state } = location || {};
+  // const { programId, roomId, officeId, checkIn, checkOut } = state || {};
+  const { programId, roomId, officeId, checkIn, checkOut } = initialData || {};
+
   // -------------------------------------------------------------------
   // * form 기본 상태 관리 (예약 폼 초기값)
   // -------------------------------------------------------------------
   const [form, setForm] = useState(
     initialData || {
-      // programId: null,
+      programId: programId || "",
       programTitle: "",
       userName: "",
       company: "",
       phone: "",
       email: "",
-      startDate: "",
-      endDate: "",
-      placeName: "",
-      roomType: "",
-      peopleCount: 0,
+      startDate: checkIn ? new Date(checkIn).toISOString().slice(0, 10) : "",
+      endDate: checkOut ? new Date(checkOut).toISOString().slice(0, 10) : "",
+      placeName: officeId || "",
+      roomType: roomId || "",
+      peopleCount: 1,
     }
   );
 
@@ -34,15 +39,44 @@ export default function ReservationForm({ initialData }) {
   const [latestDraftId, setLatestDraftId] = useState(null); // 최근 저장된 draft 식별용 (New!)
 
   // -------------------------------------------------------------------
-  // 초기데이터 반영 (수정 시 form에 initilaData 적용)
+  // 1. 초기데이터 반영
+  // 2. state가 있으면 신규 예약 폼 초기화 : 기존 값 끼워넣기
   // -------------------------------------------------------------------
-  useEffect(() => {
-    if (!initialData) return;
+  // useEffect(() => {
+  //   if (initialData) {
+  //     setForm(initialData);
+  //   } else if (state) {
+  //     setForm((prev) => ({
+  //       ...prev,
+  //       programId: programId || prev.programId,
+  //       startDate: checkIn
+  //         ? new Date(checkIn).toISOString().slice(0, 10)
+  //         : prev.startDate,
+  //       endDate: checkOut
+  //         ? new Date(checkOut).toISOString().slice(0, 10)
+  //         : prev.endDate,
+  //       placeName: officeId || prev.placeName,
+  //       roomType: roomId || prev.roomType,
+  //     }));
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [initialData, state]); // state가 바뀌거나, initialData가 들어올 때마다
 
-    if (JSON.stringify(initialData) !== JSON.stringify(form)) {
-      setForm(initialData);
+  useEffect(() => {
+    if (initialData) {
+      setForm((prev) => ({
+        ...prev,
+        programId: initialData.programId || prev.programId,
+        startDate: initialData.checkIn
+          ? new Date(initialData.checkIn).toISOString().slice(0, 10)
+          : prev.startDate,
+        endDate: initialData.checkOut
+          ? new Date(initialData.checkOut).toISOString().slice(0, 10)
+          : prev.endDate,
+        placeName: initialData.officeId || prev.placeName,
+        roomType: initialData.roomId || prev.roomType,
+      }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialData]);
 
   // -------------------------------------------------------------------
@@ -72,12 +106,20 @@ export default function ReservationForm({ initialData }) {
         alert("예약이 성공적으로 수정 되었습니다!");
       } else {
         // POST : 신규 예약 등록
-        await axios.post("http://localhost:8080/api/reservations", form, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        await axios.post(
+          "http://localhost:8080/api/reservations",
+          {
+            ...form,
+            roomType: Number(form.roomType), // ✅ 문자열 → 숫자 변환
+            placeName: Number(form.placeName), // ✅ 문자열 → 숫자 변환
           },
-          withCredentials: true,
-        });
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
         alert("예약이 성공적으로 등록되었습니다!");
       }
     } catch (error) {
