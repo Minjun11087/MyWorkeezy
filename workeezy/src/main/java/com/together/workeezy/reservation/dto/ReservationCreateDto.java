@@ -24,5 +24,6 @@ public class ReservationCreateDto {
 
     private String placeName; // 오피스명
     private String roomType; // 문자열로 enum 매칭
+    private Long roomId;
 
 }

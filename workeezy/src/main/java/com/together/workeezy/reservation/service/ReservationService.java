@@ -25,46 +25,29 @@ public class ReservationService {
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
 
-
-    // 예약 신청
     public Reservation createNewReservation(ReservationCreateDto dto, String email) {
 
-        // 사용자 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 유저가 존재하지 않습니다."));
 
-        // 프로그램 조회
         Program program = programRepository.findById(dto.getProgramId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 프로그램이 존재하지 않습니다."));
-        // 3️⃣ 룸 조회 (roomType Enum 문자열 변환)
-        RoomType roomType;
-        try {
-            roomType = RoomType.valueOf(dto.getRoomType().toLowerCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("잘못된 룸 타입입니다: " + dto.getRoomType());
-        }
 
-        // 여러 개 룸 반환
-        List<Room> rooms = roomRepository.findByRoomType(roomType);
 
-        if (rooms.isEmpty()) {
-            throw new IllegalArgumentException("해당 타입의 룸이 존재하지 않습니다.");
-        }
-
+        Room room = roomRepository.findById(dto.getRoomId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "해당 ID의 룸이 존재하지 않습니다. roomId=" + dto.getRoomId()));
 
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setProgram(program);
-        reservation.setRoom((Room) rooms);
+        reservation.setRoom(room);
         reservation.setStartDate(dto.getStartDate());
         reservation.setEndDate(dto.getEndDate());
         reservation.setPeopleCount(dto.getPeopleCount());
-        reservation.setStatus(ReservationStatus.waiting); // 기본 - 대기상태
-
-        System.out.println("✅ 예약 저장 완료: " + dto.getProgramId() + " / " + dto.getRoomType());
-
+        reservation.setStatus(ReservationStatus.waiting);
 
         return reservationRepository.save(reservation);
-
     }
+
 }
