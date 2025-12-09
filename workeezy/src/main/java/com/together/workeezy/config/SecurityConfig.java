@@ -65,8 +65,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()    // ⭐ 추가
 
 
-
-
                         .requestMatchers("/api/reservations/**").authenticated()
 
 
