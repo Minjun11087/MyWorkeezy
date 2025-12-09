@@ -9,6 +9,7 @@ export default function ProgramReserveBar({
   offices = [],
   programId,
   programPrice,
+  programTitle,
 }) {
   const navigate = useNavigate();
 
@@ -31,6 +32,9 @@ export default function ProgramReserveBar({
         checkIn,
         checkOut,
         programPrice,
+        programTitle,
+        rooms,
+        offices,
       },
     });
   };

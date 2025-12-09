@@ -7,7 +7,11 @@ export default function NewReservationPage() {
   const { state } = location || {};
   return (
     <PageLayout>
-      <ReservationForm initialData={state} />
+      <ReservationForm
+        initialData={state}
+        rooms={state?.rooms || []}
+        offices={state?.offices || []}
+      />
     </PageLayout>
   );
 }

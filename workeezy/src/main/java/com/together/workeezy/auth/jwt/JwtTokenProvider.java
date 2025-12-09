@@ -112,6 +112,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            System.out.println("❌ JWT 검증 실패 원인: " + e.getClass().getSimpleName() + " / " + e.getMessage());
             return false; // 만료 or 변조
         }
     }

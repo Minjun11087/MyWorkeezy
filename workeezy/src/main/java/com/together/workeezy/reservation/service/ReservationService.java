@@ -14,6 +14,8 @@ import com.together.workeezy.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -34,23 +36,26 @@ public class ReservationService {
         // 프로그램 조회
         Program program = programRepository.findById(dto.getProgramId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 프로그램이 존재하지 않습니다."));
-
         // 3️⃣ 룸 조회 (roomType Enum 문자열 변환)
         RoomType roomType;
         try {
-            roomType = RoomType.valueOf(dto.getRoomType().toUpperCase());
+            roomType = RoomType.valueOf(dto.getRoomType().toLowerCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("잘못된 룸 타입입니다: " + dto.getRoomType());
         }
 
-        Room room = (Room) roomRepository.findByRoomType(roomType)
-                .orElseThrow(() -> new IllegalArgumentException("해당 타입의 룸이 존재하지 않습니다."));
+        // 여러 개 룸 반환
+        List<Room> rooms = roomRepository.findByRoomType(roomType);
 
-        
+        if (rooms.isEmpty()) {
+            throw new IllegalArgumentException("해당 타입의 룸이 존재하지 않습니다.");
+        }
+
+
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setProgram(program);
-        reservation.setRoom(room);
+        reservation.setRoom((Room) rooms);
         reservation.setStartDate(dto.getStartDate());
         reservation.setEndDate(dto.getEndDate());
         reservation.setPeopleCount(dto.getPeopleCount());
