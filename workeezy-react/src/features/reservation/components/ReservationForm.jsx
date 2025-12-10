@@ -5,18 +5,15 @@ import SubmitButton from "./SubmitButton.jsx";
 import "./ReservationForm.css";
 import axios from "../../../api/axios.js";
 import DraftMenuBar from "./DraftMenuBar";
-// import { useLocation } from "react-router-dom"; // 부모 reserveBar의 state로 전달된 값 받을 용도
 
 export default function ReservationForm({
-  initialData,
-  rooms = [],
-  offices = [],
+  initialData, // 사용자가 입력한 초기 데이터
+  rooms = [], // 해당 워케이션 프로그램에서 선택 가능한 룸
+  offices = [], // 해당 워케이션 프로그램에서 선택 가능한 오피스
 }) {
-  // const location = useLocation();
-  // const { state } = location || {};
-  // const { programId, roomId, officeId, checkIn, checkOut } = state || {};
   const { programId, roomId, officeId, checkIn, checkOut } = initialData || {};
 
+  // 전체 배열에서 사용자가 선택한 id와 같은 id가 일치하는 객체를 찾아서 세팅
   const selectedRoom = rooms.find((r) => r.id === Number(roomId));
   const selectedOffice = offices.find((o) => o.id === Number(officeId));
 
@@ -85,7 +82,7 @@ export default function ReservationForm({
         // localStorage에 저장 (다음번 자동 완성용)
         localStorage.setItem("user", JSON.stringify(userData));
 
-        // form 자동 채우기
+        // form 자동 채우기(프로그램 정보가 기본으로 세팅된 prev)
         setForm((prev) => ({
           ...prev,
           userName: userData.name || userData.userName || prev.userName,
@@ -99,7 +96,7 @@ export default function ReservationForm({
     };
 
     fetchUser();
-  }, []);
+  }, []); // 첫 마운트 때 한번
 
   // -------------------------------------------------------------------
   // 입력 변경 핸들러 (Form의 모든 Field에 적용)
@@ -120,6 +117,7 @@ export default function ReservationForm({
 
     try {
       if (initialData && initialData.id) {
+        // id가 있으면 예약 수정
         console.log("🧾 initialData:", initialData);
         // PUT : 예약 수정 (기존 예약 업데이트)
         await axios.put(

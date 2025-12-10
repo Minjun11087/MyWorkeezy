@@ -1,7 +1,6 @@
 import "./ReservationFields.css";
 
 export default function ReservationFields({
-  programId,
   programTitle,
   userName,
   company,
