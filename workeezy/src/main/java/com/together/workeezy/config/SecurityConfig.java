@@ -64,9 +64,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()   // ⭐ 추가
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()    // ⭐ 추가
 
-
                         .requestMatchers("/api/reservations/**").authenticated()
-
 
                         // CORS Preflight 허용
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
