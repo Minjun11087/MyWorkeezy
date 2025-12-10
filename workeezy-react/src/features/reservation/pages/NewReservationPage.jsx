@@ -1,10 +1,17 @@
 import PageLayout from "../../../layout/PageLayout.jsx";
 import ReservationForm from "../components/ReservationForm.jsx";
+import { useLocation } from "react-router-dom";
 
 export default function NewReservationPage() {
+  const location = useLocation();
+  const { state } = location || {};
   return (
     <PageLayout>
-      <ReservationForm />
+      <ReservationForm
+        initialData={state}
+        rooms={state?.rooms || []}
+        offices={state?.offices || []}
+      />
     </PageLayout>
   );
 }

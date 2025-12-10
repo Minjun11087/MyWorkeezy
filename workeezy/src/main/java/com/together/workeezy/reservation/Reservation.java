@@ -60,7 +60,7 @@ public class Reservation {
     @Column(name = "status", nullable = false)
     private ReservationStatus status = ReservationStatus.waiting;
 
-    @NotNull
+
     @CreationTimestamp
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;

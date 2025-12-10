@@ -1,6 +1,8 @@
 import "./ReservationFields.css";
 
 export default function ReservationFields({
+  programId,
+  programTitle,
   userName,
   company,
   phone,
@@ -11,9 +13,26 @@ export default function ReservationFields({
   roomType,
   peopleCount,
   onChange,
+  rooms = [],
+  offices = [],
 }) {
   return (
     <>
+      {/* 프로그램 제목 */}
+      <div className="program-title">
+        <div className="div">프로그램명</div>
+        <div className="input">
+          <input
+            type="text"
+            name="programTitle"
+            value={programTitle || ""}
+            onChange={onChange}
+            readOnly
+            className="value"
+          />
+        </div>
+      </div>
+
       {/* 신청자명 */}
       <div className="user-name">
         <div className="div">신청자명</div>
@@ -103,29 +122,42 @@ export default function ReservationFields({
       <div className="office">
         <div className="div">오피스</div>
         <div className="input">
-          <input
-            type="text"
+          <select
             name="placeName"
-            value={placeName}
+            value={placeName || ""}
             onChange={onChange}
-            placeholder="오피스명을 입력하세요"
             className="value"
-          />
+            disabled={offices.length === 0}
+          >
+            <option value="">
+              {offices.length === 0 ? "선택할 오피스 없음" : "오피스 선택"}
+            </option>
+            {offices.map((o) => (
+              <option key={o.id} value={o.name}>
+                {o.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
       {/* 룸타입 */}
       <div className="roomtype">
-        <div className="div">룸타입</div>
+        <div className="div">룸 타입</div>
         <div className="input">
-          <input
-            type="text"
+          <select
             name="roomType"
-            value={roomType}
+            value={roomType || ""}
             onChange={onChange}
-            placeholder="룸 타입을 입력하세요"
             className="value"
-          />
+          >
+            <option value="">룸 선택</option>
+            {rooms.map((r) => (
+              <option key={r.id} value={r.roomType}>
+                {r.roomType}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -139,7 +171,7 @@ export default function ReservationFields({
             value={peopleCount}
             onChange={onChange}
             min="1"
-            placeholder="0"
+            placeholder="1"
             className="value"
           />
         </div>
