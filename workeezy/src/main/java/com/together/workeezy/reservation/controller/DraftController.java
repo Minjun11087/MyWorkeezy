@@ -44,15 +44,16 @@ public class DraftController {
     }
 
     // 특정 임시저장 불러오기
-    @GetMapping("/{key}")
+    @GetMapping("/{key:.+}")
     public ResponseEntity<?> getDraftByKey(
             @PathVariable String key,
             @RequestHeader("Authorization") String token
     ){
         Long userId = jwtTokenProvider.getUserIdFromToken(token.substring(7));
 
+
         // 본인 확인
-        if (!key.startsWith("draft"+userId)){
+        if (!key.startsWith("draft:"+userId)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error","본인 데이터만 조회할 수 있습니다."));
         }
         // Redis에서 데이터 꺼내오기

@@ -46,6 +46,7 @@ export default function ProgramDetailPage() {
         offices={program.offices ?? []}
         programId={program.id}
         programTitle={program.title}
+        programPrice={program.programPrice}
       />
 
       {/* 4) 탭 */}

@@ -32,7 +32,6 @@ export default function DraftMenuBar({
     const token = localStorage.getItem("accessToken");
     if (!token) return;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     setLoading(true);
     axios
       .get("http://localhost:8080/api/reservations/draft/me", {
@@ -43,21 +42,50 @@ export default function DraftMenuBar({
       .finally(() => setLoading(false));
   }, [isOpen]);
 
-  // 임시저장 불러오기
+  // ✅ 임시저장 불러오기
   const handleLoadDraft = async (draftKey) => {
     const token = localStorage.getItem("accessToken");
     if (!token) return alert("로그인이 필요합니다.");
 
     try {
+      // 1️⃣ draft 데이터 불러오기
       const res = await axios.get(
-        `http://localhost:8080/api/reservations/draft/${encodeURIComponent(
-          draftKey
-        )}`,
+        `http://localhost:8080/api/reservations/draft/${draftKey}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const draftData = res.data;
+
+      // 2️⃣ 필드 통일
+      const normalizedDraft = {
+        ...draftData,
+        officeName: draftData.officeName || draftData.placeName || "",
+        roomName: draftData.roomName || draftData.roomType || "",
+        officeId: draftData.officeId || draftData.placeId || "",
+        roomId: draftData.roomId || "",
+      };
+
+      // 3️⃣ 해당 프로그램의 room / office 목록 불러오기
+      const [roomsRes, officesRes] = await Promise.all([
+        axios.get(
+          `http://localhost:8080/api/programs/${normalizedDraft.programId}/rooms`
+        ),
+        axios.get(
+          `http://localhost:8080/api/programs/${normalizedDraft.programId}/offices`
+        ),
+      ]);
+
+      const rooms = roomsRes.data || [];
+      const offices = officesRes.data || [];
+
+      // 4️⃣ ReservationForm으로 이동
       alert("임시저장을 불러왔습니다!");
-      navigate("/newreservation", { state: draftData });
+      navigate("/reservation/new", {
+        state: {
+          ...normalizedDraft,
+          rooms,
+          offices,
+        },
+      });
     } catch (err) {
       console.error("임시저장 불러오기 실패:", err);
       alert("불러오기 중 오류가 발생했습니다.");
@@ -145,8 +173,8 @@ export default function DraftMenuBar({
                   {/* 상세정보 (토글 시 표시) */}
                   {openItems.includes(sub.key) && (
                     <div className="draft-card-body">
-                      <p>🏢 {sub.data.placeName}</p>
-                      <p>🛏 {sub.data.roomType}</p>
+                      <p>🏢 {sub.data.officeName || sub.data.placeName}</p>
+                      <p>🛏 {sub.data.roomName || sub.data.roomType}</p>
                       <p>
                         📅 {sub.data.startDate} ~ {sub.data.endDate}
                       </p>

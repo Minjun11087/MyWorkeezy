@@ -29,8 +29,10 @@ export default function ReservationForm({
     email: "",
     startDate: checkIn ? new Date(checkIn).toISOString().slice(0, 10) : "",
     endDate: checkOut ? new Date(checkOut).toISOString().slice(0, 10) : "",
-    placeName: selectedOffice?.name || "", // 화면 표시용 이름
+    officeName: selectedOffice?.name || "", // 화면 표시용 이름
+    officeId: selectedOffice?.id || "",
     roomType: selectedRoom?.roomType || "", // 화면 표시용 이름
+    roomId: selectedRoom?.id || "",
     peopleCount: 1,
   });
 
@@ -48,22 +50,43 @@ export default function ReservationForm({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (initialData) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       setForm((prev) => ({
         ...prev,
         programId: initialData.programId || prev.programId,
-        startDate: initialData.checkIn
-          ? new Date(initialData.checkIn).toISOString().slice(0, 10)
-          : prev.startDate,
-        endDate: initialData.checkOut
-          ? new Date(initialData.checkOut).toISOString().slice(0, 10)
-          : prev.endDate,
-        placeName: initialData.officeName || prev.placeName,
-        roomType: initialData.roomType || prev.roomType,
         programTitle: initialData.programTitle || prev.programTitle,
+
+        // DraftData 및 ReservationData 모두 대응
+        startDate:
+          initialData.checkIn || initialData.startDate
+            ? new Date(initialData.checkIn || initialData.startDate)
+                .toISOString()
+                .slice(0, 10)
+            : prev.startDate,
+
+        endDate:
+          initialData.checkOut || initialData.endDate
+            ? new Date(initialData.checkOut || initialData.endDate)
+                .toISOString()
+                .slice(0, 10)
+            : prev.endDate,
+
+        // 장소, 방 타입
+        officeId: initialData.officeId || selectedOffice?.id || prev.officeId,
+        officeName:
+          initialData.officeName || selectedOffice?.name || prev.officeName,
+
+        roomId: initialData.roomId || selectedRoom?.id || prev.roomId,
+        roomName:
+          initialData.roomName || selectedRoom?.roomType || prev.roomName,
+
+        // 사용자 정보
+        userName: initialData.userName || prev.userName,
+        company: initialData.company || prev.company,
+        email: initialData.email || prev.email,
+        phone: initialData.phone || prev.phone,
       }));
     }
-  }, [initialData]);
+  }, [initialData, selectedRoom, selectedOffice]);
 
   // -------------------------------------------------------------------
   // 사용자 정보 자동 채우기 (localStorage에서 가져오기)
@@ -132,13 +155,14 @@ export default function ReservationForm({
         );
         alert("예약이 성공적으로 수정 되었습니다!");
       } else {
-        // POST : 신규 예약 등록
+        // 신규 예약 등록
         await axios.post(
           "http://localhost:8080/api/reservations",
           {
             ...form,
-            roomId: initialData.roomId, // DB용 id
-            officeId: initialData.officeId, // DB용 id
+            programId: Number(form.programId),
+            roomId: Number(form.roomId),
+            officeId: Number(form.officeId),
           },
           {
             headers: {
@@ -194,7 +218,7 @@ export default function ReservationForm({
   };
 
   // 임시 저장 불러오기
-  // 불러오기 기능은 DraftMenuBar 내부에서 실행됨 (props 통해 연결)
+  // 불러오기 기능은 DraftMenuBar 내부에서 실행(props 통해 연결)
 
   // UI 렌더링
   return (
