@@ -17,6 +17,11 @@ export default function ProfileForm() {
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordCheck, setNewPasswordCheck] = useState("");
 
+    // 새 비밀번호 규칙 충족 여부
+    const [passwordValidMessage, setPasswordValidMessage] = useState("");
+    // 비밀번호 확인 일치 여부
+    const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
+
     useEffect(() => {
         const fetchMyInfo = async () => {
             try {
@@ -74,9 +79,10 @@ export default function ProfileForm() {
         }
     };
 
+    // 비밀번호 변경
     const handleChangePassword = async () => {
 
-        console.log({ currentPassword, newPassword, newPasswordCheck });
+        console.log({currentPassword, newPassword, newPasswordCheck});
 
         if (!currentPassword || !newPassword || !newPasswordCheck) {
             await toast.fire({
@@ -113,7 +119,44 @@ export default function ProfileForm() {
             })
         }
         console.log("token:", localStorage.getItem("accessToken"));
+    }
 
+    const validatePasswordRule = (pwd) => {
+        const lengthOk = pwd.length >= 8 && pwd.length <= 16;
+        const numberOk = /[0-9]/.test(pwd);
+        const upperOk = /[A-Z]/.test(pwd);
+        const lowerOk = /[a-z]/.test(pwd);
+        const specialOk = /[!@#$%^&*]/.test(pwd);
+
+        if (!pwd) return "";
+
+        if (!lengthOk) return "비밀번호는 8~16자여야 합니다.";
+        if (!numberOk) return "비밀번호에는 숫자가 1개 이상 포함되어야 합니다.";
+        if (!upperOk) return "비밀번호에는 영어 대문자가 1개 이상 포함되어야 합니다.";
+        if (!lowerOk) return "비밀번호에는 영어 소문자가 1개 이상 포함되어야 합니다.";
+        if (!specialOk) return "비밀번호에는 특수문자가 1개 이상 포함되어야 합니다.(가능 문자: !@#$%^&*)";
+
+        return "사용 가능한 비밀번호입니다.";
+    }
+
+    const handleNewPasswordChange = (value) => {
+        setNewPassword(value);
+        setPasswordValidMessage(validatePasswordRule(value));
+    }
+
+    const handleNewPasswordCheckChange = (value) => {
+        setNewPasswordCheck(value);
+
+        if (!value) {
+            setPasswordMatchMessage("");
+            return;
+        }
+
+        if (value === newPassword) {
+            setPasswordMatchMessage("비밀번호가 일치합니다.");
+        } else {
+            setPasswordMatchMessage("비밀번호가 일치하지 않습니다.");
+        }
     }
 
     return (
@@ -173,21 +216,25 @@ export default function ProfileForm() {
                     <label>새 비밀번호</label>
                     <input type="password"
                            value={newPassword}
-                           onChange={(e) => setNewPassword(e.target.value)}/>
+                           onChange={(e) => handleNewPasswordChange(e.target.value)}/>
                 </div>
 
-                <p className="hint">
-                    비밀번호는 공백없는 8~16자의 영문/숫자 등 두 가지 이상 조합으로 입력해주세요.
+                <p className={`hint ${passwordValidMessage.includes("사용 가능한 비밀번호입니다.") ? "success" : "error"}`}>
+                    {passwordValidMessage}
+                    {/*비밀번호는 공백없는 8~16자의 영문/숫자 등 두 가지 이상 조합으로 입력해주세요.*/}
                 </p>
 
                 <div className="form-row">
                     <label>새 비밀번호 확인</label>
                     <input type="password"
                            value={newPasswordCheck}
-                           onChange={(e) => setNewPasswordCheck(e.target.value)}/>
+                           onChange={(e) => handleNewPasswordCheckChange(e.target.value)}/>
                 </div>
 
-                <p className="hint">비밀번호 확인을 위해 한 번 더 입력해주세요.</p>
+                <p className={`hint ${passwordMatchMessage === "비밀번호가 일치합니다." ? "success" : "error"}`}>
+                    {passwordMatchMessage}
+                    {/*비밀번호 확인을 위해 한 번 더 입력해주세요.*/}
+                </p>
 
                 <button className="primary-btn"
                         onClick={handleChangePassword}>비밀번호 변경

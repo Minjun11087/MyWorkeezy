@@ -59,8 +59,8 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호에는 영어 소문자가 1개 이상 포함되어야 합니다.");
         }
 
-        if (!password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
-            throw new IllegalArgumentException("비밀번호에는 특수문자가 1개 이상 포함되어야 합니다.");
+        if (!password.matches(".*[!@#$%^&*].*")) {
+            throw new IllegalArgumentException("비밀번호에는 특수문자가 1개 이상 포함되어야 합니다.(가능 문자: !@#$%^&*)");
         }
     }
 
