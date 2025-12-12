@@ -90,3 +90,30 @@
 .buttons button:hover {
   background: #eee;
 }
+
+.status-btn {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+/* === 상태별 색상 === */
+.status-btn.waiting {
+  background-color: #fbbf24; /* 노랑: 결제 대기 */
+}
+
+.status-btn.confirmed {
+  background-color: #3b82f6; /* 파랑: 확정 */
+}
+
+.status-btn.cancelled {
+  background-color: #9ca3af; /* 회색: 취소 */
+}
+
+.status-btn.default {
+  background-color: #6b7280; /* 기본 회색 */
+}
