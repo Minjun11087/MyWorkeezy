@@ -32,7 +32,6 @@ public class Notification {
     @Column(name = "noti_title", length = 200)
     private String notiTitle;
 
-    @Lob
     @Column(name = "noti_msg")
     private String notiMsg;
 

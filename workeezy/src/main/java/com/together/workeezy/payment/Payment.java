@@ -38,7 +38,6 @@ public class Payment {
     private Integer amount;
 
     @NotNull
-    @Lob
     @Column(name = "payment_status", nullable = false)
     private String status;
 

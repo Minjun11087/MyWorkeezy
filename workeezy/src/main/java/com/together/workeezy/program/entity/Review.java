@@ -30,7 +30,6 @@ public class Review {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Lob
     @Column(name = "review_content")
     private String content;
 

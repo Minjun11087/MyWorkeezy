@@ -27,7 +27,6 @@ public class PaymentLog {
     private String responseData;
 
     @NotNull
-    @Lob
     @Column(name = "event_type", nullable = false)
     private String eventType;
 
