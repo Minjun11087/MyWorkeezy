@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: "http://localhost:8080",
     withCredentials: true,
 });
 
@@ -20,7 +20,7 @@ api.interceptors.request.use(
 // refresh 요청 전용 axios
 // Authorization 헤더 자동 포함 방지
 const refreshAxios = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: "http://localhost:8080",
     withCredentials: true,
 });
 
