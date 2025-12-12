@@ -11,7 +11,7 @@ import ActivityInfo from "../components/details/ActivityInfo.jsx";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../../../api/axios.js";
-import PageLayout from "../../../Layout/PageLayout.jsx";
+import PageLayout from "../../../layout/PageLayout.jsx";
 import HotelInfo from "../components/details/HotelInfo.jsx";
 import { ReviewInput } from "../components/ReviewInput.jsx";
 

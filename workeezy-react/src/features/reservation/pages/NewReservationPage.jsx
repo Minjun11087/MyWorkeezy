@@ -1,4 +1,4 @@
-import PageLayout from "../../../Layout/PageLayout.jsx";
+import PageLayout from "../../../layout/PageLayout.jsx";
 import ReservationForm from "../components/ReservationForm.jsx";
 import { useLocation } from "react-router-dom";
 

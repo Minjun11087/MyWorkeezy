@@ -1,4 +1,4 @@
-import PageLayout from "../../../Layout/PageLayout.jsx";
+import PageLayout from "../../../layout/PageLayout.jsx";
 import SearchBar from "../../search/components/SearchBar.jsx";
 import CategoryFilter from "../../search/components/CategoryFilter.jsx";
 import Pagination from "../../../shared/common/Pagination.jsx";

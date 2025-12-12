@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PageLayout from "../../../Layout/PageLayout.jsx";
+import PageLayout from "../../../layout/PageLayout.jsx";
 import ReservationListContainer from "../components/ReservationListContainer.jsx";
 
 export default function ReservationListPage() {
