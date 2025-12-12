@@ -20,12 +20,17 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/confirm")
-    public ResponseEntity<PaymentConfirmResponse> confirm(@RequestBody PaymentConfirmRequest request,
-                                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<PaymentConfirmResponse> confirmPayment(
+            @RequestBody PaymentConfirmRequest request,
+            @AuthenticationPrincipal CustomUserDetails user) {
         // 1. user.getEmail() 가져오기
+        String email = user.getUsername();
+
         // 2. paymentService.confirmPayment(...) 호출
+        PaymentConfirmResponse response = paymentService.confirmPayment(request, email);
+
         // 3. 결과 반환
-        return null;
+        return ResponseEntity.ok(response);
     }
 
 }

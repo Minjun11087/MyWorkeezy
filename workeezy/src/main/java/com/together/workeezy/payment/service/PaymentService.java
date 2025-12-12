@@ -1,6 +1,6 @@
 package com.together.workeezy.payment.service;
 
-import com.together.workeezy.payment.CustomException;
+import com.together.workeezy.common.exception.CustomException;
 import com.together.workeezy.payment.client.TossPaymentClient;
 import com.together.workeezy.payment.dto.PaymentConfirmRequest;
 import com.together.workeezy.payment.dto.PaymentConfirmResponse;
@@ -14,6 +14,8 @@ import com.together.workeezy.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.together.workeezy.common.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +35,14 @@ public class PaymentService {
         Reservation reservation = reservationRepository.findById(request.getReservationId())
                 .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
 
+        // 예약 소유자 검증
         if(!reservation.getUser().getEmail().equals(userEmail)) {
             throw new CustomException(FORBIDDEN_ACCESS);
+        }
+
+        // orderId(=reservation_no) 검증
+        if(!reservation.getReservationNo().equals(request.getOrderId())) {
+            throw new CustomException(ORDER_ID_MISMATCH);
         }
 
         // 해당 예약의 totalPrice와 비교 동일한지 검증
@@ -53,7 +61,7 @@ public class PaymentService {
         TossConfirmResponseDto tossResponse =
                 tossPaymentClient.confirm(
                         request.getPaymentKey(),
-                        request.getOrderId(),
+                        request.getOrderId(),       // reservation_no 보냄
                         request.getAmount()
                 );
 
@@ -65,6 +73,8 @@ public class PaymentService {
 
         // 승인 성공 → Payment 엔티티 업데이트
         payment.setPaymentKey(tossResponse.getPaymentKey());
+        payment.setOrderId(tossResponse.getOrderId());          // reservation_no
+        payment.setAmount(tossResponse.getAmount());
         payment.setPaymentMethod(tossResponse.getMethod());
         payment.setApprovedAt(tossResponse.getApprovedAt());
         payment.setStatus(PaymentStatus.paid);
@@ -85,7 +95,7 @@ public class PaymentService {
         if(request.getOrderId() == null || request.getOrderId().isBlank()) {
             throw new CustomException(ORDER_ID_MISSING);
         }
-        if(request.getAmount() == null request.getAmount() <= 0) {
+        if(request.getAmount() == null || request.getAmount() <= 0) {
             throw new CustomException(AMOUNT_INVALID);
         }
     }
