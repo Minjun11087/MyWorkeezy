@@ -5,12 +5,14 @@ import SubmitButton from "./SubmitButton.jsx";
 import "./ReservationForm.css";
 import axios from "../../../api/axios.js";
 import DraftMenuBar from "./DraftMenuBar";
+import { useNavigate } from "react-router-dom";
 
 export default function ReservationForm({
   initialData, // 사용자가 선택한 초기 데이터
   rooms = [], // 해당 워케이션 프로그램에서 선택 가능한 룸
   offices = [], // 해당 워케이션 프로그램에서 선택 가능한 오피스
 }) {
+  const navigate = useNavigate();
   // 초기 데이터에서 필요한 값만 꺼냄
   const { programId, roomId, officeId, checkIn, checkOut } = initialData || {};
 
@@ -175,6 +177,7 @@ export default function ReservationForm({
           }
         );
         alert("예약이 성공적으로 수정 되었습니다!");
+        navigate("/reservation/list");
       } else {
         // 신규 예약 등록
         await axios.post(
@@ -188,6 +191,7 @@ export default function ReservationForm({
           }
         );
         alert("예약이 성공적으로 등록되었습니다!");
+        navigate("/reservation/list");
       }
     } catch (error) {
       console.error("예약 전송 실패", error);
