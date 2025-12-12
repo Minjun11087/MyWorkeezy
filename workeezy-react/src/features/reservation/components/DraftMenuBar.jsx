@@ -61,24 +61,19 @@ export default function DraftMenuBar({
       // 2️⃣ 필드 통일
       const normalizedDraft = {
         ...draftData,
+        // 오피스명 / 장소명
         officeName: draftData.officeName || draftData.placeName || "",
-        roomName: draftData.roomName || draftData.roomType || "",
+        // 룸타입 / 룸이름
+        roomType: draftData.roomType || draftData.roomName || "",
+        // 오피스 ID (placeId가 있을 수도 있음)
         officeId: draftData.officeId || draftData.placeId || "",
+        // 룸 ID
         roomId: draftData.roomId || "",
       };
 
-      // 3️⃣ 해당 프로그램의 room / office 목록 불러오기
-      const [roomsRes, officesRes] = await Promise.all([
-        axios.get(
-          `http://localhost:8080/api/programs/${normalizedDraft.programId}/rooms`
-        ),
-        axios.get(
-          `http://localhost:8080/api/programs/${normalizedDraft.programId}/offices`
-        ),
-      ]);
-
-      const rooms = roomsRes.data || [];
-      const offices = officesRes.data || [];
+      // ✅ 3️⃣ (수정) 더 이상 API 요청 안 함 — draft 안에 있는 rooms/offices 사용
+      const rooms = draftData.rooms || [];
+      const offices = draftData.offices || [];
 
       // 4️⃣ ReservationForm으로 이동
       alert("임시저장을 불러왔습니다!");

@@ -76,7 +76,7 @@ public class ReservationService {
         reservation.setEndDate(dto.getEndDate());
         reservation.setPeopleCount(dto.getPeopleCount());
         reservation.setTotalPrice(totalPrice);
-        reservation.setStatus(ReservationStatus.waiting);
+        reservation.setStatus(ReservationStatus.waiting_payment);
 
         return reservationRepository.save(reservation);
     }

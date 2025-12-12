@@ -81,14 +81,16 @@ export default function ReservationForm({
           initialData.officeName || selectedOffice?.name || prev.officeName,
 
         roomId: initialData.roomId || selectedRoom?.id || prev.roomId,
-        roomName:
-          initialData.roomName || selectedRoom?.roomType || prev.roomName,
+        roomType:
+          initialData.roomType || selectedRoom?.roomType || prev.roomType,
 
         // 사용자 정보
         userName: initialData.userName || prev.userName,
         company: initialData.company || prev.company,
         email: initialData.email || prev.email,
         phone: initialData.phone || prev.phone,
+
+        peopleCount: initialData.peopleCount || prev.peopleCount,
       }));
     }
   }, [initialData, selectedRoom, selectedOffice]);
@@ -201,6 +203,8 @@ export default function ReservationForm({
     const draftData = {
       ...form,
       title: form.programTitle,
+      rooms,
+      offices,
     };
     try {
       const res = await axios.post(
