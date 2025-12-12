@@ -46,6 +46,7 @@ export default function ProgramDetailPage() {
         programId={program.id}
         programTitle={program.title}
         programPrice={program.programPrice}
+        placeId={program.placeId}
       />
 
       {/* 4) 탭 */}
