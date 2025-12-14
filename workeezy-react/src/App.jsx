@@ -27,6 +27,9 @@ export default function App() {
   if (window.Kakao && !window.Kakao.isInitialized()) {
     window.Kakao.init("b915b18542b9776646e5434c83e959c9");
     console.log("Kakao SDK initialized!");
+
+    console.log("API URL:", import.meta.env.VITE_API_URL);
+
   }
 
   useEffect(() => {
@@ -52,6 +55,7 @@ export default function App() {
         // 실패 시 로그인 페이지로 리다이렉트 또는 무시
       });
   }, []);
+
 
   return (
     <Routes>
