@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // 서버 상태 확인
-                        .requestMatchers("/health").permitAll()
+                        .requestMatchers("/health", "/health/**").permitAll()
 
                         // Auth 공개 API
                         .requestMatchers("/api/auth/login").permitAll()
@@ -61,10 +61,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/**").authenticated()
 
                         // 공개 데이터 API
-                        .requestMatchers("/api/programs/cards").permitAll()
                         .requestMatchers("/api/programs/**").permitAll()
-                        .requestMatchers("/api/search").permitAll()
                         .requestMatchers("/api/search/**").permitAll()
+
+                        // review POST permitAll은 추후 꼭 수정 요망
                         .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()   // ⭐ 추가
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()    // ⭐ 추가
                         .requestMatchers("/api/recommendations/**").permitAll()
@@ -93,14 +93,20 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:5173");
-        config.addAllowedOrigin("http://localhost:5174");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("https://www.workeezy.cloud");
-        config.addAllowedOrigin("https://workeezy-react.vercel.app");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.setAllowCredentials(true); // refreshToken 쿠키 허용
+
+        // 허용 Origin
+        config.setAllowedOrigins(List.of(
+                "https://www.workeezy.cloud"
+        ));
+
+        // 허용 메서드 / 헤더
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+
+        // 쿠키(Refresh Token) 허용
+        config.setAllowCredentials(true);
+
+        // 프론트에서 Authorization 헤더 접근 허용
         config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -113,6 +119,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // 테스트 끝나고 반드시 삭제
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.debug(true);
