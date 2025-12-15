@@ -9,7 +9,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -17,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -63,25 +62,21 @@ public class AuthController {
         boolean autoLogin = request.isAutoLogin();
 
         // Refresh Token -> HttpOnly 쿠키로 내려주기
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setDomain("localhost");
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)       // https 필수
+                .sameSite("None")   // 크로스 도메인 필수
+                .path("/")
+                .domain(".workeezy.cloud")
+                .maxAge(autoLogin ? jwtProvider.getRefreshExpiration() / 1000 : -1)
+                .build();
 
-        if (autoLogin) {
-            // 자동 로그인 on -> refreshToken 유효기간 전체 사용
-            int maxAgeSec = (int) (jwtProvider.getRefreshExpiration() / 1000);
-            cookie.setMaxAge(maxAgeSec);
-        } else {
-            // 자동 로그인 off -> 세션 쿠키
-            cookie.setMaxAge(-1);
-        }
+        // ResponseCookie는 반드시 헤더로만 내려야 함
+        response.addHeader("Set-Cookie", cookie.toString());
 
-        response.addCookie(cookie);
         System.out.println("✅ 인증 성공: " + authentication.getName());
 
         return new LoginResponse(accessToken, name, role);
-
     }
 
     // 새 Access Token 재발급
