@@ -3,6 +3,7 @@ import "./AdminReservationList.css";
 import Pagination from "../../../../shared/common/Pagination";
 import ReservationStatusButton from "../../../../shared/common/ReservationStatusButton";
 import axios from "../../../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminReservationList() {
   const [reservations, setReservations] = useState([]); // 예약 목록
@@ -12,6 +13,8 @@ export default function AdminReservationList() {
     status: "",
     keyword: "",
   });
+
+  const navigate = useNavigate();
 
   // page/filters 바뀔 때마다 목록 재조회
   useEffect(() => {
@@ -87,7 +90,11 @@ export default function AdminReservationList() {
         </thead>
         <tbody>
           {reservations.map((r) => (
-            <tr key={r.id}>
+            <tr
+              key={r.id}
+              className="clickable-row"
+              onClick={() => navigate(`/admin/reservations/${r.id}`)}
+            >
               <td>{r.reservationNo}</td>
               <td>{r.programTitle}</td>
               <td>{r.userName}</td>
