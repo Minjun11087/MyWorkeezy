@@ -49,5 +49,4 @@ jobs:
 
             setsid nohup java -jar *SNAPSHOT*.jar \
               --spring.profiles.active=prod \
-              --spring.config.location=application.yml \
               > app.log 2>&1 < /dev/null &
