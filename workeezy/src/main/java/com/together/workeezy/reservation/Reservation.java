@@ -1,6 +1,5 @@
 package com.together.workeezy.reservation;
 
-import com.together.workeezy.payment.Payment;
 import com.together.workeezy.program.entity.Place;
 import com.together.workeezy.program.entity.Program;
 import com.together.workeezy.program.entity.Room;
@@ -75,9 +74,6 @@ public class Reservation {
     @NotNull
     @Column(name = "people_count", nullable = false)
     private int peopleCount;
-
-    @OneToOne(mappedBy = "reservation")
-    private Payment Payment;
 
     @OneToMany(mappedBy = "reservation")
     private List<ReservationModify> reservationModifys = new ArrayList<>();
