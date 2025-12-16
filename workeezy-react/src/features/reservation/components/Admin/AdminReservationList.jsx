@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./AdminReservationList.css";
-import Pagination from "./../../../shared/common/Pagination";
-import ReservationStatusButton from "../../../shared/common/ReservationStatusButton";
-import axios from "../../../api/axios";
+import Pagination from "../../../../shared/common/Pagination";
+import ReservationStatusButton from "../../../../shared/common/ReservationStatusButton";
+import axios from "../../../../api/axios";
 
 export default function AdminReservationList() {
   const [reservations, setReservations] = useState([]); // 예약 목록
