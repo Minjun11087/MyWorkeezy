@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/reviews/**",
             "/api/recommendations/**"
     );
-    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     protected void doFilterInternal(
