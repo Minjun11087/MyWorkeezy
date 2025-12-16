@@ -27,7 +27,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           source: "workeezy/build/libs/*SNAPSHOT*.jar"
-          target: "/home/ubuntu/workeezy-backend/"
+          target: "/home/ubuntu/workeezy-backend/workeezy/build/libs"
 
       - name: Restart Spring Boot on EC2
         uses: appleboy/ssh-action@v0.1.7
@@ -57,17 +57,17 @@ jobs:
             ls -l /home/ubuntu/workeezy-backend/workeezy/build/libs
 
             echo "=== KILL OLD PROCESS ==="
-            pgrep -f workeezy-0.0.1-SNAPSHOT.jar | xargs -r kill
+            pkill -15 -f 'java.*workeezy-0.0.1-SNAPSHOT.jar' || true
+            sleep 2
 
-            echo "=== TRY RUN JAVA (BACKGROUND) ==="
-            setsid nohup java -jar \
+            echo "=== START APP ==="
+            nohup java -jar \
               /home/ubuntu/workeezy-backend/workeezy/build/libs/workeezy-0.0.1-SNAPSHOT.jar \
               --spring.profiles.active=prod \
-              > /home/ubuntu/workeezy-backend/app.log 2>&1 < /dev/null &
+              > /home/ubuntu/workeezy-backend/app.log 2>&1 &
 
-            echo "=== AFTER JAVA COMMAND ==="
             sleep 3
-            pgrep -af workeezy || echo "Spring not running"
+            pgrep -af java || echo "Spring not running"
 
             echo "=== CHECK LOG FILE ==="
             ls -l /home/ubuntu/workeezy-backend || true
