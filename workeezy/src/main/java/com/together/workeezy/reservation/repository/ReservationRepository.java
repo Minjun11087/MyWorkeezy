@@ -1,6 +1,8 @@
 package com.together.workeezy.reservation.repository;
 
 import com.together.workeezy.reservation.Reservation;
+import com.together.workeezy.reservation.ReservationStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +34,25 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
            order by r.createdDate desc
            """)
     List<Reservation> findByUserIdWithJoins(Long userId);
+
+    // 관리자 예약 조회 (Page + left join)
+    @Query("""
+        select r
+        from Reservation r
+          left join r.user u
+          left join r.program p
+        where (:status is null or r.status = :status)
+          and (
+               :keyword is null
+               or :keyword = ''
+               or u.userName like concat('%', :keyword, '%')
+               or p.title like concat('%', :keyword, '%')
+          )
+        order by r.id desc
+    """)
+    Page<Reservation> findAdminReservations(
+            @Param("status") ReservationStatus status,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }
