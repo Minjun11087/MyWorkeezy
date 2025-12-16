@@ -55,4 +55,20 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("keyword") String keyword,
             Pageable pageable
     );
+
+    // 관리자 예약 상세 조회
+    @Query("""
+        select r
+        from Reservation r
+          join fetch r.program p
+          join fetch r.user u
+          left join fetch r.stay s
+          left join fetch r.room rm
+          left join fetch p.places pl
+        where r.id = :reservationId
+    """)
+    Optional<Reservation> findAdminReservationDetail(
+            @Param("reservationId") Long reservationId
+    );
+
 }

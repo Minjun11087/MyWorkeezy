@@ -1,7 +1,9 @@
 package com.together.workeezy.reservation.controller;
 
 import com.together.workeezy.reservation.ReservationStatus;
+import com.together.workeezy.reservation.dto.AdminReservationDetailDto;
 import com.together.workeezy.reservation.dto.AdminReservationListDto;
+import com.together.workeezy.reservation.dto.RejectReservationRequestDto;
 import com.together.workeezy.reservation.service.AdminReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,5 +28,32 @@ public class AdminReservationController {
         return ResponseEntity.ok(
                 adminReservationService.getReservationList(page, status, keyword)
         );
+    }
+
+    // 상세 조회
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<AdminReservationDetailDto> getReservationDetail(
+            @PathVariable Long reservationId
+    ) {
+        return ResponseEntity.ok(
+                adminReservationService.getReservationDetail(reservationId)
+        );
+    }
+    
+    // 예약 승인
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<Void> approve(@PathVariable Long id) {
+        adminReservationService.approveReservation(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    // 예약 거절
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<Void> reject(
+            @PathVariable Long id,
+            @RequestBody RejectReservationRequestDto dto
+    ) {
+        adminReservationService.rejectReservation(id, dto.getReason());
+        return ResponseEntity.ok().build();
     }
 }
