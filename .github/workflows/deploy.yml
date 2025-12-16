@@ -27,7 +27,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           source: "workeezy/build/libs/*SNAPSHOT.jar"
-          target: "/home/ubuntu/workeezy-backend/"
+          target: "/home/ubuntu/workeezy-backend/app.jar"
 
       - name: Restart Spring Boot on EC2
         uses: appleboy/ssh-action@v1.0.3
@@ -41,12 +41,12 @@ jobs:
           envs: APPLICATION_PROPERTIES
           request_pty: false
           script: |
-            cd /home/ubuntu/workeezy-backend/workeezy/build/libs
+            cd /home/ubuntu/workeezy-backend
 
             echo "$APPLICATION_PROPERTIES" > application.yml
 
-            pgrep -f 'java -jar' | xargs kill || true
+            pgrep -f 'java -jar app.jar' | xargs kill || true
 
-            setsid nohup java -jar *SNAPSHOT.jar \
-              --spring.config.location=/home/ubuntu/workeezy-backend/application.yml \
-              > /home/ubuntu/workeezy-backend/app.log 2>&1 < /dev/null &
+            setsid nohup java -jar app.jar \
+              --spring.config.location=application.yml \
+              > app.log 2>&1 < /dev/null &
