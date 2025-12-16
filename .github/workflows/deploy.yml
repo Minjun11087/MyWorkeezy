@@ -39,7 +39,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           envs: APPLICATION_PROPERTIES
-          request_pty: false
           script: |
             cd /home/ubuntu/workeezy-backend
 
@@ -54,3 +53,6 @@ jobs:
               --spring.profiles.active=prod \
               > /home/ubuntu/workeezy-backend/app.log 2>&1 < /dev/null &
               # overwrite app.log on each deploy
+
+            sleep 3
+            pgrep -f workeezy-0.0.1-SNAPSHOT.jar || echo "Spring not running"
