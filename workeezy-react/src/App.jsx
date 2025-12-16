@@ -88,7 +88,7 @@ export default function App() {
       <Route path="/reservation/new" element={<NewReservationPage />} />
       <Route path="/modifyreservation" element={<ModifyReservationPage />} />
       <Route
-        path="/admin/reservationlist"
+        path="/admin/reservations"
         element={<AdimnReservationListPage />}
       />
 
