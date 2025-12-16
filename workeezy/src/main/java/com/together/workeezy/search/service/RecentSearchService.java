@@ -1,6 +1,7 @@
 package com.together.workeezy.search.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -8,12 +9,18 @@ import java.time.Duration;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class RecentSearchService {
 
     // RedisConfig에서 만든 String-String 템플릿
     private final RedisTemplate<String, String> redisTemplate;
 
+    public RecentSearchService(
+            @Qualifier("stringRedisTemplate")
+            RedisTemplate<String, String> redisTemplate
+    ) {
+        this.redisTemplate = redisTemplate;
+    }
+    
     // 최근 검색어 최대 개수
     private static final int MAX_RECENT_KEYWORDS = 10;
 
