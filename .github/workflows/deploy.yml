@@ -57,7 +57,7 @@ jobs:
             ls -l /home/ubuntu/workeezy-backend/workeezy/build/libs
 
             echo "=== KILL OLD PROCESS ==="
-            pkill -f 'workeezy-0.0.1-SNAPSHOT.jar' || true
+            pgrep -f workeezy-0.0.1-SNAPSHOT.jar | xargs -r kill
 
             echo "=== TRY RUN JAVA (FOREGROUND) ==="
             java -jar /home/ubuntu/workeezy-backend/workeezy/build/libs/workeezy-0.0.1-SNAPSHOT.jar \
