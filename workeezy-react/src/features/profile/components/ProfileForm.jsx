@@ -164,25 +164,25 @@ export default function ProfileForm() {
             <SectionHeader icon="far fa-user" title="개인 정보 조회"/>
 
             {/* ----- 개인정보 수정 섹션 ----- */}
-            <div className="section">
-                <h3 className="section-title">개인 정보 수정</h3>
+            <div className="profile-section">
+                <h3 className="profile-section-title">개인 정보 수정</h3>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>아이디</label>
                     <input className="readonly-profile" type="text" readOnly value={user.email}/>
                 </div>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>이름</label>
                     <input className="readonly-profile" type="text" readOnly value={user.name}/>
                 </div>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>생년월일</label>
                     <input className="readonly-profile" type="text" readOnly value={user.birth}/>
                 </div>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>연락처</label>
                     <input type="text"
                            value={user.phone}
@@ -191,7 +191,7 @@ export default function ProfileForm() {
                            }/>
                 </div>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>소속 회사</label>
                     <input className="readonly-profile" type="text" readOnly value={user.company}/>
                 </div>
@@ -202,17 +202,17 @@ export default function ProfileForm() {
             </div>
 
             {/* ----- 비밀번호 변경 섹션 ----- */}
-            <div className="section">
-                <h3 className="section-title">비밀번호 변경</h3>
+            <div className="profile-section">
+                <h3 className="profile-section-title">비밀번호 변경</h3>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>기존 비밀번호</label>
                     <input type="password"
                            value={currentPassword}
                            onChange={(e) => setCurrentPassword(e.target.value)}/>
                 </div>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>새 비밀번호</label>
                     <input type="password"
                            value={newPassword}
@@ -224,7 +224,7 @@ export default function ProfileForm() {
                     {/*비밀번호는 공백없는 8~16자의 영문/숫자 등 두 가지 이상 조합으로 입력해주세요.*/}
                 </p>
 
-                <div className="form-row">
+                <div className="profile-form-row">
                     <label>새 비밀번호 확인</label>
                     <input type="password"
                            value={newPasswordCheck}

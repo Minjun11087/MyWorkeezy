@@ -1,22 +1,21 @@
 .profile-page {
-    width: 700px; /* 전체 폼 폭 */
+    width: 100%;
     margin: 0 auto; /* 중앙 정렬 */
-    padding: 60px 120px;
 }
 
 /* 섹션 */
-.section {
+.profile-section {
     margin-bottom: 80px;
 }
 
-.section-title {
+.profile-section-title {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 30px;
 }
 
 /* 라벨 + 인풋 가로 정렬 */
-.form-row {
+.profile-form-row {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -25,14 +24,14 @@
 }
 
 /* 왼쪽 라벨 */
-.form-row label {
+.profile-form-row label {
     width: 150px;
     font-size: 15px;
     color: #333;
 }
 
 /* 오른쪽 input 라인 스타일 */
-.form-row input {
+.profile-form-row input {
     flex: 1;
     border: none;
     border-bottom: 1px solid #ccc;
@@ -41,7 +40,7 @@
     outline: none;
 }
 
-.form-row input:focus {
+.profile-form-row input:focus {
     border-bottom-color: #35593d;
 }
 

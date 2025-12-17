@@ -7,7 +7,7 @@ import LoginPage from "./features/auth/pages/LoginPage.jsx";
 import Home from "./features/home/pages/Home";
 import MyPage from "./features/profile/pages/MyPage.jsx";
 import ProfilePasswordCheck from "./features/profile/pages/ProfilePasswordCheck.jsx";
-import PaymentHistory from "./features/profile/pages/PaymentHistory.jsx";
+import PaymentHistory from "./features/payment/pages/PaymentHistory.jsx";
 
 import ProgramDetailPage from "./features/program/pages/ProgramDetailPage.jsx";
 import ReviewPage from "./features/review/pages/ReviewPage.jsx";
@@ -93,8 +93,6 @@ export default function App() {
                 }
             />
             <Route path="/likes" element={<LikesPage/>}/>
-            {/* 결제 */}
-            <Route path="/payments" element={<PaymentHistory/>}/>
 
             {/* 검색, 리뷰 */}
             <Route path="/program" element={<ProgramDetailPage/>}/>
@@ -110,6 +108,9 @@ export default function App() {
                 path="/admin/reservationlist"
                 element={<AdminReservationListPage/>}
             />
+
+            {/* 결제 내역 */}
+            <Route path="/payments" element={<PaymentHistory/>}/>
 
             {/* 에러 페이지 */}
             <Route path="/403" element={<Forbidden/>}/>

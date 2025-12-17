@@ -3,24 +3,26 @@
     margin: 0 auto;
 }
 
-/* 한 줄(라벨 + input) */
+/* 웹 기본: 라벨 + 인풋 같은 줄 */
 .login-form-row {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 16px;
     margin-bottom: 34px;
 }
 
 /* 라벨 */
 .login-label {
-    width: 100%;
+    width: 90px;
     font-size: 15px;
     color: #4a4a4a;
     padding-top: 8px;
+    flex-shrink: 0;
 }
 
 /* input */
 .login-line-input {
+    flex: 1;
     width: 100%;
     border: none;
     border-bottom: 1.6px solid #d1d1d1;
@@ -38,7 +40,14 @@
 }
 
 @media (max-width: 600px) {
+    .login-form-row {
+        flex-direction: column; /* 줄 분리 */
+        align-items: stretch;
+        gap: 6px;
+    }
+
     .login-label {
+        width: 100%;
         font-size: 14px;
         color: #666;
     }
