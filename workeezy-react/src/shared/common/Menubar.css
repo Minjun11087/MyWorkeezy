@@ -35,6 +35,7 @@
 }
 
 .menu-title {
+    color: #222;
     font-size: 22px;
     font-weight: 600;
     cursor: pointer;
@@ -70,7 +71,6 @@
     width: 100%;
     font-size: 16px;
     color: #222;
-    margin-bottom: 2px;
     box-sizing: border-box;
     padding: clamp(6px, 1.2vw, 8px) 6px;
     border-radius: 4px;
@@ -98,14 +98,9 @@ a:active {
     color: inherit; /* 부모 색상 상속 */
 }
 
-.menu-title,
-.submenu-item {
-    color: #222;
-}
-
 .menu-title:hover,
 .submenu-item:hover {
-    color: #000; /* 호버 시 살짝 진하게 */
+    color: #444;
     background: #f7f7f7;
 }
 
@@ -222,11 +217,6 @@ a:active {
 
     .submenu-item {
         font-size: 15px;
-    }
-
-    .menu-title,
-    .submenu-item {
-        padding: 6px 6px;
     }
 }
 
