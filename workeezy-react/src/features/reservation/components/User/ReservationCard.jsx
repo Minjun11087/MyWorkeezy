@@ -1,4 +1,5 @@
 import "./ReservationCard.css";
+import ReservationStatusButton from "./../../../../shared/common/ReservationStatusButton";
 
 export default function ReservationCard({ data, isSelected, onSelect }) {
   const {
@@ -11,39 +12,46 @@ export default function ReservationCard({ data, isSelected, onSelect }) {
     totalPrice,
     peopleCount,
     images = [],
+
+    // 상세 정보
+    userName,
+    company,
+    phone,
+    reservationNo,
+    officeName,
   } = data;
 
-  // ✅ 예약 상태 표시용 버튼 (내부 함수)
-  const renderStatusButton = (status) => {
-    let label = "";
-    let className = "";
+  /* =========================
+     날짜 계산 (D-Day 기준)
+  ========================= */
+  const today = new Date();
+  const start = new Date(startDate);
+  const diffDays = Math.floor((start - today) / (1000 * 60 * 60 * 24));
 
-    switch (status) {
-      case "waiting_payment":
-        label = "결제 대기";
-        className = "status-btn waiting";
-        break;
-      case "confirmed":
-        label = "확정";
-        className = "status-btn confirmed";
-        break;
-      case "cancelled":
-        label = "취소";
-        className = "status-btn cancelled";
-        break;
-      default:
-        label = "알 수 없음";
-        className = "status-btn default";
-    }
+  /* =========================
+     상태 플래그
+  ========================= */
+  const isWaitingPayment = status === "waiting_payment";
+  const isApproved = status === "approved";
+  const isConfirmed = status === "confirmed";
 
-    return <span className={className}>{label}</span>;
-  };
+  /* =========================
+     버튼 노출 조건
+  ========================= */
+  const showConfirmDoc = isConfirmed;
+  const showReceipt = isConfirmed;
+  const showChangeRequest = isConfirmed && diffDays >= 1;
+  const showChange = isWaitingPayment;
+  const showDirectCancel = isWaitingPayment || (isConfirmed && diffDays >= 3);
+  const showCancelRequest =
+    isApproved || (isConfirmed && diffDays >= 1 && diffDays < 3);
+  const showPayment = isWaitingPayment;
 
   return (
     <div
       className={`reservation-card ${isSelected ? "selected" : ""}`}
       onClick={(e) => {
-        e.stopPropagation(); // 버블링 막기
+        e.stopPropagation();
         onSelect();
       }}
     >
@@ -61,29 +69,103 @@ export default function ReservationCard({ data, isSelected, onSelect }) {
       {/* === 정보 섹션 === */}
       <div className="info">
         {/* 상태 버튼 */}
-        {renderStatusButton(status)}
+        <div style={{ marginRight: "860px", marginBottom: "0px" }}>
+          <ReservationStatusButton status={status} />
+        </div>
 
         <div className="title">{programTitle}</div>
-        <div className="details">
-          <p>
-            기간: {startDate} ~ {endDate}
-          </p>
-          <p>숙소: {stayName}</p>
-          <p>룸타입: {roomType}</p>
-          <p>인원: {peopleCount}명</p>
-          <p>금액: {totalPrice?.toLocaleString()}원</p>
-        </div>
+
+        {/* === 기본 정보 === */}
+        <dl className="details">
+          <div>
+            <dt>기간</dt>
+            <dd>
+              {startDate} ~ {endDate}
+            </dd>
+          </div>
+
+          <div>
+            <dt>숙소</dt>
+            <dd>{stayName}</dd>
+          </div>
+
+          <div>
+            <dt>룸타입</dt>
+            <dd>{roomType}</dd>
+          </div>
+
+          <div>
+            <dt>인원</dt>
+            <dd>{peopleCount}명</dd>
+          </div>
+
+          <div>
+            <dt>금액</dt>
+            <dd>{totalPrice?.toLocaleString()}원</dd>
+          </div>
+        </dl>
+
+        {/* === 선택 시 상세 정보 === */}
+        {isSelected && (
+          <dl className="detail-extra">
+            <div>
+              <dt>예약자</dt>
+              <dd>{userName}</dd>
+            </div>
+
+            <div>
+              <dt>소속</dt>
+              <dd>{company || "-"}</dd>
+            </div>
+
+            <div>
+              <dt>연락처</dt>
+              <dd>{phone}</dd>
+            </div>
+
+            <div>
+              <dt>예약번호</dt>
+              <dd>{reservationNo}</dd>
+            </div>
+
+            <div>
+              <dt>프로그램명</dt>
+              <dd>{programTitle}</dd>
+            </div>
+
+            <div>
+              <dt>숙소명</dt>
+              <dd>{stayName}</dd>
+            </div>
+
+            <div>
+              <dt>룸타입</dt>
+              <dd>{roomType}</dd>
+            </div>
+
+            <div>
+              <dt>인원수</dt>
+              <dd>{peopleCount}명</dd>
+            </div>
+
+            <div>
+              <dt>오피스명</dt>
+              <dd>{officeName || "없음"}</dd>
+            </div>
+          </dl>
+        )}
       </div>
 
-      {/* === 선택됐을 때 보여지는 버튼 === */}
+      {/* === 선택됐을 때 버튼 === */}
       {isSelected && (
         <div className="buttons">
-          <button>예약 확정서</button>
-          <button>결제 영수증</button>
-          <button>예약 변경 신청</button>
-          <button>예약 취소</button>
-          <button>예약 변경</button>
-          <button>결제하기</button>
+          {showConfirmDoc && <button>예약 확정서</button>}
+          {showReceipt && <button>결제 영수증</button>}
+          {showChangeRequest && <button>예약 변경 신청</button>}
+          {showChange && <button>예약 변경</button>}
+          {showDirectCancel && <button>예약 취소</button>}
+          {showCancelRequest && <button>예약 취소 요청</button>}
+          {showPayment && <button>결제</button>}
         </div>
       )}
     </div>
