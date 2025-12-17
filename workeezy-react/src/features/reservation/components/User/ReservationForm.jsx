@@ -11,7 +11,10 @@ export default function ReservationForm({
   initialData, // 사용자가 선택한 초기 데이터
   rooms = [], // 해당 워케이션 프로그램에서 선택 가능한 룸
   offices = [], // 해당 워케이션 프로그램에서 선택 가능한 오피스
+  mode = "create",
 }) {
+  const isEdit = mode === "edit";
+
   const navigate = useNavigate();
   // 초기 데이터에서 필요한 값만 꺼냄
   const { programId, roomId, officeId, checkIn, checkOut } = initialData || {};
@@ -38,8 +41,8 @@ export default function ReservationForm({
     roomType: selectedRoom?.roomType || "", // 화면 표시용 이름
     roomId: selectedRoom?.id || "",
     peopleCount: 1,
-    stayId: initialData.stayId || "",
-    stayName: initialData.stayName || "",
+    stayId: initialData?.stayId || "",
+    stayName: initialData?.stayName || "",
   });
 
   // -------------------------------------------------------------------
@@ -153,22 +156,20 @@ export default function ReservationForm({
     e.preventDefault(); // 브라우저 자동 새로고침 막기
     const token = localStorage.getItem("accessToken");
 
-    // Number 캐스팅
-    const formattedForm = {
-      ...form,
-      programId: Number(form.programId),
-      roomId: Number(form.roomId),
-      officeId: Number(form.officeId),
-      stayId: Number(form.stayId),
-    };
-
     try {
+      // id가 있으면 예약 수정
       if (initialData && initialData.id) {
-        // id가 있으면 예약 수정
-        // console.log("🧾 initialData:", initialData);
+        const updatePayload = {
+          startDate: form.startDate,
+          endDate: form.endDate,
+          roomId: Number(form.roomId),
+          officeId: Number(form.officeId),
+          peopleCount: form.peopleCount,
+        };
+
         await axios.put(
           `http://localhost:8080/api/reservations/${initialData.id}`,
-          formattedForm,
+          updatePayload,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -179,6 +180,14 @@ export default function ReservationForm({
         alert("예약이 성공적으로 수정 되었습니다!");
         navigate("/reservation/list");
       } else {
+        // Number 캐스팅
+        const formattedForm = {
+          ...form,
+          programId: Number(form.programId),
+          roomId: Number(form.roomId),
+          officeId: Number(form.officeId),
+          stayId: Number(form.stayId),
+        };
         // 신규 예약 등록
         await axios.post(
           "http://localhost:8080/api/reservations",
@@ -253,15 +262,16 @@ export default function ReservationForm({
           rooms={rooms}
           offices={offices}
           onChange={handleChange}
+          isEdit={isEdit}
         />
         {/* 예약 등록/수정 버튼 */}
         <SubmitButton />
-        {/* 임시저장 버튼 */}
-        <DraftButton onClick={handleDraftSave} />
+        {/* 임시저장 버튼 - 수정모드시 안 보임*/}
+        {!isEdit && <DraftButton onClick={handleDraftSave} />}
       </form>
 
       {/* 임시저장 메뉴바 */}
-      {isDraftMenuOpen && (
+      {!isEdit && isDraftMenuOpen && (
         <DraftMenuBar
           isOpen={isDraftMenuOpen}
           onClose={() => setIsDraftMenuOpen(false)}

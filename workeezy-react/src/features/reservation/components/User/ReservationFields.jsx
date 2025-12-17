@@ -18,6 +18,7 @@ export default function ReservationFields({
   officeName,
   stayName,
   stayId,
+  isEdit,
 }) {
   // 공용 select 핸들러
   const handleSelectChange = (type, e) => {
@@ -66,6 +67,7 @@ export default function ReservationFields({
             onChange={onChange}
             placeholder="이름을 입력하세요"
             className="value"
+            readOnly={isEdit}
           />
         </div>
       </div>
@@ -81,6 +83,7 @@ export default function ReservationFields({
             onChange={onChange}
             placeholder="소속을 입력하세요"
             className="value"
+            readOnly={isEdit}
           />
         </div>
       </div>

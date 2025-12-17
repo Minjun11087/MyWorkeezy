@@ -1,7 +1,9 @@
 import "./ReservationCard.css";
 import ReservationStatusButton from "./../../../../shared/common/ReservationStatusButton";
+import { useNavigate } from "react-router-dom";
 
 export default function ReservationCard({ data, isSelected, onSelect }) {
+  const navigate = useNavigate();
   const {
     programTitle,
     stayName,
@@ -162,7 +164,16 @@ export default function ReservationCard({ data, isSelected, onSelect }) {
           {showConfirmDoc && <button>예약 확정서</button>}
           {showReceipt && <button>결제 영수증</button>}
           {showChangeRequest && <button>예약 변경 신청</button>}
-          {showChange && <button>예약 변경</button>}
+          {showChange && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/reservation/edit/${data.id}`);
+              }}
+            >
+              예약 변경
+            </button>
+          )}
           {showDirectCancel && <button>예약 취소</button>}
           {showCancelRequest && <button>예약 취소 요청</button>}
           {showPayment && <button>결제</button>}

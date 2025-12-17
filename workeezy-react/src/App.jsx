@@ -16,6 +16,7 @@ import ModifyReservationPage from "./features/reservation/pages/ModifyReservatio
 import LikesPage from "./features/profile/pages/LikesPage.jsx";
 import AdminReservationPage from "./features/reservation/pages/AdminReservationPage.jsx";
 import ReservationListPage from "./features/reservation/pages/ReservationListPage.jsx";
+import EditReservationPage from "./features/reservation/pages/EditReservationPage.jsx";
 
 import Forbidden from "./shared/error/Forbidden.jsx";
 import ServerError from "./shared/error/ServerError.jsx";
@@ -86,6 +87,7 @@ export default function App() {
       {/* 예약 */}
       <Route path="/reservation/list" element={<ReservationListPage />} />
       <Route path="/reservation/new" element={<NewReservationPage />} />
+      <Route path="/reservation/edit/:id" element={<EditReservationPage />} />
       <Route path="/modifyreservation" element={<ModifyReservationPage />} />
 
       <Route path="/admin/reservations" element={<AdminReservationPage />} />
