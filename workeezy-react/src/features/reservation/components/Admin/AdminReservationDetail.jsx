@@ -11,6 +11,7 @@ export default function AdminReservationDetail({ reservationId }) {
 
   useEffect(() => {
     fetchDetail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reservationId]);
 
   const fetchDetail = async () => {
@@ -23,8 +24,11 @@ export default function AdminReservationDetail({ reservationId }) {
 
   if (!reservation) return <div>로딩중...</div>;
 
-  //   console.log("DETAIL reservation =", reservation);
+  /* ===== 상태 플래그 (CSS 영향 없음) ===== */
+  const isWaitingPayment = reservation.status === "waiting_payment";
+  const isCancelRequested = reservation.status === "cancel_requested";
 
+  /* ===== 예약 승인 ===== */
   const handleApprove = async () => {
     const result = await Swal.fire({
       title: "예약을 승인하시겠습니까?",
@@ -45,9 +49,7 @@ export default function AdminReservationDetail({ reservationId }) {
       await axios.patch(
         `/api/admin/reservations/${reservationId}/approve`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       await Swal.fire({
@@ -57,7 +59,7 @@ export default function AdminReservationDetail({ reservationId }) {
         confirmButtonColor: "#4caf50",
       });
 
-      fetchDetail(); // 상태 다시 조회
+      fetchDetail();
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -68,22 +70,19 @@ export default function AdminReservationDetail({ reservationId }) {
     }
   };
 
-  const canReject =
-    reservation.status === "waiting_payment" ||
-    reservation.status === "cancel_requested";
-
-  const handleReject = async () => {
+  /* ===== 예약 반려 (waiting_payment 전용) ===== */
+  const handleRejectReservation = async () => {
     const result = await Swal.fire({
-      title: "예약을 반송하시겠습니까?",
+      title: "예약을 반려하시겠습니까?",
       input: "textarea",
-      inputLabel: "반송 사유",
-      inputPlaceholder: "반송 사유를 입력해주세요",
+      inputLabel: "반려 사유",
+      inputPlaceholder: "반려 사유를 입력해주세요",
       showCancelButton: true,
-      confirmButtonText: "반송",
+      confirmButtonText: "반려",
       cancelButtonText: "취소",
       confirmButtonColor: "#d33",
       inputValidator: (value) => {
-        if (!value) return "반송 사유를 입력해주세요.";
+        if (!value) return "반려 사유를 입력해주세요.";
       },
     });
 
@@ -95,24 +94,104 @@ export default function AdminReservationDetail({ reservationId }) {
       await axios.patch(
         `/api/admin/reservations/${reservationId}/reject`,
         { reason: result.value },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       await Swal.fire({
         icon: "success",
-        title: "반송 완료",
-        text: "예약이 반송 처리되었습니다.",
+        title: "반려 완료",
+        text: "예약이 반려 처리되었습니다.",
       });
 
       fetchDetail();
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "반송 실패",
+        title: "반려 실패",
         text:
-          error.response?.data?.message || "예약 반송 중 오류가 발생했습니다.",
+          error.response?.data?.message || "예약 반려 중 오류가 발생했습니다.",
+      });
+    }
+  };
+
+  /* ===== 취소 승인 ===== */
+  const handleApproveCancel = async () => {
+    const result = await Swal.fire({
+      title: "취소 요청을 승인하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "취소 승인",
+      cancelButtonText: "취소",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      await axios.patch(
+        `/api/admin/reservations/${reservationId}/cancel/approve`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      await Swal.fire({
+        icon: "success",
+        title: "취소 완료",
+        text: "예약이 취소되었습니다.",
+      });
+
+      fetchDetail();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "취소 승인 실패",
+        text:
+          error.response?.data?.message || "취소 승인 중 오류가 발생했습니다.",
+      });
+    }
+  };
+
+  /* ===== 취소 반려 ===== */
+  const handleRejectCancel = async () => {
+    const result = await Swal.fire({
+      title: "취소 요청을 반려하시겠습니까?",
+      input: "textarea",
+      inputLabel: "반려 사유",
+      inputPlaceholder: "반려 사유를 입력해주세요",
+      showCancelButton: true,
+      confirmButtonText: "취소 반려",
+      cancelButtonText: "취소",
+      confirmButtonColor: "#d33",
+      inputValidator: (value) => {
+        if (!value) return "반려 사유를 입력해주세요.";
+      },
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      await axios.patch(
+        `/api/admin/reservations/${reservationId}/cancel/reject`,
+        { reason: result.value },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      await Swal.fire({
+        icon: "success",
+        title: "취소 반려 완료",
+        text: "취소 요청이 반려되었습니다.",
+      });
+
+      fetchDetail();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "취소 반려 실패",
+        text:
+          error.response?.data?.message || "취소 반려 중 오류가 발생했습니다.",
       });
     }
   };
@@ -129,12 +208,10 @@ export default function AdminReservationDetail({ reservationId }) {
 
       {/* 본문 */}
       <div className="detail-body">
-        {/* 이미지 */}
         <div className="image-box">
           <img src={reservation.imageUrl} alt="숙소 이미지" />
         </div>
 
-        {/* 정보 */}
         <div className="info-box">
           <p>
             <strong>예약자 :</strong> {reservation.userName}
@@ -170,22 +247,29 @@ export default function AdminReservationDetail({ reservationId }) {
         </div>
       </div>
 
-      {/* 하단 버튼 */}
+      {/* 하단 버튼 (CSS 그대로 유지) */}
       <div className="detail-actions">
-        <button
-          className="btn-approve"
-          onClick={handleApprove}
-          disabled={reservation.status !== "waiting_payment"}
-        >
-          승인
-        </button>
-        <button
-          className="btn-reject"
-          onClick={handleReject}
-          disabled={!canReject}
-        >
-          반송
-        </button>
+        {isWaitingPayment && (
+          <>
+            <button className="btn-approve" onClick={handleApprove}>
+              승인
+            </button>
+            <button className="btn-reject" onClick={handleRejectReservation}>
+              반송
+            </button>
+          </>
+        )}
+
+        {isCancelRequested && (
+          <>
+            <button className="btn-approve" onClick={handleApproveCancel}>
+              취소 승인
+            </button>
+            <button className="btn-reject" onClick={handleRejectCancel}>
+              취소 반려
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
