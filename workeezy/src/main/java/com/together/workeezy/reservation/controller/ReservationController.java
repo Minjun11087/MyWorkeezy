@@ -1,6 +1,8 @@
 package com.together.workeezy.reservation.controller;
 
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
+import com.together.workeezy.reservation.dto.ReservationResponseDto;
+import com.together.workeezy.reservation.dto.ReservationUpdateDto;
 import com.together.workeezy.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -63,7 +65,32 @@ public class ReservationController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("예약 조회 실패: " + e.getMessage());
         }
+    }
 
+    // 예약 단건 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMyReservation(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
 
+        ReservationResponseDto dto =
+                reservationService.getMyReservation(id, email);
+
+        return ResponseEntity.ok(dto);
+    }
+        
+    // 예약 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMyReservation(
+            @PathVariable Long id,
+            @RequestBody ReservationUpdateDto dto,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+
+        reservationService.updateMyReservation(id, dto, email);
+        return ResponseEntity.ok("예약 수정 성공");
     }
 }

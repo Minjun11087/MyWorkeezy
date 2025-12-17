@@ -8,6 +8,7 @@ import com.together.workeezy.reservation.Reservation;
 import com.together.workeezy.reservation.ReservationStatus;
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
 import com.together.workeezy.reservation.dto.ReservationResponseDto;
+import com.together.workeezy.reservation.dto.ReservationUpdateDto;
 import com.together.workeezy.reservation.repository.ReservationRepository;
 import com.together.workeezy.search.repository.RoomRepository;
 import com.together.workeezy.user.entity.User;
@@ -15,12 +16,12 @@ import com.together.workeezy.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 import com.together.workeezy.program.entity.Place;
 
@@ -134,6 +135,8 @@ public class ReservationService {
 
 
         return new ReservationResponseDto(
+                r.getId(),
+
                 r.getReservationNo(),
                 r.getStatus().name(),
                 r.getUser().getUserName(),
@@ -142,6 +145,7 @@ public class ReservationService {
                 r.getStartDate(),
                 r.getEndDate(),
                 (p != null ? p.getTitle() : null),
+                p != null ? p.getId() : null,
                 stayName,
                 officeName,
                 (r.getRoom() != null && r.getRoom().getRoomType() != null) ? r.getRoom().getRoomType().name() : null,
@@ -149,5 +153,61 @@ public class ReservationService {
                 r.getPeopleCount()
         );
     }
+
+    @Transactional(readOnly = true)
+    public ReservationResponseDto getMyReservation(Long id, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("예약 없음"));
+
+        // ⭐ 핵심: 내 예약인지 검증
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("본인 예약 아님");
+        }
+
+        return mapToResponseDto(reservation);
+    }
+
+    
+    // 예약 수정
+    @Transactional
+    public void updateMyReservation(Long id, ReservationUpdateDto dto, String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("예약 없음"));
+
+        // ⭐ 핵심: 본인 예약 검증
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("본인 예약 아님");
+        }
+
+        // 🔒 상태별 수정 가능 조건 (필요하면)
+        if (reservation.getStatus() != ReservationStatus.waiting_payment) {
+            throw new IllegalStateException("이 상태에서는 수정 불가");
+        }
+
+        // 수정 가능한 필드만 변경
+        reservation.setStartDate(dto.getStartDate());
+        reservation.setEndDate(dto.getEndDate());
+        reservation.setPeopleCount(dto.getPeopleCount());
+
+        Room room = roomRepository.findById(dto.getRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("룸 없음"));
+        reservation.setRoom(room);
+
+//        Place office = placeRepository.findById(dto.getOfficeId())
+//                .orElseThrow(() -> new IllegalArgumentException("오피스 없음"));
+//        reservation.setStay(office);
+
+       
+    }
+
+
 
 }
