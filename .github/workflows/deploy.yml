@@ -29,7 +29,7 @@ jobs:
           source: "workeezy/build/libs/*SNAPSHOT*.jar"
           target: "/home/ubuntu/workeezy-backend"
 
-      - name: Restart Spring Boot on EC2
+      - name: Deploy Backend (run deploy.sh)
         uses: appleboy/ssh-action@v0.1.7
         env:
           APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
@@ -40,40 +40,8 @@ jobs:
           port: ${{ secrets.EC2_PORT }}
           envs: APPLICATION_PROPERTIES
           script: |
-            set -x
-            echo "=== START SSH SCRIPT ==="
-            pwd
-            whoami
-
-            cd /home/ubuntu/workeezy-backend || exit 1
-            echo "PWD AFTER CD:"
-            pwd
-
-            echo "=== WRITE application-prod.yml ==="
-            printf "%s" "$APPLICATION_PROPERTIES" > application-prod.yml
-            ls -l application-prod.yml
-
-            echo "=== CHECK JAR EXISTS ==="
-            ls -l /home/ubuntu/workeezy-backend/workeezy/build/libs
-
-            echo "=== KILL OLD PROCESS (PORT 8080) ==="
-            PID=$(lsof -ti :8080)
-            if [ -n "$PID" ]; then
-              kill -15 $PID
-              sleep 2
-            fi
-
-            echo "=== START APP ==="
-            nohup java -jar \
-              /home/ubuntu/workeezy-backend/workeezy/build/libs/workeezy-0.0.1-SNAPSHOT.jar \
-              --spring.profiles.active=prod \
-              > /home/ubuntu/workeezy-backend/app.log 2>&1 &
-
-            sleep 3
-            pgrep -af java || echo "Spring not running"
-
-            echo "=== CHECK LOG FILE ==="
-            ls -l /home/ubuntu/workeezy-backend || true
-            ls -l /home/ubuntu/workeezy-backend/app.log || true
-
-            echo "=== END SSH SCRIPT ==="
+            echo "===== DEPLOY START ====="
+            cd /home/ubuntu/workeezy-backend
+            chmod +x deploy.sh
+            ./deploy.sh
+            echo "===== DEPLOY END ====="
