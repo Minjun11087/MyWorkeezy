@@ -1,6 +1,7 @@
 import "./ReservationCard.css";
 import ReservationStatusButton from "./../../../../shared/common/ReservationStatusButton";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function ReservationCard({ data, isSelected, onSelect }) {
   const navigate = useNavigate();
@@ -48,6 +49,32 @@ export default function ReservationCard({ data, isSelected, onSelect }) {
   const showCancelRequest =
     isApproved || (isConfirmed && diffDays >= 1 && diffDays < 3);
   const showPayment = isWaitingPayment;
+
+  // 예약 취소
+  const handleCancel = async () => {
+    const ok = window.confirm("예약을 취소하시겠습니까?");
+    if (!ok) return;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      await axios.patch(
+        `http://localhost:8080/api/reservations/${data.id}/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("예약이 취소되었습니다.");
+      window.location.reload(); // 또는 상위에서 목록 재조회
+    } catch (err) {
+      console.error("예약 취소 실패", err);
+      alert("예약 취소 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <div
@@ -174,7 +201,16 @@ export default function ReservationCard({ data, isSelected, onSelect }) {
               예약 변경
             </button>
           )}
-          {showDirectCancel && <button>예약 취소</button>}
+          {showDirectCancel && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCancel();
+              }}
+            >
+              예약 취소
+            </button>
+          )}
           {showCancelRequest && <button>예약 취소 요청</button>}
           {showPayment && <button>결제</button>}
         </div>
