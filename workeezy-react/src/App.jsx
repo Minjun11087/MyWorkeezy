@@ -15,8 +15,9 @@ import SearchPage from "./features/search/pages/SearchPage.jsx";
 import NewReservationPage from "./features/reservation/pages/NewReservationPage.jsx";
 import ModifyReservationPage from "./features/reservation/pages/ModifyReservationPage.jsx";
 import LikesPage from "./features/profile/pages/LikesPage.jsx";
-import AdminReservationListPage from "./features/reservation/pages/AdminReservationListPage.jsx";
+import AdminReservationPage from "./features/reservation/pages/AdminReservationPage.jsx";
 import ReservationListPage from "./features/reservation/pages/ReservationListPage.jsx";
+import EditReservationPage from "./features/reservation/pages/EditReservationPage.jsx";
 
 import CheckoutPage from "./features/payment/pages/CheckoutPage.jsx";
 
@@ -91,10 +92,13 @@ export default function App() {
             {/* 예약 */}
             <Route path="/reservation/list" element={<ReservationListPage/>}/>
             <Route path="/reservation/new" element={<NewReservationPage/>}/>
+            <Route path="/reservation/edit/:id" element={<EditReservationPage/>}/>
             <Route path="/modifyreservation" element={<ModifyReservationPage/>}/>
+
+            <Route path="/admin/reservations" element={<AdminReservationPage/>}/>
             <Route
-                path="/admin/reservationlist"
-                element={<AdminReservationListPage/>}
+                path="/admin/reservations/:reservationId"
+                element={<AdminReservationPage/>}
             />
 
             {/* 결제 */}
