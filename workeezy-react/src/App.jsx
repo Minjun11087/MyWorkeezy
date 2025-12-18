@@ -7,16 +7,18 @@ import LoginPage from "./features/auth/pages/LoginPage.jsx";
 import Home from "./features/home/pages/Home";
 import MyPage from "./features/profile/pages/MyPage.jsx";
 import ProfilePasswordCheck from "./features/profile/pages/ProfilePasswordCheck.jsx";
-import PaymentHistory from "./features/profile/pages/PaymentHistory.jsx";
 
 import ProgramDetailPage from "./features/program/pages/ProgramDetailPage.jsx";
 import ReviewPage from "./features/review/pages/ReviewPage.jsx";
 import SearchPage from "./features/search/pages/SearchPage.jsx";
+
 import NewReservationPage from "./features/reservation/pages/NewReservationPage.jsx";
 import ModifyReservationPage from "./features/reservation/pages/ModifyReservationPage.jsx";
 import LikesPage from "./features/profile/pages/LikesPage.jsx";
 import AdminReservationListPage from "./features/reservation/pages/AdminReservationListPage.jsx";
 import ReservationListPage from "./features/reservation/pages/ReservationListPage.jsx";
+
+import CheckoutPage from "./features/payment/pages/CheckoutPage.jsx";
 
 import Forbidden from "./shared/error/Forbidden.jsx";
 import ServerError from "./shared/error/ServerError.jsx";
@@ -79,8 +81,6 @@ export default function App() {
                 }
             />
             <Route path="/likes" element={<LikesPage/>}/>
-            {/* 결제 */}
-            <Route path="/payments" element={<PaymentHistory/>}/>
 
             {/* 검색, 리뷰 */}
             <Route path="/program" element={<ProgramDetailPage/>}/>
@@ -96,6 +96,9 @@ export default function App() {
                 path="/admin/reservationlist"
                 element={<AdminReservationListPage/>}
             />
+
+            {/* 결제 */}
+            <Route path="/payments" element={<CheckoutPage/>}/>
 
             {/* 에러 페이지 */}
             <Route path="/403" element={<Forbidden/>}/>
