@@ -247,15 +247,6 @@ export default function SearchPage() {
                             <p className="empty-desc">
                                 검색어를 바꾸거나 지역 필터를 해제해서 다시 시도해보세요.
                             </p>
-
-                            <div className="empty-actions">
-                                <button className="empty-btn" onClick={resetFilters}>
-                                    필터 초기화
-                                </button>
-                                <button className="empty-btn outline" onClick={showAll}>
-                                    전체 보기
-                                </button>
-                            </div>
                         </div>
                     ) : (
                         <div className="search-grid">
