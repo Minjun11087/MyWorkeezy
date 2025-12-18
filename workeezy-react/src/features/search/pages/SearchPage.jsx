@@ -4,10 +4,12 @@ import CategoryFilter from "../components/CategoryFilter.jsx";
 import Pagination from "../../../shared/common/Pagination.jsx";
 import SearchCard from "../components/SearchCard.jsx";
 import RecommendedCarousel from "../components/RecommendedCarousel.jsx";
+import MapView from "../components/MapView.jsx";
 
-import { useEffect, useState } from "react";
+
+import {useEffect, useState} from "react";
 import SectionHeader from "../../../shared/common/SectionHeader.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import api from "../../../api/axios.js";
 
 export default function SearchPage() {
@@ -25,6 +27,7 @@ export default function SearchPage() {
 
     const [bigRegion, setBigRegion] = useState("전체");
     const [smallRegions, setSmallRegions] = useState([]);
+    const [viewMode, setViewMode] = useState("list"); // "list" | "map"
 
     // ✅ (선택) 새로고침해도 캐러셀 유지하고 싶으면 ON
     const PERSIST_RECOMMENDED = true;
@@ -64,7 +67,7 @@ export default function SearchPage() {
         }
 
         api
-            .get("/api/search", { params: { keyword: urlKeyword, regions: [] } })
+            .get("/api/search", {params: {keyword: urlKeyword, regions: []}})
             .then(async (res) => {
                 // 1) 검색 결과
                 setAllPrograms(res.data.cards);
@@ -74,7 +77,7 @@ export default function SearchPage() {
                 try {
                     const token = localStorage.getItem("accessToken");
                     const recRes = await api.get("/api/recommendations/recent", {
-                        headers: token ? { Authorization: `Bearer ${token}` } : {},
+                        headers: token ? {Authorization: `Bearer ${token}`} : {},
                     });
                     incoming = recRes.data ?? [];
                 } catch (e) {
@@ -138,9 +141,23 @@ export default function SearchPage() {
 
     return (
         <PageLayout>
-            <SectionHeader icon="fas fa-search" title="Search" />
+            <SectionHeader icon="fas fa-search" title="Search"/>
 
-            <SearchBar value={search} onChange={setSearch} onSearch={handleSearch} />
+            <SearchBar value={search} onChange={setSearch} onSearch={handleSearch}/>
+            <div className="search-view-tabs">
+                <button
+                    className={viewMode === "list" ? "active" : ""}
+                    onClick={() => setViewMode("list")}
+                >
+                    리스트
+                </button>
+                <button
+                    className={viewMode === "map" ? "active" : ""}
+                    onClick={() => setViewMode("map")}
+                >
+                    지도
+                </button>
+            </div>
 
             <CategoryFilter
                 bigRegion={bigRegion}
@@ -156,18 +173,37 @@ export default function SearchPage() {
                 }}
             />
 
-            <div className="search-grid">
-                {paginatedPrograms.map((p) => (
-                    <SearchCard
-                        key={p.id}
-                        id={p.id}
-                        title={p.title}
-                        photo={p.photo}
-                        price={p.price}
-                        region={p.region}
-                    />
-                ))}
-            </div>
+            {viewMode === "map" ? (
+                <MapView
+                    programs={filteredPrograms}
+                    bigRegion={bigRegion}
+                    setBigRegion={(r) => {
+                        setBigRegion(r);
+                        setSmallRegions([]);
+                        setCurrentPage(1);
+                    }}
+                    smallRegions={smallRegions}
+                    setSmallRegions={(list) => {
+                        setSmallRegions(list);
+                        setCurrentPage(1);
+                    }}
+                />
+            ) : (
+                <div className="search-grid">
+                    {paginatedPrograms.map((p) => (
+                        <SearchCard
+                            key={p.id}
+                            id={p.id}
+                            title={p.title}
+                            photo={p.photo}
+                            price={p.price}
+                            region={p.region}
+                        />
+                    ))}
+                </div>
+            )
+            }
+
 
             {totalPages > 1 && (
                 <Pagination
@@ -178,7 +214,8 @@ export default function SearchPage() {
             )}
 
             {/* ✅ 여기서 recommended 내려줌 */}
-            <RecommendedCarousel items={recommended} />
+            <RecommendedCarousel items={recommended}/>
         </PageLayout>
-    );
+
+    )
 }
