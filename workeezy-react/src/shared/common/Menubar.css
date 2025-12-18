@@ -206,7 +206,7 @@ a:active {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 820px) and (min-width: 600px) {
     .menu-bar {
         padding: 100px 5px 5px;
     }
