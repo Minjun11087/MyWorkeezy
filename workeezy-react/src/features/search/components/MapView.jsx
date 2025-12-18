@@ -18,17 +18,7 @@ export default function MapView({
 
     return (
         <div className="map-wrap">
-            <div className="map-top-chips">
-                <button className="chip" onClick={() => onChangeBigRegion?.("전체")}>
-                    전체
-                </button>
-                <button className="chip" onClick={() => onChangeBigRegion?.("수도권")}>
-                    국내(예: 수도권)
-                </button>
-                <button className="chip" onClick={() => onChangeBigRegion?.("해외")}>
-                    해외
-                </button>
-            </div>
+
 
             <div className="map-stage">
                 <div className="map-frame">
