@@ -1,6 +1,5 @@
 package com.together.workeezy.reservation;
 
-import com.together.workeezy.payment.entity.Payment;
 import com.together.workeezy.program.entity.Place;
 import com.together.workeezy.program.entity.Program;
 import com.together.workeezy.program.entity.Room;
@@ -43,10 +42,13 @@ public class Reservation {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    /* 숙소 */
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "stay_id")
     private Place stay;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "office_id")
+    private Place office;
 
     @NotNull
     @Column(name = "reservation_no", nullable = false, length = 20)
@@ -73,6 +75,9 @@ public class Reservation {
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
+    @Column(name = "reject_reason", length = 500)
+    private String rejectReason;
+
     @NotNull
     @Column(name = "total_price", nullable = false)
     private Long totalPrice;
@@ -80,9 +85,6 @@ public class Reservation {
     @NotNull
     @Column(name = "people_count", nullable = false)
     private int peopleCount;
-
-    @OneToOne(mappedBy = "reservation")
-    private Payment Payment;
 
     @OneToMany(mappedBy = "reservation")
     private List<ReservationModify> reservationModifys = new ArrayList<>();
