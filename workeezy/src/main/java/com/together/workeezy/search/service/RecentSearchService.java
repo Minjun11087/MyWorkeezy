@@ -75,5 +75,4 @@ public class RecentSearchService {
         if (userId == null) return;
         redisTemplate.delete(getKey(userId));
     }
-
 }
