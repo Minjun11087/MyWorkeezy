@@ -253,7 +253,6 @@ export default function ReservationForm({
           rooms={rooms}
           offices={offices}
           onChange={handleChange}
-          isEdit={isEdit}
         />
         <SubmitButton />
         {!isEdit && <DraftButton onClick={handleDraftSave} />}
