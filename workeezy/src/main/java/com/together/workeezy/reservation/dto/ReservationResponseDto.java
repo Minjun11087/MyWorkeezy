@@ -28,6 +28,7 @@ public class ReservationResponseDto {
     private long programId;
     private String stayName;           // 숙소명
     private String officeName;         // 오피스명 (null 가능)
+    private Long roomId;
     private String roomType;           // 룸타입
 
     private Long totalPrice;        // 총 가격
