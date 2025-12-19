@@ -10,7 +10,7 @@ export default function MapProgramMiniCard({ program }) {
     const goDetail = (e) => {
         e.preventDefault();
         e.stopPropagation(); // ✅ 지도/말풍선 클릭 전파 차단
-        navigate(`/program/${id}`); // ✅ 상세 라우트가 다르면 여기만 수정
+        navigate(`/program/${program.id}`); // ✅ 상세 라우트가 다르면 여기만 수정
     };
 
     return (

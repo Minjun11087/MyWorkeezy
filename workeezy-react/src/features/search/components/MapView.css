@@ -10,7 +10,7 @@
     justify-content: center;
 }
 
-/* ✅ 레이아웃(프레임) 크게 잡기 */
+/* ✅ 레이아웃(프레임) */
 .map-frame {
     position: relative;
 
@@ -20,7 +20,7 @@
     max-width: 100%;
     background: transparent;
 
-    /* ✅ 잘림/밀림 방지 */
+    /* ✅ 오버레이/말풍선 잘림 방지 */
     overflow: visible;
     overflow-anchor: none;
 }
