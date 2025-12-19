@@ -6,7 +6,7 @@ import "./ProgramReserveBar.css";
 
 export default function ProgramReserveBar({
   rooms = [],
-  offices = [],
+  office,
   programId,
   programPrice,
   programTitle,
@@ -15,8 +15,8 @@ export default function ProgramReserveBar({
 }) {
   const navigate = useNavigate();
 
-  const [roomType, setRoomType] = useState("");
-  const [officeType, setOfficeType] = useState("");
+  const [roomId, setRoomType] = useState("");
+  // const [officeType, setOfficeType] = useState("");
   const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
   const now = useMemo(() => new Date(), []);
@@ -51,7 +51,7 @@ export default function ProgramReserveBar({
   }, []);
 
   const onReserve = () => {
-    if (!roomType || !checkIn || !checkOut) {
+    if (!roomId || !checkIn || !checkOut) {
       alert("필수 항목을 입력해주세요!");
       return;
     }
@@ -60,12 +60,17 @@ export default function ProgramReserveBar({
         programId,
         programTitle,
         programPrice,
-        roomId: roomType,
-        officeId: officeType,
+
+        roomId,
+
+        officeId: office.id,
+        officeName: office.name,
+
         checkIn,
         checkOut,
+
         rooms,
-        offices,
+        office: office,
         stayId,
         stayName,
       },
@@ -81,10 +86,7 @@ export default function ProgramReserveBar({
       <div className={`pd-reserve ${bottomFixed ? "bottom-fixed" : ""}`}>
         <div className="pd-reserve-item">
           <label>룸 타입</label>
-          <select
-            value={roomType}
-            onChange={(e) => setRoomType(e.target.value)}
-          >
+          <select value={roomId} onChange={(e) => setRoomType(e.target.value)}>
             <option value="">룸 선택</option>
             {rooms.map((r) => (
               <option key={r.id} value={r.id}>
@@ -143,18 +145,12 @@ export default function ProgramReserveBar({
         </div>
 
         <div className="pd-reserve-item">
-          <label>오피스 타입</label>
-          <select
-            value={officeType}
-            onChange={(e) => setOfficeType(e.target.value)}
-          >
-            <option value="">오피스 선택</option>
-            {offices.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.name}
-              </option>
-            ))}
-          </select>
+          <label>오피스</label>
+          <input
+            value={office?.name ?? ""}
+            readOnly
+            className="pd-input-readonly"
+          />
         </div>
 
         <button className="pd-reserve-btn" onClick={onReserve}>

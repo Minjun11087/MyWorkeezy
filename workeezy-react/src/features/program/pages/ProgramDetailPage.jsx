@@ -27,6 +27,14 @@ export default function ProgramDetailPage() {
   }, [id]);
 
   if (!program) return <div>Loading...</div>;
+
+  // 단일 오피스
+
+  const fixedOffice = program.offices?.[0] ?? null;
+
+  console.log("program.offices =", program.offices);
+  console.log("fixedOffice =", fixedOffice);
+
   return (
     <PageLayout>
       {/* 1) 제목 */}
@@ -39,8 +47,8 @@ export default function ProgramDetailPage() {
       />
 
       <ProgramReserveBar
-        rooms={program.hotel?.rooms ?? []}
-        offices={program.offices ?? []}
+        rooms={program.hotel?.rooms ?? []} // stay 기준 rooms
+        office={fixedOffice} // 단일 오피스
         programId={program.id}
         programTitle={program.title}
         programPrice={program.programPrice}
