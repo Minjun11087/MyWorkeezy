@@ -2,8 +2,6 @@ import "./ReservationCard.css";
 import ReservationStatusButton from "./../../../../shared/common/ReservationStatusButton";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {useEffect, useState} from "react";
-import {TossPaymentWidget} from "../../../payment/components/TossPaymentWidget.jsx";
 
 export default function ReservationCard({data, isSelected, onSelect}) {
     const navigate = useNavigate();

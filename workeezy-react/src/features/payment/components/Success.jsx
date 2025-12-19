@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export function SuccessPage() {
+export function Success() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
@@ -15,7 +15,7 @@ export function SuccessPage() {
         };
 
         async function confirm() {
-            const response = await fetch("/confirm", {
+            const response = await fetch("/api/payments/confirm", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
