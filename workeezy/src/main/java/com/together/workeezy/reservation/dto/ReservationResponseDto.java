@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ReservationResponseDto {
+    private Long reservationId;     // PK
     private String reservationNo;  // 예약번호 (ex: 20251212-000001)
     private String status;             // 예약상태
 
