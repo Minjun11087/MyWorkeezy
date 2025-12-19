@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import "./KoreaSvgMap.css";
 import MapProgramMiniCard from "../components/MapProgramMiniCard.jsx";
 
@@ -27,16 +27,19 @@ function extractSvgOnly(raw) {
         .replace(/<\?xml[\s\S]*?\?>/gi, "")
         .replace(/<!doctype[\s\S]*?>/gi, "")
         .trim();
+
     const match = cleaned.match(/<svg[\s\S]*<\/svg>/i);
     return match ? match[0] : cleaned;
 }
 
 export default function KoreaSvgMap({ counts = {}, programsByRegion = {} }) {
     const wrapRef = useRef(null);
+
     const [svgText, setSvgText] = useState("");
     const [bubble, setBubble] = useState(null); // { region, x, y }
     const [isSvgReady, setIsSvgReady] = useState(false);
 
+    // ✅ SVG 로드
     useEffect(() => {
         fetch("/southKoreaHigh.svg")
             .then((r) => {
@@ -45,7 +48,7 @@ export default function KoreaSvgMap({ counts = {}, programsByRegion = {} }) {
             })
             .then((txt) => {
                 setSvgText(extractSvgOnly(txt));
-                setIsSvgReady(false);
+                setIsSvgReady(false); // ✅ 다시 로드되면 준비 상태 초기화
             })
             .catch((e) => console.error("SVG load failed:", e));
     }, []);
@@ -55,48 +58,45 @@ export default function KoreaSvgMap({ counts = {}, programsByRegion = {} }) {
         return programsByRegion[bubble.region] || [];
     }, [bubble, programsByRegion]);
 
-    // ✅ SVG viewBox는 로드 후 1번만 (클릭 때 흔들림 방지)
-    useEffect(() => {
+    /**
+     * ✅ 핵심: viewBox 세팅은 "한 번만" 하고
+     * - preserveAspectRatio: xMidYMin meet (위 기준 고정)
+     * - 준비 전에는 SVG를 숨겨서 "점프" 자체를 없앰
+     */
+    // ✅ viewBox는 "첫 페인트 전에" 세팅해서 점프 제거
+    useLayoutEffect(() => {
         const el = wrapRef.current;
         if (!el || !svgText || isSvgReady) return;
 
-        requestAnimationFrame(() => {
-            const svg = el.querySelector("svg");
-            if (!svg) return;
+        const svg = el.querySelector("svg");
+        if (!svg) return;
 
-            svg.removeAttribute("width");
-            svg.removeAttribute("height");
-            svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+        svg.removeAttribute("width");
+        svg.removeAttribute("height");
+        svg.setAttribute("preserveAspectRatio", "xMidYMin meet");
 
-            try {
-                const bbox = svg.getBBox();
+        try {
+            const bbox = svg.getBBox();
 
-                const pad = 12;
+            const pad = 8;
+            const cropTop = 80;        // 위 여백 줄이기 (필요하면 ↑)
+            const extraBottom = 80;    // 아래 잘림 방지 (필요하면 ↑)
 
-                // ✅ 여기 숫자만 조절 (클수록 위를 더 잘라서 지도가 더 위로 올라감)
-                const cropTop = 60; // ⭐ 60~200 사이로 조절
+            const x = bbox.x - pad;
+            const y = bbox.y + cropTop;      // ✅ SVG 상단 여백 실제로 잘라냄
+            const w = bbox.width + pad * 2;
+            const h = bbox.height + pad * 2 - cropTop + extraBottom;
 
-                // bbox 기반 기본 값
-                const x = bbox.x - pad;
-                const y = bbox.y - pad + cropTop;         // ✅ y를 "아래로" 내려서 위쪽을 자름
-                const w = bbox.width + pad * 2;
-                const h = bbox.height + pad * 2 - cropTop; // ✅ h를 그만큼 줄여서 전체 크기는 유지
+            svg.setAttribute("viewBox", `${x} ${y} ${w} ${Math.max(300, h)}`);
+            svg.setAttribute("preserveAspectRatio", "xMidYMin meet");
+        } catch (e) {
+            svg.setAttribute("viewBox", "0 80 800 820");
+            svg.setAttribute("preserveAspectRatio", "xMidYMin meet");
+        }
 
-                // 안전장치(너무 줄어서 0/음수 되면 fallback)
-                const safeH = Math.max(200, h);
-
-                svg.setAttribute("viewBox", `${x} ${y} ${w} ${safeH}`);
-                svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-            } catch (e) {
-                svg.setAttribute("viewBox", "0 120 800 780"); // ✅ 위 좀 자른 fallback
-                svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-            }
-
-
-
-            setIsSvgReady(true);
-        });
+        setIsSvgReady(true);
     }, [svgText, isSvgReady]);
+
 
     // ✅ 클릭(포인터다운)에서 스크롤 점프/포커스 점프 방지
     useEffect(() => {
@@ -104,9 +104,13 @@ export default function KoreaSvgMap({ counts = {}, programsByRegion = {} }) {
         if (!el) return;
 
         const lockScroll = (x, y) => {
-            // 스크롤 앵커링/포커스 점프로 움직이면 즉시 복구
-            requestAnimationFrame(() => window.scrollTo({ left: x, top: y, behavior: "auto" }));
-            setTimeout(() => window.scrollTo({ left: x, top: y, behavior: "auto" }), 0);
+            requestAnimationFrame(() =>
+                window.scrollTo({ left: x, top: y, behavior: "auto" })
+            );
+            setTimeout(
+                () => window.scrollTo({ left: x, top: y, behavior: "auto" }),
+                0
+            );
         };
 
         const handlePointerDownCapture = (e) => {
@@ -187,7 +191,11 @@ export default function KoreaSvgMap({ counts = {}, programsByRegion = {} }) {
         <div ref={wrapRef} className="korea-map-wrap">
             {!svgText ? <div className="map-loading">지도 로딩중...</div> : null}
 
-            <div className="svg-host" dangerouslySetInnerHTML={{ __html: svgText }} />
+            {/* ✅ 준비되기 전에는 숨기고, 준비되면 보여서 점프 제거 */}
+            <div
+                className={`svg-host ${isSvgReady ? "ready" : ""}`}
+                dangerouslySetInnerHTML={{ __html: svgText }}
+            />
 
             {/* ✅ 오버레이 레이어(레이아웃 영향 0) */}
             <div className="map-overlay">
