@@ -1,4 +1,4 @@
-package com.together.workeezy.auth.security.jwt;
+package com.together.workeezy.auth.jwt;
 
 import com.together.workeezy.auth.security.user.CustomUserDetailsService;
 import io.jsonwebtoken.*;

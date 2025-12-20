@@ -1,4 +1,4 @@
-package com.together.workeezy.auth.service;
+package com.together.workeezy.auth.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;

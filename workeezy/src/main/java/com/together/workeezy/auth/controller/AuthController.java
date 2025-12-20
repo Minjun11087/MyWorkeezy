@@ -2,14 +2,15 @@ package com.together.workeezy.auth.controller;
 
 import com.together.workeezy.auth.dto.request.LoginRequest;
 import com.together.workeezy.auth.dto.response.LoginResponse;
-import com.together.workeezy.auth.security.jwt.JwtTokenProvider;
-import com.together.workeezy.auth.service.TokenRedisService;
+import com.together.workeezy.auth.jwt.JwtTokenProvider;
+import com.together.workeezy.auth.redis.TokenRedisService;
 import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.auth.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -26,7 +27,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtProvider;
     private final AuthService authService;
-    private final TokenRedisService tokenRedisService;
+    private final TokenRedisService redisService;
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request,
@@ -62,25 +63,22 @@ public class AuthController {
         boolean autoLogin = request.isAutoLogin();
 
         // Refresh Token -> HttpOnly 쿠키로 내려주기
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setDomain("localhost");
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)       // https 필수
+                .sameSite("None")   // 크로스 도메인 필수
+                .path("/")
+                .domain(".workeezy.cloud")
+                .maxAge(autoLogin ? jwtProvider.getRefreshExpiration() / 1000 : -1)
+                .build();
 
-        if (autoLogin) {
-            // 자동 로그인 on -> refreshToken 유효기간 전체 사용
-            int maxAgeSec = (int) (jwtProvider.getRefreshExpiration() / 1000);
-            cookie.setMaxAge(maxAgeSec);
-        } else {
-            // 자동 로그인 off -> 세션 쿠키
-            cookie.setMaxAge(-1);
-        }
+        // ResponseCookie는 반드시 헤더로만 내려야 함
+        response.setHeader("Set-Cookie", cookie.toString());
+        System.out.println("🍪 Set-Cookie = " + cookie);
 
-        response.addCookie(cookie);
         System.out.println("✅ 인증 성공: " + authentication.getName());
 
         return new LoginResponse(accessToken, name, role);
-
     }
 
     // 새 Access Token 재발급
@@ -119,7 +117,7 @@ public class AuthController {
             System.out.println("TTL 남은 시간(ms) = " + ttl);
 
             // 남은 ttl만큼 블랙리스트에 저장
-            tokenRedisService.blacklistAccessToken(accessToken, ttl);
+            redisService.blacklistAccessToken(accessToken, ttl);
             System.out.println("블랙리스트 저장 시도 완료");
         }
 
@@ -127,7 +125,7 @@ public class AuthController {
         String refreshToken = extractRefreshToken(request);
         if (refreshToken != null) {
             String email = jwtProvider.getEmailFromToken(refreshToken);
-            tokenRedisService.deleteRefreshToken(email);
+            redisService.deleteRefreshToken(email);
         }
 
         return ResponseEntity.ok("로그아웃 성공");
