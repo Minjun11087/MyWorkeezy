@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.together.workeezy.common.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -30,16 +32,13 @@ public class UserService {
 
         // 현재 비밀번호 검증(서비스 책임)
         if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+            throw new CustomException(PASSWORD_NOT_MATCH);
         }
 
         // 새 비밀번호 규칙 확인(DTO 책임)
         if (!request.newPassword().equals(request.newPasswordCheck())) {
-            throw new IllegalArgumentException("새 비밀번호가 서로 일치하지 않습니다.");
+            throw new CustomException(PASSWORD_CONFIRM_NOT_MATCH);
         }
-
-        // 암호화(서비스 책임)
-        String encodedPassword = passwordEncoder.encode(request.newPassword());
 
         // 엔티티에 위임(도메인 책임)
         user.changePassword(request.newPassword(), passwordEncoder);

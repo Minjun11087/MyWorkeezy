@@ -1,5 +1,6 @@
 package com.together.workeezy.user.entity;
 
+import com.together.workeezy.common.exception.CustomException;
 import com.together.workeezy.reservation.Reservation;
 import com.together.workeezy.reservation.ReservationModify;
 import com.together.workeezy.user.enums.UserRole;
@@ -16,7 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+
+import static com.together.workeezy.common.exception.ErrorCode.*;
 
 @Getter
 @Entity
@@ -101,28 +103,28 @@ public class User {
 //    }
 
     private void validatePasswordRule(String password) {
-        if (password == null) {
-            throw new IllegalArgumentException("비밀번호가 비어있습니다.");
-        }
+//        if (password == null || password.isBlank()) {
+//            throw new IllegalArgumentException("비밀번호가 비어있습니다.");
+//        }
 
         if (password.length() < 8 || password.length() > 16) {
-            throw new IllegalArgumentException("비밀번호는 8~16자여야 합니다.");
+            throw new CustomException(INVALID_PASSWORD_LENGTH);
         }
 
         if (!password.matches(".*[0-9].*")) {
-            throw new IllegalArgumentException("비밀번호에는 숫자가 1개 이상 포함되어야 합니다.");
+            throw new CustomException(INVALID_PASSWORD_NUMBER);
         }
 
         if (!password.matches(".*[A-Z].*")) {
-            throw new IllegalArgumentException("비밀번호에는 영대문자가 1개 이상 포함되어야 합니다.");
+            throw new CustomException(INVALID_PASSWORD_UPPER);
         }
 
         if (!password.matches(".*[a-z].*")) {
-            throw new IllegalArgumentException("비밀번호에는 영소문자가 1개 이상 포함되어야 합니다.");
+            throw new CustomException(INVALID_PASSWORD_LOWER);
         }
 
         if (!password.matches(".*[!@#$%^&*].*")) {
-            throw new IllegalArgumentException("비밀번호에는 특수문자가 1개 이상 포함되어야 합니다.(가능 문자: !@#$%^&*)");
+            throw new CustomException(INVALID_PASSWORD_SPECIAL);
         }
     }
 }
