@@ -10,7 +10,9 @@ public enum ErrorCode {
     AMOUNT_INVALID("금액이 올바르지 않습니다."),
     PAYMENT_ALREADY_COMPLETED("이미 결제된 예약입니다."),
     ORDER_ID_MISMATCH("주문 번호가 일치하지 않습니다."),
-    PAYMENT_NOT_FOUND("");
+    PAYMENT_NOT_FOUND("결제 정보가 존재하지 않습니다."),
+
+    USER_NOT_FOUND("사용자를 찾을 수 없습니다.");
 
     private final String message;
 

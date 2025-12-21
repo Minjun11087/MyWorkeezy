@@ -6,18 +6,21 @@ import com.together.workeezy.user.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Getter
-@Setter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_users")
 public class User {
 
@@ -72,4 +75,54 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<ReservationModify> reservationModifys = new ArrayList<>();
 
+    // ======== 도메인 동작 ========
+    public void changePhone(String newPhone) {
+//        validatePhone(newPhone);
+        this.phone = newPhone;
+    }
+
+    public void changePassword(String rawPassword, PasswordEncoder encoder) {
+        validatePasswordRule(rawPassword);
+        this.password = encoder.encode(rawPassword);
+    }
+
+    // ======== 검증 로직 =========
+//    private static final Pattern PHONE_REGEX =
+//            Pattern.compile("^010-\\d{4}-\\d{4}$");
+//
+//    private void validatePhone(String phone) {
+//        if (phone == null || phone.isBlank()) {
+//            throw new IllegalArgumentException("Phone number required");
+//        }
+//
+//        if (!PHONE_REGEX.matcher(phone).matches()) {
+//            throw new IllegalArgumentException("Invalid phone format. (010-XXXX-XXXX)");
+//        }
+//    }
+
+    private void validatePasswordRule(String password) {
+        if (password == null) {
+            throw new IllegalArgumentException("비밀번호가 비어있습니다.");
+        }
+
+        if (password.length() < 8 || password.length() > 16) {
+            throw new IllegalArgumentException("비밀번호는 8~16자여야 합니다.");
+        }
+
+        if (!password.matches(".*[0-9].*")) {
+            throw new IllegalArgumentException("비밀번호에는 숫자가 1개 이상 포함되어야 합니다.");
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("비밀번호에는 영대문자가 1개 이상 포함되어야 합니다.");
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            throw new IllegalArgumentException("비밀번호에는 영소문자가 1개 이상 포함되어야 합니다.");
+        }
+
+        if (!password.matches(".*[!@#$%^&*].*")) {
+            throw new IllegalArgumentException("비밀번호에는 특수문자가 1개 이상 포함되어야 합니다.(가능 문자: !@#$%^&*)");
+        }
+    }
 }
