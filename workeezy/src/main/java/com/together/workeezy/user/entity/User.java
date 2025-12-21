@@ -77,6 +77,12 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<ReservationModify> reservationModifys = new ArrayList<>();
 
+    public static User reference(Long id) {
+        User user = new User();
+        user.id = id;
+        return user;
+    }
+
     // ======== 도메인 동작 ========
     public void changePhone(String newPhone) {
 //        validatePhone(newPhone);
