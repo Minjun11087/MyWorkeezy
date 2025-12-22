@@ -54,8 +54,8 @@ public class SecurityConfig {
                         .requestMatchers("/health", "/health/**").permitAll()
 
                         // Auth 공개 API
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/refresh").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/refresh").permitAll()
                         .requestMatchers("/api/auth/logout").authenticated()
 
                         // 비밀번호 재확인, 마이페이지용 보호
