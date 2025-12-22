@@ -190,17 +190,19 @@ public class ReservationService {
     @Transactional
     public void updateMyReservation(Long id, ReservationUpdateDto dto, String email) {
 
+        // 조회해옴
         Reservation reservation = getMyReservationOrThrow(id, email);
 
+        // 도메인 규칙 실행
         // 상태 + 날짜 검증
-        reservation.validateUpdatable();
-        reservation.validateDate(dto.getStartDate(), dto.getEndDate());
+        reservation.validateUpdatable(); // 수정 가능한지
+        reservation.validateDate(dto.getStartDate(), dto.getEndDate()); // 날짜 검증
 
         //  날짜 / 인원 변경
         reservation.changePeriod(dto.getStartDate(), dto.getEndDate());
         reservation.changePeopleCount(dto.getPeopleCount());
 
-        // 룸 + 숙소 변경 (Service에서 조합 검증)
+        // 룸 + 숙소 변경 (Service에서는 조합 검증)
         Room room = getValidRoom(dto.getRoomId(), reservation.getProgram());
         reservation.changeRoom(room);
 
