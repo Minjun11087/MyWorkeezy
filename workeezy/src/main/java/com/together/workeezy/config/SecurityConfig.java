@@ -101,7 +101,9 @@ public class SecurityConfig {
         // 허용 Origin
         config.setAllowedOrigins(List.of(
                 "https://www.workeezy.cloud",
-                "https://workeezy-react.vercel.app"
+                "https://workeezy.cloud",
+                "https://workeezy-react.vercel.app",
+                "https://api.workeezy.cloud/health"
         ));
 
         // 허용 메서드 / 헤더
