@@ -47,30 +47,44 @@ public class SecurityConfig {
                 // 경로별 권한 설정
                 .authorizeHttpRequests(auth -> auth
 
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // GET → 공개
+                        // POST / PUT / DELETE → 인증
 
-                                .requestMatchers("/health", "/api/health").permitAll()
+                        // CORS Preflight 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                                .requestMatchers("/api/auth/login").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        // 서버 상태 확인
+                        .requestMatchers("/health", "/health/**").permitAll()
 
-                                .requestMatchers("/api/auth/refresh").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+                        // Auth 공개 API
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
 
-                                .requestMatchers("/api/auth/logout").authenticated()
+                        // 비밀번호 재확인, 마이페이지용 보호
+                        .requestMatchers("/api/auth/check-password").authenticated()
+                        .requestMatchers("/api/user/**").authenticated()
 
-                                .requestMatchers("/actuator/**").permitAll()
+                        // 공개 데이터 API
+                        .requestMatchers("/api/programs/**").permitAll()
+                        .requestMatchers("/api/search/**").permitAll()
 
-                                .requestMatchers("/api/programs/**").permitAll()
-                                .requestMatchers("/api/search/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()
+                        .requestMatchers("/api/recommendations/**").permitAll()
 
-                                .requestMatchers("/api/reviews/**").permitAll()
-                                .requestMatchers("/api/recommendations/**").permitAll()
+                        .requestMatchers("/api/reservations/draft/**").authenticated()
+                        .requestMatchers("/api/reservations/**").authenticated()
 
-                                .requestMatchers("/api/payments/**").authenticated()
+                        .requestMatchers(("/api/payments/**")).authenticated()
 
-                                .anyRequest().permitAll() // <-- 현재는 이렇게 해야 로그인 테스트됨
-                        
+                        // 에러 페이지
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+
+                        .anyRequest().authenticated()
                 )
                 .formLogin(login -> login.disable()) // 기본 로그인 form X
                 .httpBasic(basic -> basic.disable()); // 브라우저 인증 팝업 X (Basic Auth)
