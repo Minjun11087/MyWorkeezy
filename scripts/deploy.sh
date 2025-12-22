@@ -33,6 +33,7 @@ fi
 echo "[3] Start Spring Boot"
 nohup java -jar "$JAR_PATH" \
   --spring.profiles.active="$PROFILE" \
+  --spring.config.location=file:/home/ubuntu/workeezy-backend/application-prod.yml \
   > "$LOG_FILE" 2>&1 &
 
 sleep 3

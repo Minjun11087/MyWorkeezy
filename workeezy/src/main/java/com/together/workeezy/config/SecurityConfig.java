@@ -103,11 +103,12 @@ public class SecurityConfig {
                 "https://www.workeezy.cloud",
                 "https://workeezy.cloud",
                 "https://workeezy-react.vercel.app",
-                "https://api.workeezy.cloud/health"
+                "https://api.workeezy.cloud/health",
+                "http://localhost:5173"
         ));
 
         // 허용 메서드 / 헤더
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
         // 쿠키(Refresh Token) 허용
