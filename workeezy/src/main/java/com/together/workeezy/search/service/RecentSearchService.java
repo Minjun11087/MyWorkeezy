@@ -1,9 +1,5 @@
 package com.together.workeezy.search.service;
 
-<<<<<<< HEAD
-import lombok.RequiredArgsConstructor;
-=======
->>>>>>> feat/payment-create
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,25 +10,16 @@ import java.util.List;
 @Service
 public class RecentSearchService {
 
-
     // RedisConfig에서 만든 String-String 템플릿
     private final RedisTemplate<String, String> redisTemplate;
 
     public RecentSearchService(
-<<<<<<< HEAD
-            @Qualifier("stringRedisTemplate")
-=======
             @Qualifier("loginRedisTemplate")
->>>>>>> feat/payment-create
             RedisTemplate<String, String> redisTemplate
     ) {
         this.redisTemplate = redisTemplate;
     }
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> feat/payment-create
     // 최근 검색어 최대 개수
     private static final int MAX_RECENT_KEYWORDS = 10;
 

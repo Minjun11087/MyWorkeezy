@@ -18,15 +18,10 @@ public class ReservationCreateDto {
     private String phone;
     private String email;
 
-<<<<<<< HEAD
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-=======
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime  startDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime  endDate;
->>>>>>> feat/payment-create
     private int peopleCount;
 
     private String officeName; // 오피스명

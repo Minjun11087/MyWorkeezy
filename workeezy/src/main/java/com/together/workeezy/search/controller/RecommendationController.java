@@ -1,10 +1,7 @@
 package com.together.workeezy.search.controller;
 
 import com.together.workeezy.auth.security.jwt.JwtTokenProvider;
-<<<<<<< HEAD
-=======
 import com.together.workeezy.auth.security.user.CustomUserDetails;
->>>>>>> feat/payment-create
 import com.together.workeezy.program.dto.ProgramCardDto;
 import com.together.workeezy.search.service.RecommendationService;
 import lombok.RequiredArgsConstructor;

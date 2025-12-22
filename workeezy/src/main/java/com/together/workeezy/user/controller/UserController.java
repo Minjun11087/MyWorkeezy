@@ -1,11 +1,7 @@
 package com.together.workeezy.user.controller;
 
 import com.together.workeezy.auth.security.user.CustomUserDetails;
-<<<<<<< HEAD
-import com.together.workeezy.user.dto.UserMeResponse;
-=======
 import com.together.workeezy.user.dto.UserMeResponseDto;
->>>>>>> feat/payment-create
 import com.together.workeezy.user.dto.UserPasswordUpdateRequest;
 import com.together.workeezy.user.dto.UserUpdateRequest;
 import com.together.workeezy.user.entity.User;

@@ -1,9 +1,6 @@
 package com.together.workeezy.reservation;
 
-<<<<<<< HEAD
-=======
 import com.together.workeezy.payment.entity.Payment;
->>>>>>> feat/payment-create
 import com.together.workeezy.program.entity.Place;
 import com.together.workeezy.program.entity.Program;
 import com.together.workeezy.program.entity.Room;
@@ -15,6 +12,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -60,19 +58,11 @@ public class Reservation {
 
     @NotNull
     @Column(name = "start_date", nullable = false)
-<<<<<<< HEAD
     private LocalDateTime startDate;
 
     @NotNull
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
-=======
-    private LocalDateTime  startDate;
-
-    @NotNull
-    @Column(name = "end_date", nullable = false)
-    private LocalDateTime  endDate;
->>>>>>> feat/payment-create
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -97,13 +87,10 @@ public class Reservation {
     @NotNull
     @Column(name = "people_count", nullable = false)
     private int peopleCount;
-
-<<<<<<< HEAD
-=======
+    
     @OneToOne(mappedBy = "reservation")
     private Payment payment;
 
->>>>>>> feat/payment-create
     @OneToMany(mappedBy = "reservation")
     private List<ReservationModify> reservationModifys = new ArrayList<>();
 
