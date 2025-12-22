@@ -18,8 +18,8 @@ public class TossPaymentClient {
     private final TossPaymentProperties props;
 
     public TossConfirmResponse confirm(String paymentKey,
-                                          String orderId,
-                                          long amount) {
+                                       String orderId,
+                                       long amount) {
 
         // 1. Basic Auth 헤더 만들기 (secretKey:)
         // 2. body: paymentKey, orderId, amount

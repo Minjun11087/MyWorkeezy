@@ -3,14 +3,13 @@ package com.together.workeezy.auth.controller;
 import com.together.workeezy.auth.dto.internal.LoginResult;
 import com.together.workeezy.auth.dto.request.LoginRequest;
 import com.together.workeezy.auth.dto.response.LoginResponse;
-import com.together.workeezy.auth.service.CookieService;
 import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.auth.service.AuthService;
+import com.together.workeezy.auth.service.CookieService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,6 +71,7 @@ public class AuthController {
     public ResponseEntity<?> checkPassword(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody Map<String, String> request) {
+
         boolean result = authService.checkPassword(userDetails.getUser(), request.get("password"));
 
         return ResponseEntity.ok(Map.of("success", result));
