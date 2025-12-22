@@ -52,6 +52,7 @@ public class SecurityConfig {
 
                         // 서버 상태 확인
                         .requestMatchers("/health", "/health/**").permitAll()
+                        .requestMatchers("/api/health", "/api/health/**").permitAll()
 
                         // Auth 공개 API
                         .requestMatchers("/auth/login", "/api/auth/login").permitAll()
