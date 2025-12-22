@@ -26,9 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 토큰 검증 제외할 URL (화이트리스트)
     private static final List<String> WHITELIST = List.of(
-            "/auth/login",
             "/api/auth/login",
-            "/auth/refresh",
             "/api/auth/refresh",
             "/api/programs/**",
             "/api/reviews/**",
