@@ -47,43 +47,30 @@ public class SecurityConfig {
                 // 경로별 권한 설정
                 .authorizeHttpRequests(auth -> auth
 
-                        // GET → 공개
-                        // POST / PUT / DELETE → 인증
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 서버 상태 확인
-                        .requestMatchers("/health", "/health/**").permitAll()
-                        .requestMatchers("/api/health", "/api/health/**").permitAll()
+                                .requestMatchers("/health", "/api/health").permitAll()
 
-                        // Auth 공개 API
-                        .requestMatchers("/auth/login", "/api/auth/login").permitAll()
-                        .requestMatchers("/auth/refresh", "/api/auth/refresh").permitAll()
-                        .requestMatchers("/api/auth/logout").authenticated()
+                                .requestMatchers("/api/auth/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
-                        // 비밀번호 재확인, 마이페이지용 보호
-                        .requestMatchers("/api/auth/check-password").authenticated()
-                        .requestMatchers("/api/user/**").authenticated()
+                                .requestMatchers("/api/auth/refresh").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
 
-                        // 공개 데이터 API
-                        .requestMatchers("/api/programs/**").permitAll()
-                        .requestMatchers("/api/search/**").permitAll()
+                                .requestMatchers("/api/auth/logout").authenticated()
 
-                        // review POST permitAll은 추후 꼭 수정 요망
-                        .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
-                        .requestMatchers("/api/recommendations/**").permitAll()
+                                .requestMatchers("/actuator/**").permitAll()
 
-                        .requestMatchers("/api/reservations/draft/**").authenticated()
-                        .requestMatchers("/api/reservations/**").authenticated()
+                                .requestMatchers("/api/programs/**").permitAll()
+                                .requestMatchers("/api/search/**").permitAll()
 
-                        // 에러 페이지
-                        .requestMatchers("/error").permitAll()
+                                .requestMatchers("/api/reviews/**").permitAll()
+                                .requestMatchers("/api/recommendations/**").permitAll()
 
-                        .requestMatchers(("api/payments/**")).authenticated()
+                                .requestMatchers("/api/payments/**").authenticated()
 
-                        // CORS Preflight 허용
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        .anyRequest().authenticated()
+                                .anyRequest().permitAll() // <-- 현재는 이렇게 해야 로그인 테스트됨
+                        
                 )
                 .formLogin(login -> login.disable()) // 기본 로그인 form X
                 .httpBasic(basic -> basic.disable()); // 브라우저 인증 팝업 X (Basic Auth)
