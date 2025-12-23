@@ -1,5 +1,4 @@
-import "./ReviewInput.css";
-import { jwtDecode } from "jwt-decode";
+import "./ReviewInput.css";;
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import publicApi from "../../../api/publicApi.js";
@@ -14,11 +13,6 @@ export default function ReviewInput({ onReviewSubmitted }) {
     const navigate = useNavigate();
 
     let userId = null;
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-        const decoded = jwtDecode(token);
-        userId = decoded.userId;
-    }
 
     const handleSubmit = () => {
         if (!rating) {
@@ -33,7 +27,6 @@ export default function ReviewInput({ onReviewSubmitted }) {
         publicApi
             .post("/api/reviews", {
                 programId,
-                userId,
                 rating,
                 reviewText,
             })
