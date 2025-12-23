@@ -22,10 +22,10 @@ public class ReservationController {
             @RequestBody ReservationCreateDto dto,
             Authentication authentication) {
 
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("🔥 현재 인증 정보: " + auth);
-//        System.out.println("🔥 권한 목록: " + auth.getAuthorities());
-
+        /*
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("🔥 현재 인증 정보: " + auth);
+        System.out.println("🔥 권한 목록: " + auth.getAuthorities());
         System.out.println("🚀 예약 요청 도착");
         System.out.println("👤 사용자: " + authentication.getName());
         System.out.println("📦 DTO: " + dto);
@@ -41,7 +41,7 @@ public class ReservationController {
         System.out.println("🏡 roomType = " + dto.getRoomType());
         System.out.println("🎯 programId = " + dto.getProgramId());
         System.out.println("🎯 programTitle = " + dto.getProgramTitle());
-
+         */
 
         try {
             reservationService.createNewReservation(dto, authentication.getName());

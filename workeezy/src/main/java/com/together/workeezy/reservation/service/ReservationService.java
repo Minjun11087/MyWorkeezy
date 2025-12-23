@@ -40,14 +40,15 @@ public class ReservationService {
     // 동시 요청 방지를 위해 synchronized 추가 (멀티유저 환경 대비)
     public synchronized Reservation createNewReservation(ReservationCreateDto dto, String email) {
 
+        // *** 예약 번호 생성 ***
         // 오늘 날짜 문자열 (예: 20251209)
         String today = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-
         // 오늘 날짜로 시작하는 예약번호 중 가장 마지막 값 1개 조회1
         Pageable limitOne = PageRequest.of(0, 1);
+
         List<String> latestList = reservationRepository.findLatestReservationNoByDate(today, limitOne);
         String latestNo = latestList.isEmpty() ? null : latestList.get(0);
-
+        // 예약번호
         long newSeq = 1L;
         if (latestNo != null) {
             // latestNo = "20251209-000000008"
@@ -56,11 +57,11 @@ public class ReservationService {
                 newSeq = Long.parseLong(parts[1]) + 1;
             }
         }
-
         // 새로운 예약번호 생성 (예: 20251209-000000009)
         String newReservationNo = String.format("%s-%09d", today, newSeq);
 
-        // 관련 엔티티 조회
+
+        // *** 관련 엔티티 조회 ***
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 유저가 존재하지 않습니다."));
 
@@ -70,30 +71,45 @@ public class ReservationService {
         Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 룸이 존재하지 않습니다. roomId=" + dto.getRoomId()));
 
-        // 총 금액 계산 (프로그램 가격 * 인원수)
-        Integer basePrice = program.getProgramPrice();
-        Long totalPrice = (long) (basePrice * dto.getPeopleCount());
-
-        // 예약 엔티티 생성
-        Reservation reservation = new Reservation();
-        reservation.setUser(user);
-        reservation.setProgram(program);
-        reservation.setRoom(room);
-        reservation.setStay(room.getPlace());
-
+        Place office = null;
         if (dto.getOfficeId() != null) {
-            Place office = placeRepository.findById(dto.getOfficeId())
+            office = placeRepository.findById(dto.getOfficeId())
                     .orElseThrow(() -> new IllegalArgumentException("오피스 없음"));
-            reservation.setOffice(office);
         }
 
-        reservation.setReservationNo(newReservationNo);
-        reservation.setStartDate(dto.getStartDate());
-        reservation.setEndDate(dto.getEndDate());
-        reservation.setPeopleCount(dto.getPeopleCount());
-        reservation.setTotalPrice(totalPrice);
-        reservation.setStatus(ReservationStatus.waiting_payment);
+        // *** 도메인 생성 메서드 ***
+        Reservation reservation = Reservation.create(
+                user,
+                program,
+                room,
+                office,
+                dto.getStartDate(),
+                dto.getEndDate(),
+                dto.getPeopleCount(),
+                newReservationNo
+        );
 
+//        // 총 금액 계산 (프로그램 가격 * 인원수)
+//        Integer basePrice = program.getProgramPrice();
+//        Long totalPrice = (long) (basePrice * dto.getPeopleCount());
+
+//        // 예약 엔티티 생성
+//        Reservation reservation = new Reservation();
+//        reservation.setUser(user);
+//        reservation.setProgram(program);
+//        reservation.setRoom(room);
+//        reservation.setStay(room.getPlace());
+//
+//
+//
+//        reservation.setReservationNo(newReservationNo);
+//        reservation.setStartDate(dto.getStartDate());
+//        reservation.setEndDate(dto.getEndDate());
+//        reservation.setPeopleCount(dto.getPeopleCount());
+//        reservation.setTotalPrice(totalPrice);
+//        reservation.setStatus(ReservationStatus.waiting_payment);
+
+        // 저장
         Reservation saved = reservationRepository.save(reservation);
 
         // 예약 저장 후 임시저장 삭제
@@ -196,7 +212,7 @@ public class ReservationService {
         // 도메인 규칙 실행
         // 상태 + 날짜 검증
         reservation.validateUpdatable(); // 수정 가능한지
-        reservation.validateDate(dto.getStartDate(), dto.getEndDate()); // 날짜 검증
+//        reservation.validateDate(dto.getStartDate(), dto.getEndDate()); // 중복으로 제거(changePeriod)
 
         //  날짜 / 인원 변경
         reservation.changePeriod(dto.getStartDate(), dto.getEndDate());

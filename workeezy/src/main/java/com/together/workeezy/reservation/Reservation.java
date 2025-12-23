@@ -100,13 +100,6 @@ public class Reservation {
     private List<ReservationPdf> reservationPdfs = new ArrayList<>();
 
 
-    // 예약 취소
-    public void cancel() {
-        // 남은 날짜
-        int diffDays = daysUntilStart();
-        status.validateCancelable(diffDays); // 취소 가능한 상태인지 검증
-        this.status = ReservationStatus.cancelled; // 취소 가능하면 바꿈
-    }
 
 
 
@@ -129,32 +122,80 @@ public class Reservation {
         }
     }
 
-    // 시작일보다 종료일이 빨라야 함
-    public void validateDate(LocalDateTime start, LocalDateTime end) {
+    // 예약 생성 + 수정 시 공통 규칙
+    // 시작일 - 종료일
+    public static void validateDate(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
             throw new IllegalStateException("시작일은 종료일보다 늦을 수 없습니다.");
         }
     }
 
-    // 수정
-    public void changePeriod(LocalDateTime  start, LocalDateTime  end) {
+    // 수정 - 날짜
+    public void changePeriod(LocalDateTime start, LocalDateTime  end) {
+        validateDate(start, end); // 시작일 > 종료일 규칙
         this.startDate = start;
         this.endDate = end;
     }
 
+    // 수정 - 인원수
     public void changePeopleCount(int count) {
         this.peopleCount = count;
     }
 
+    // 룸 변경
     public void changeRoom(Room room) {
         this.room = room;
         this.stay = room.getPlace(); // stay 자동 동기화
     }
 
+    // 프로그램 총 가격
     public void recalculateTotalPrice() {
         this.totalPrice = (long) this.program.getProgramPrice() * this.peopleCount;
     }
 
+
+    // ================================ 예약 CRUD ========================= //
+
+    // 예약 취소
+    public void cancel() {
+        // 남은 날짜
+        int diffDays = daysUntilStart();
+        status.validateCancelable(diffDays); // 취소 가능한 상태인지 검증
+        this.status = ReservationStatus.cancelled; // 취소 가능하면 바꿈
+    }
+
+    // ***** 예약 생성 *****
+    public static Reservation create(
+            User user,
+            Program program,
+            Room room,
+            Place office,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            int peopleCount,
+            String reservationNo
+    ) {
+        validateDate(startDate, endDate);
+
+        Reservation r = new Reservation();
+        r.user = user;
+        r.program = program;
+        r.room = room;
+        r.stay = room.getPlace();
+        r.office = office;
+        r.startDate = startDate;
+        r.endDate = endDate;
+        r.peopleCount = peopleCount;
+        r.reservationNo = reservationNo;
+        r.status = ReservationStatus.waiting_payment;
+
+        // 해당 예약 가격 계산
+        r.recalculateTotalPrice();
+
+        return r;
+    }
+    
+    // 예약 수정
 
 
 }
