@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 import com.together.workeezy.program.program.domain.model.entity.Place;
 
@@ -97,7 +98,7 @@ public class ReservationService {
         Reservation saved = reservationRepository.save(reservation);
 
         // 예약 저장 후 임시저장 삭제
-        if (dto.getDraftKey() !=null && !dto.getDraftKey().isBlank()){
+        if (dto.getDraftKey() != null && !dto.getDraftKey().isBlank()) {
             draftRedisService.deleteDraft(dto.getDraftKey());
         }
         return saved;
@@ -131,20 +132,28 @@ public class ReservationService {
             stayName = placeRepository.findById(p.getStayId())
                     .map(Place::getName)
                     .orElse(null);
-        }*/ 
-        
-        // 숙소명
-        String stayName = r.getStay().getName();
+        }*/
+
+        // 숙소명 (null-safe)
+        String stayName = (r.getStay() != null)
+                ? r.getStay().getName()
+                : null;
 
         // 오피스명(선택)
         String officeName = (r.getOffice() != null)
                 ? r.getOffice().getName()
                 : null;
 
+        Long roomId = (r.getRoom() != null)
+                ? r.getRoom().getId()
+                : null;
+
+        String roomType = (r.getRoom() != null && r.getRoom().getRoomType() != null)
+                ? r.getRoom().getRoomType().name()
+                : null;
 
         return new ReservationResponseDto(
                 r.getId(),
-
                 r.getReservationNo(),
                 r.getStatus().name(),
                 r.getUser().getUserName(),
@@ -153,11 +162,11 @@ public class ReservationService {
                 r.getStartDate(),
                 r.getEndDate(),
                 (p != null ? p.getTitle() : null),
-                p != null ? p.getId() : null,
+                (p != null ? p.getId() : null),
                 stayName,
                 officeName,
-                r.getRoom().getId(),
-                (r.getRoom() != null && r.getRoom().getRoomType() != null) ? r.getRoom().getRoomType().name() : null,
+                roomId,
+                roomType,
                 r.getTotalPrice(),
                 r.getPeopleCount(),
                 r.getRejectReason()
@@ -190,7 +199,7 @@ public class ReservationService {
         return mapToResponseDto(reservation);
     }
 
-    
+
     // 예약 수정
     @Transactional
     public void updateMyReservation(Long id, ReservationUpdateDto dto, String email) {
@@ -220,7 +229,7 @@ public class ReservationService {
 
         Reservation reservation = getMyReservationOrThrow(id, email);
 
-        int diffDays =  reservation.daysUntilStart();
+        int diffDays = reservation.daysUntilStart();
 
         if (!reservation.getStatus().canDirectCancel(diffDays)) {
             throw new IllegalStateException("이 상태에서는 취소 불가");
@@ -252,13 +261,13 @@ public class ReservationService {
     }
 
     // 룸 검증
-    private Room getValidRoom(Long roomId, Program program){
+    private Room getValidRoom(Long roomId, Program program) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(()-> new IllegalArgumentException("룸 없음"));
+                .orElseThrow(() -> new IllegalArgumentException("룸 없음"));
 
         Place stay = room.getPlace();
 
-        if (stay.getPlaceType() != PlaceType.stay){
+        if (stay.getPlaceType() != PlaceType.stay) {
             throw new IllegalStateException("숙소 타입이 아닙니다.");
         }
         if (!stay.getProgram().getId().equals(program.getId())) {
@@ -287,9 +296,6 @@ public class ReservationService {
 
         return office;
     }*/
-
-
-
 
 
 }
