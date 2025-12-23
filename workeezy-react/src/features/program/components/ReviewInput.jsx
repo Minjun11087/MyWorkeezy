@@ -1,4 +1,4 @@
-import "./ReviewInput.css";;
+import "./ReviewInput.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import publicApi from "../../../api/publicApi.js";
