@@ -47,32 +47,40 @@ public class SecurityConfig {
                 // 경로별 권한 설정
                 .authorizeHttpRequests(auth -> auth
 
-                        // Auth 공개 API
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/refresh").permitAll()
-                        .requestMatchers("/api/auth/logout").authenticated()
+                        // CORS Preflight 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 비밀번호 재확인, 마이페이지용 보호
+                        // health / actuator (로컬 확인용)
+                        .requestMatchers("/health", "/health/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+
+
+                        // Auth
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()
                         .requestMatchers("/api/auth/check-password").authenticated()
+
+                        // User
                         .requestMatchers("/api/user/**").authenticated()
 
-                        // 공개 데이터 API
-                        .requestMatchers("/api/programs/cards").permitAll()
+                        // Programs / Reviews (공개 범위)
                         .requestMatchers("/api/programs/**").permitAll()
-                        .requestMatchers("/api/search").authenticated()
-                        .requestMatchers("/api/search/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews", "/api/reviews/**").permitAll()
-                        .requestMatchers("/api/recommendations/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()
 
+                        // Search / Recommend
+                        .requestMatchers("/api/search/**").authenticated()
+                        .requestMatchers("/api/recommendations/**").permitAll()
+
+                        // Reservations / Payments
                         .requestMatchers("/api/reservations/draft/**").authenticated()
                         .requestMatchers("/api/reservations/me").authenticated()
                         .requestMatchers("/api/reservations/**").authenticated()
-                        
-//                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/api/payments/**").authenticated()
 
-                        // CORS Preflight 허용
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // error
+                        .requestMatchers("/error").permitAll()
 
                         .anyRequest().authenticated()
                 )
@@ -88,21 +96,30 @@ public class SecurityConfig {
     // CORS React 허용
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:5173");
-        config.addAllowedOrigin("http://localhost:5174");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://localhost:4173");
-        config.addAllowedOrigin("https://workeezy.cloud");
-        config.addAllowedOrigin("https://www.workeezy.cloud");
-        config.addAllowedOrigin("https://api.workeezy.cloud");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.setAllowCredentials(true); // refreshToken 쿠키 허용
+
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:3000",
+                "http://localhost:4173",
+                "https://www.workeezy.cloud",
+                "https://workeezy.cloud",
+                "https://workeezy-react.vercel.app"
+        ));
+
+
+        config.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        ));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
         config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 
