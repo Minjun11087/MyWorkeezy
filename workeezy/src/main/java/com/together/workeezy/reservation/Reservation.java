@@ -23,7 +23,8 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "tb_reservation")
-@Getter @Setter
+@Getter
+@Setter
 public class Reservation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -130,8 +131,9 @@ public class Reservation {
         }
     }
 
-    // 수정 - 날짜
+    // 수정 - 날짜 (상태검증, 날짜 검증까지)
     public void changePeriod(LocalDateTime start, LocalDateTime  end) {
+        validateUpdatable(); // 수정 가능한 상태인지
         validateDate(start, end); // 시작일 > 종료일 규칙
         this.startDate = start;
         this.endDate = end;
@@ -139,11 +141,13 @@ public class Reservation {
 
     // 수정 - 인원수
     public void changePeopleCount(int count) {
+        validateUpdatable();
         this.peopleCount = count;
     }
 
     // 룸 변경
     public void changeRoom(Room room) {
+        validateUpdatable();
         this.room = room;
         this.stay = room.getPlace(); // stay 자동 동기화
     }
@@ -156,13 +160,7 @@ public class Reservation {
 
     // ================================ 예약 CRUD ========================= //
 
-    // 예약 취소
-    public void cancel() {
-        // 남은 날짜
-        int diffDays = daysUntilStart();
-        status.validateCancelable(diffDays); // 취소 가능한 상태인지 검증
-        this.status = ReservationStatus.cancelled; // 취소 가능하면 바꿈
-    }
+
 
     // ***** 예약 생성 *****
     public static Reservation create(
@@ -194,8 +192,36 @@ public class Reservation {
 
         return r;
     }
-    
-    // 예약 수정
+
+    // ***** 예약 수정 *****
+    public void update(
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            int peopleCount,
+            Room room
+    ){
+        validateUpdatable(); // 수정 가능한지
+        validateDate(startDate, endDate); // 날짜 규칙
+
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.peopleCount = peopleCount;
+        this.room = room;
+        this.stay = room.getPlace();
+
+        recalculateTotalPrice(); // 파생 값 계산
+    }
+
+    // ***** 예약 취소 *****
+    public void cancel() {
+        // 남은 날짜
+        int diffDays = daysUntilStart();
+        status.validateCancelable(diffDays); // 취소 가능한 상태인지 검증
+        this.status = ReservationStatus.cancelled; // 취소 가능하면 바꿈
+    }
+
+
+
 
 
 }

@@ -78,7 +78,7 @@ public class ReservationController {
         return ResponseEntity.ok(dto);
     }
         
-    // 예약 수정
+    // * 예약 수정 *
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMyReservation(
             @PathVariable Long id,
@@ -91,7 +91,7 @@ public class ReservationController {
         return ResponseEntity.ok("예약 수정 성공");
     }
 
-    // 예약 취소
+    // * 예약 취소 *
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<?> cancelMyReservation(@PathVariable Long id,
                                                Authentication authentication
