@@ -2,7 +2,7 @@ package com.together.workeezy.reservation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.together.workeezy.reservation.ReservationStatus;
-import com.together.workeezy.program.entity.RoomType;
+import com.together.workeezy.program.program.domain.model.entity.RoomType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
