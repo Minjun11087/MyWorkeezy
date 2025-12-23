@@ -1,84 +1,80 @@
 import axios from "axios";
 
+/**
+ * 기본 API axios
+ * - accessToken은 Authorization 헤더로만 전송
+ * - refreshToken은 HttpOnly 쿠키로 자동 전송
+ */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true, // refreshToken 쿠키 전송용
 });
 
-// 요청마다 accessToken 자동 포함
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  console.log("헤더 보내기:", config.headers.Authorization);
-  console.log("🔐 Authorization 보내는 값:", config.headers.Authorization);
-  return config;
-});
-
-// refresh 요청 전용 axios
-// Authorization 헤더 자동 포함 방지
+/**
+ * refresh 전용 axios
+ * - Authorization 헤더 절대 붙이지 않음
+ */
 const refreshAxios = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
 });
 
-refreshAxios.defaults.withCredentials = true;
+/**
+ * 요청 인터셉터
+ * - 모든 요청에 accessToken을 Authorization 헤더로 첨부
+ */
+api.interceptors.request.use((config) => {
+    const accessToken = localStorage.getItem("accessToken");
 
-// 응답 인터셉터 → AccessToken 만료 시 자동 재발급 처리
+    if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+});
+
+/**
+ * 응답 인터셉터
+ * - 401 → refresh 시도
+ * - refresh 성공 시 기존 요청 재시도
+ */
 api.interceptors.response.use(
-  (res) => res,
+    (response) => response,
 
-  async (err) => {
-    const originalRequest = err.config;
-    const status = err.response?.status;
+    async (error) => {
+        const originalRequest = error.config;
+        const status = error.response?.status;
 
-    // accessToken 만료(401) → refresh 시도
-    if ((status === 401 || status === 403) && !originalRequest._retry) {
-      originalRequest._retry = true;
+        // accessToken 만료 → refresh 시도
+        if (status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
 
-      try {
-        const refreshRes = await refreshAxios.post("/api/auth/refresh");
-        const newAccessToken = refreshRes.data.token;
+            try {
+                // refreshToken은 쿠키로 자동 전송됨
+                const refreshRes = await refreshAxios.post("/api/auth/refresh");
 
-        localStorage.setItem("accessToken", newAccessToken);
+                // 서버가 내려준 새 accessToken
+                const newAccessToken = refreshRes.data.token;
 
-        // axios 기본 헤더 갱신
-        api.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
+                // accessToken 갱신
+                localStorage.setItem("accessToken", newAccessToken);
 
-        // originalRequest 헤더 보정
-        if (!originalRequest.headers) {
-          originalRequest.headers = {};
+                // 재요청 헤더 갱신
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+                return api(originalRequest);
+            } catch (refreshError) {
+                console.error("🔥 refresh 실패 → 로그아웃 처리");
+
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("profileVerified");
+
+                return Promise.reject(refreshError);
+            }
         }
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-        return api(originalRequest); // 실패한 요청 재시도
-      } catch (e) {
-        console.error("🔥 refresh 실패 → 자동 로그아웃");
-
-        localStorage.removeItem("accessToken");
-        window.location.href = "/login";
-
-        return Promise.reject(e);
-      }
+        return Promise.reject(error);
     }
-
-    // refresh 실패가 아닌 401 → 로그인 이동
-    if (status === 401) {
-      window.location.href = "/login";
-    }
-
-    // 접근 권한 없음(403) → 에러 페이지 이동
-    // if (status === 403) {
-    //     window.location.href = "/403";
-    // }
-
-    // 서버 문제(500) → 에러 페이지 이동
-    if (status === 500) {
-      window.location.href = "/500";
-    }
-
-    return Promise.reject(err);
-  }
 );
+
 export default api;
