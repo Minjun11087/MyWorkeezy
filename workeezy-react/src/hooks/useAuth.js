@@ -14,15 +14,20 @@ export default function useAuth() {
     useEffect(() => {
         async function checkAuth() {
             try {
-                const {data} = await getMyInfoApi(); // 쿠키 기반
+                const {data} = await getMyInfoApi();
                 setUser({
                     name: data.username,
                     role: data.role,
                 });
                 setIsAuthenticated(true);
             } catch (e) {
-                setUser(null);
-                setIsAuthenticated(false);
+                if (e.response?.status === 401 || e.response?.status === 403) {
+                    // "아직 확인 불가" 상태로만 둔다
+                    setUser(null);
+                    setIsAuthenticated(false);
+                } else {
+                    console.error("checkAuth error", e);
+                }
             } finally {
                 setLoading(false);
             }

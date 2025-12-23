@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const publicApi = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: "",
     withCredentials: true, // refreshToken 쿠키 때문에 필요할 수 있음
 });
 

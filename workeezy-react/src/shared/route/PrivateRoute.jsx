@@ -1,6 +1,14 @@
-import useAuthGuard from "../../hooks/useAuthGuard.js";
+import {Navigate} from "react-router-dom";
+import {useAuthContext} from "../../auth/AuthContext";
 
 export default function PrivateRoute({children}) {
-    useAuthGuard({requireLogin: true});
+    const {isAuthenticated, loading} = useAuthContext();
+
+    if (loading) return null;
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" replace/>;
+    }
+
     return children;
 }
