@@ -3,32 +3,19 @@ import axios from "../../../../api/axios.js";
 import ReservationListView from "./ReservationListView.jsx";
 
 export default function ReservationListContainer({
-  selectedId, // 선택된 예약카드 id
-  setSelectedId, // 클릭시 선택된 예약을 바꾸는 함수
+  selectedId,
+  setSelectedId,
 }) {
-  const [reservations, setReservations] = useState([]); // 서버에서 불러온 예약 목록 저장
-  const [loading, setLoading] = useState(true); // 데이터 로딩 표시
-  const [error, setError] = useState(null); // 에러 메시지 저장
+  const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 해당 사용자의 예약 불러오기
   useEffect(() => {
     const fetchMyReservations = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        setError("로그인이 필요합니다.");
-        setLoading(false);
-        return;
-      }
-
       try {
-        const res = await axios.get(
-          "http://localhost:8080/api/reservations/me",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.get("/api/reservations/me");
+
         setReservations(res.data);
-        // console.log("서버 응답 데이터:", res.data);
         console.log("서버 응답:", res.data);
       } catch (err) {
         setError("예약 목록 불러오기 실패");

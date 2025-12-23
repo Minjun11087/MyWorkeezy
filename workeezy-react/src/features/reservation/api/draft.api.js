@@ -1,21 +1,16 @@
 import axios from "../../../api/axios";
 
-export const fetchDraftList = (token) =>
-  axios.get("/api/reservations/draft/me", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// 목록
+export const fetchDraftList = () => axios.get("/api/reservations/draft/me");
 
-export const fetchDraft = (draftKey, token) =>
-  axios.get(`/api/reservations/draft/${draftKey}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// 단건
+export const fetchDraft = (draftKey) =>
+  axios.get(`/api/reservations/draft/${draftKey}`);
 
-export const saveDraft = (draftData, token) =>
-  axios.post("/api/reservations/draft/me", draftData, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// 저장
+export const saveDraft = (draftData) =>
+  axios.post("/api/reservations/draft/me", draftData);
 
-export const deleteDraft = (draftKey, token) =>
-  axios.delete(`/api/reservations/draft/${encodeURIComponent(draftKey)}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// 삭제
+export const deleteDraft = (draftKey) =>
+  axios.delete(`/api/reservations/draft/${encodeURIComponent(draftKey)}`);

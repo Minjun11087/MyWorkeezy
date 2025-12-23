@@ -133,23 +133,22 @@ export default function ReservationForm({
   ========================= */
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
+      try {
+        const res = await axios.get("/api/user/me");
 
-      const res = await axios.get("http://localhost:8080/api/user/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        const userData = res.data;
+        localStorage.setItem("user", JSON.stringify(userData));
 
-      const userData = res.data;
-      localStorage.setItem("user", JSON.stringify(userData));
-
-      setForm((prev) => ({
-        ...prev,
-        userName: userData.name || prev.userName,
-        company: userData.company || prev.company,
-        email: userData.email || prev.email,
-        phone: userData.phone || prev.phone,
-      }));
+        setForm((prev) => ({
+          ...prev,
+          userName: userData.name || prev.userName,
+          company: userData.company || prev.company,
+          email: userData.email || prev.email,
+          phone: userData.phone || prev.phone,
+        }));
+      } catch (e) {
+        console.error("유저 정보 조회 실패", e);
+      }
     };
 
     fetchUser();
@@ -168,33 +167,25 @@ export default function ReservationForm({
   ========================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("accessToken");
+    // const token = localStorage.getItem("accessToken");
 
     try {
       if (initialData?.id) {
-        await axios.put(
-          `http://localhost:8080/api/reservations/${initialData.id}`,
-          {
-            startDate: toLocalDateTimeString(form.startDate),
-            endDate: toLocalDateTimeString(form.endDate),
-            roomId: Number(form.roomId),
-            peopleCount: form.peopleCount,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await axios.put(`/api/reservations/${initialData.id}`, {
+          startDate: toLocalDateTimeString(form.startDate),
+          endDate: toLocalDateTimeString(form.endDate),
+          roomId: Number(form.roomId),
+          peopleCount: form.peopleCount,
+        });
       } else {
-        await axios.post(
-          "http://localhost:8080/api/reservations",
-          {
-            ...form,
-            startDate: toLocalDateTimeString(form.startDate),
-            endDate: toLocalDateTimeString(form.endDate),
-            programId: Number(form.programId),
-            roomId: Number(form.roomId),
-            draftKey,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await axios.post("/api/reservations", {
+          ...form,
+          startDate: toLocalDateTimeString(form.startDate),
+          endDate: toLocalDateTimeString(form.endDate),
+          programId: Number(form.programId),
+          roomId: Number(form.roomId),
+          draftKey,
+        });
       }
       const isEdit = Boolean(initialData?.id);
 
