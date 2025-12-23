@@ -7,8 +7,6 @@ import com.together.workeezy.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,10 +22,10 @@ public class ReservationController {
             @RequestBody ReservationCreateDto dto,
             Authentication authentication) {
 
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("🔥 현재 인증 정보: " + auth);
-//        System.out.println("🔥 권한 목록: " + auth.getAuthorities());
-
+        /*
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("🔥 현재 인증 정보: " + auth);
+        System.out.println("🔥 권한 목록: " + auth.getAuthorities());
         System.out.println("🚀 예약 요청 도착");
         System.out.println("👤 사용자: " + authentication.getName());
         System.out.println("📦 DTO: " + dto);
@@ -43,7 +41,7 @@ public class ReservationController {
         System.out.println("🏡 roomType = " + dto.getRoomType());
         System.out.println("🎯 programId = " + dto.getProgramId());
         System.out.println("🎯 programTitle = " + dto.getProgramTitle());
-
+         */
 
         try {
             reservationService.createNewReservation(dto, authentication.getName());
@@ -71,7 +69,6 @@ public class ReservationController {
         String email = authentication.getName();
 
         try {
-            System.out.println("📥 예약 목록 조회 요청 by " + email);
             return ResponseEntity.ok(reservationService.getMyReservations(email));
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +91,7 @@ public class ReservationController {
         return ResponseEntity.ok(dto);
     }
         
-    // 예약 수정
+    // * 예약 수정 *
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMyReservation(
             @PathVariable Long id,
@@ -107,7 +104,7 @@ public class ReservationController {
         return ResponseEntity.ok("예약 수정 성공");
     }
 
-    // 예약 취소
+    // * 예약 취소 *
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<?> cancelMyReservation(@PathVariable Long id,
                                                Authentication authentication

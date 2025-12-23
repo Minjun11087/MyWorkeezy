@@ -48,10 +48,12 @@ public class Reservation {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "stay_id")
     private Place stay;
 
+    @NotNull
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "office_id")
     private Place office;
@@ -91,8 +93,8 @@ public class Reservation {
     @NotNull
     @Column(name = "people_count", nullable = false)
     private int peopleCount;
-    
-    @OneToOne(mappedBy = "reservation")
+
+    @OneToOne(mappedBy = "reservation",  fetch = LAZY)
     private Payment payment;
 
     @OneToMany(mappedBy = "reservation")
@@ -101,9 +103,6 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation")
     private List<ReservationPdf> reservationPdfs = new ArrayList<>();
 
-//    protected Reservation() {}
-
-    // 상태판단 메소드
     // 사용자 예약이 맞는지
     public boolean isOwnedBy(User user) {
         return this.user.getId().equals(user.getId());
@@ -123,31 +122,103 @@ public class Reservation {
         }
     }
 
-    // 시작일보다 종료일이 빨라야 함
-    public void validateDate(LocalDateTime start, LocalDateTime end) {
+    // 예약 생성 + 수정 시 공통 규칙
+    // 시작일 - 종료일
+    public static void validateDate(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
             throw new IllegalStateException("시작일은 종료일보다 늦을 수 없습니다.");
         }
     }
 
-    // 수정
-    public void changePeriod(LocalDateTime start, LocalDateTime end) {
+    // 수정 - 날짜 (상태검증, 날짜 검증까지)
+    public void changePeriod(LocalDateTime start, LocalDateTime  end) {
+        validateUpdatable(); // 수정 가능한 상태인지
+        validateDate(start, end); // 시작일 > 종료일 규칙
         this.startDate = start;
         this.endDate = end;
     }
 
+    // 수정 - 인원수
     public void changePeopleCount(int count) {
+        validateUpdatable();
         this.peopleCount = count;
     }
 
+    // 룸 변경
     public void changeRoom(Room room) {
+        validateUpdatable();
         this.room = room;
         this.stay = room.getPlace(); // stay 자동 동기화
     }
 
+    // 프로그램 총 가격
     public void recalculateTotalPrice() {
         this.totalPrice = (long) this.program.getProgramPrice() * this.peopleCount;
     }
+
+    // ================================ 예약 CRUD ========================= //
+
+
+
+    // ***** 예약 생성 *****
+    public static Reservation create(
+            User user,
+            Program program,
+            Room room,
+            Place office,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            int peopleCount,
+            String reservationNo
+    ) {
+        validateDate(startDate, endDate);
+
+        Reservation r = new Reservation();
+        r.user = user;
+        r.program = program;
+        r.room = room;
+        r.stay = room.getPlace();
+        r.office = office;
+        r.startDate = startDate;
+        r.endDate = endDate;
+        r.peopleCount = peopleCount;
+        r.reservationNo = reservationNo;
+        r.status = ReservationStatus.waiting_payment;
+
+        // 해당 예약 가격 계산
+        r.recalculateTotalPrice();
+
+        return r;
+    }
+
+    // ***** 예약 수정 *****
+    public void update(
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            int peopleCount,
+            Room room
+    ){
+        validateUpdatable(); // 수정 가능한지
+        validateDate(startDate, endDate); // 날짜 규칙
+
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.peopleCount = peopleCount;
+        this.room = room;
+        this.stay = room.getPlace();
+
+        recalculateTotalPrice(); // 파생 값 계산
+    }
+
+    // ***** 예약 취소 *****
+    public void cancel() {
+        // 남은 날짜
+        int diffDays = daysUntilStart();
+        status.validateCancelable(diffDays); // 취소 가능한 상태인지 검증
+        this.status = ReservationStatus.cancelled; // 취소 가능하면 바꿈
+    }
+
+
 
     // 결제 상태 변경
     public void markConfirmed() {
@@ -163,4 +234,42 @@ public class Reservation {
             this.payment = payment;
         }
     }
+
+    // ==================================== 관리자 행위 =================================
+
+
+    // 예약 승인 (waiting_payment → approved)
+    public void approve() {
+        if (this.status != ReservationStatus.waiting_payment) {
+            throw new IllegalStateException("결제 대기 상태에서만 승인할 수 있습니다.");
+        }
+        this.status = ReservationStatus.approved;
+    }
+
+    // 예약 반려 (waiting_payment → rejected)
+    public void reject(String reason) {
+        if (this.status != ReservationStatus.waiting_payment) {
+            throw new IllegalStateException("결제 대기 상태에서만 반려할 수 있습니다.");
+        }
+        this.status = ReservationStatus.rejected;
+        this.rejectReason = reason;
+    }
+
+    // 취소 승인 (cancel_requested → cancelled)
+    public void approveCancel() {
+        if (this.status != ReservationStatus.cancel_requested) {
+            throw new IllegalStateException("취소 요청 상태에서만 취소 승인할 수 있습니다.");
+        }
+        this.status = ReservationStatus.cancelled;
+    }
+
+    // 취소 반려 (cancel_requested → confirmed)
+    public void rejectCancel(String reason) {
+        if (this.status != ReservationStatus.cancel_requested) {
+            throw new IllegalStateException("취소 요청 상태에서만 취소 반려할 수 있습니다.");
+        }
+        this.status = ReservationStatus.confirmed;
+        this.rejectReason = reason;
+    }
+
 }
