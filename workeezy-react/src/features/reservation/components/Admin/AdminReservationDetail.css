@@ -99,3 +99,19 @@
   opacity: 0.6;
   border: none;
 }
+
+.reservation-detail {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px 24px;
+}
+
+.reservation-detail dt {
+  font-weight: 600;
+  color: #666;
+}
+
+.reservation-detail dd {
+  margin: 0;
+  color: #222;
+}

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function AdminReservationList() {
   const [reservations, setReservations] = useState([]); // 예약 목록
-  const [page, setPage] = useState(0); // 현재 페이지 번호
+  const [page, setPage] = useState(1); // 현재 페이지 번호
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
   const [filters, setFilters] = useState({
     status: "",
@@ -31,7 +31,7 @@ export default function AdminReservationList() {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          page,
+          page: page - 1,
           status: filters.status || null,
           keyword: filters.keyword || null,
         },
