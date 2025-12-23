@@ -13,7 +13,7 @@ export default function ModifyReservationPage() {
     // 비동기 함수 async를 쓰면, 그 안에서 await 키워드로 다음 구문을 기다려달라는 오류
     const fetchReservation = async () => {
       const response = await axios.get(
-        `http://localhost:8080/api/reservations/${id}`
+        `/api/reservations/${id}`
       );
       setReservation(response.data);
     };

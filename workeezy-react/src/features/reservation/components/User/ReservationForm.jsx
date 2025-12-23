@@ -136,7 +136,7 @@ export default function ReservationForm({
       const token = localStorage.getItem("accessToken");
       if (!token) return;
 
-      const res = await axios.get("http://localhost:8080/api/user/me", {
+      const res = await axios.get("/api/user/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -173,7 +173,7 @@ export default function ReservationForm({
     try {
       if (initialData?.id) {
         await axios.put(
-          `http://localhost:8080/api/reservations/${initialData.id}`,
+          `/api/reservations/${initialData.id}`,
           {
             startDate: toLocalDateTimeString(form.startDate),
             endDate: toLocalDateTimeString(form.endDate),
@@ -184,7 +184,7 @@ export default function ReservationForm({
         );
       } else {
         await axios.post(
-          "http://localhost:8080/api/reservations",
+          "/api/reservations",
           {
             ...form,
             startDate: toLocalDateTimeString(form.startDate),

@@ -1,27 +1,34 @@
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import {useAuthContext} from "../../auth/AuthContext";
 
 export default function ProfileGuard({children}) {
     const navigate = useNavigate();
-    const {user, isAuthenticated, loading} = useAuth();
+    const {user, isAuthenticated, loading} = useAuthContext();
 
     useEffect(() => {
         if (loading) return;
 
-        // 미로그인 상태면 로그인 페이지
+        // user 로딩 전에는 아무 것도 하지 말 것
+        if (isAuthenticated && user == null) {
+            return;
+        }
+
+        // 미로그인
         if (!isAuthenticated) {
             navigate("/login", {replace: true});
             return;
         }
 
-        // 프로필 미검증이면 프로필 확인 페이지
-        if (!user?.profileVerified) {
+        // 로그인은 했지만 프로필 미검증
+        if (user.profileVerified === false) {
             navigate("/profile-check", {replace: true});
         }
     }, [loading, isAuthenticated, user, navigate]);
 
-    if (loading) return null;
+    if (loading || (isAuthenticated && user == null)) {
+        return null;
+    }
 
     return children;
 }
