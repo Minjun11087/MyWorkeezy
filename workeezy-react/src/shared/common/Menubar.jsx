@@ -9,7 +9,10 @@ export default function MenuBar({onClose}) {
     const location = useLocation();
     const navigate = useNavigate();
     const currentPath = location.pathname;
+
     const {user, isAuthenticated, loading, logout} = useAuthContext();
+
+    console.log("🧠 MenuBar render", {user, loading, isAuthenticated});
 
     // 메뉴 데이터
     const userMenu = [
@@ -44,6 +47,7 @@ export default function MenuBar({onClose}) {
         {title: "Admin", isFooter: true, path: "/admin"},
     ];
 
+    // 권한/메뉴
     const role = normalizeRole(user?.role);
     const isAdminUser = role === "ADMIN";
 
@@ -51,7 +55,7 @@ export default function MenuBar({onClose}) {
         return isAdminUser ? adminMenu : userMenu;
     }, [isAdminUser]);
 
-    //  현재 페이지 기준 대메뉴만 열기
+    // 열린 메뉴
     const [openItems, setOpenItems] = useState([]);
 
     useEffect(() => {
@@ -60,9 +64,7 @@ export default function MenuBar({onClose}) {
             .map((m) => m.title);
 
         setOpenItems(activeParents);
-    }, [currentPath, menu]);
-
-    if (loading || !user) return null;
+    }, [menu, currentPath]);
 
     const toggleItem = (title) => {
         setOpenItems((prev) =>
@@ -72,7 +74,7 @@ export default function MenuBar({onClose}) {
         );
     };
 
-    // 보호된 메뉴 클릭 처리
+    // 보호된 메뉴 이동
     const handleProtectedClick = async (path) => {
         if (!isAuthenticated) {
             await toast.fire({
@@ -108,10 +110,10 @@ export default function MenuBar({onClose}) {
             icon: "success",
             title: "로그아웃 완료! 다시 만나요. 😥",
         });
+
         navigate("/");
         onClose?.();
     };
-    console.log("📌 MenuBar", { user, loading });
 
     return (
         <div className="menu-bar">
