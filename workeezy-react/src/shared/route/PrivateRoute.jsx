@@ -6,7 +6,7 @@ export default function PrivateRoute({children}) {
 
     // 인증 확인 중
     if (loading) {
-        return null; // 또는 <LoadingSpinner />
+        return null;
     }
 
     // 미인증
