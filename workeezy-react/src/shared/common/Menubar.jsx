@@ -62,7 +62,7 @@ export default function MenuBar({onClose}) {
         setOpenItems(activeParents);
     }, [currentPath, menu]);
 
-    if (loading ) return null;
+    if (loading || !user) return null;
 
     const toggleItem = (title) => {
         setOpenItems((prev) =>
