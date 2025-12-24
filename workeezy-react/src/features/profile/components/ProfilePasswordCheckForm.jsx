@@ -1,7 +1,7 @@
 import "./ProfilePasswordCheckForm.css";
 import {useNavigate} from "react-router-dom";
 import {toast} from "../../../shared/alert/workeezyAlert.js";
-import {checkPasswordApi} from "../../api/authApi.js";
+import {checkPasswordApi} from "../../auth/api/authApi.js";
 import {useState} from "react";
 
 export default function ProfilePasswordCheckForm() {

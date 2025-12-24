@@ -1,4 +1,4 @@
-import api from "../../api/axios.js";
+import api from "../../../api/axios.js";
 
 // 내 정보 조회
 export const getMyInfoApi = () => {
@@ -17,4 +17,7 @@ export const updatePasswordApi = (currentPassword, newPassword, newPasswordCheck
         newPassword,
         newPasswordCheck
     });
+}
+export const refreshApi = async () => {
+    return api.post("/api/auth/refresh");
 }

@@ -1,4 +1,4 @@
-import api from "../../api/axios.js";
+import api from "../../../api/axios.js";
 
 // 로그인 API
 export const loginApi = async (email, password, autoLogin) => {
