@@ -18,6 +18,3 @@ export const updatePasswordApi = (currentPassword, newPassword, newPasswordCheck
         newPasswordCheck
     });
 }
-export const refreshApi = async () => {
-    return api.post("/api/auth/refresh");
-}

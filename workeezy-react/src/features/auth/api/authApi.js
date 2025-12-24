@@ -10,10 +10,8 @@ export const loginApi = async (email, password, autoLogin) => {
             headers: {
                 "Cache-Control": "no-cache",
                 Pragma: "no-cache",
-                "Content-Type": "application/json",
             },
-        }
-    );
+        });
 };
 
 // 로그아웃 API1
