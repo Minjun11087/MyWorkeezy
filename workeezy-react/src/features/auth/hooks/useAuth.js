@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {loginApi, logoutApi, refreshApi} from "../api/authApi";
-import {getMyInfoApi} from "../api/userApi";
+import {loginApi, logoutApi, refreshApi} from "../../api/authApi.js";
+import {getMyInfoApi} from "../../api/userApi.js";
 
 export default function useAuth() {
     const [user, setUser] = useState(null);

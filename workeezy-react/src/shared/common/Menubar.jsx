@@ -2,7 +2,7 @@ import "./Menubar.css";
 import React, {useEffect, useMemo, useState} from "react";
 import {alert, toast} from "../alert/workeezyAlert.js";
 import {useLocation, useNavigate} from "react-router-dom";
-import {useAuthContext} from "../../auth/AuthContext";
+import {useAuthContext} from "../../features/auth/context/AuthContext.jsx";
 import {normalizeRole} from "../../utils/normalizeRole.js";
 
 export default function MenuBar({onClose}) {

@@ -1,5 +1,5 @@
 import {Navigate, Outlet} from "react-router-dom";
-import {useAuthContext} from "../../auth/AuthContext.jsx";
+import {useAuthContext} from "../../features/auth/context/AuthContext.jsx";
 
 export default function PrivateRoute({children}) {
     const {isAuthenticated, loading} = useAuthContext();

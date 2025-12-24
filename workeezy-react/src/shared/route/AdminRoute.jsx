@@ -1,4 +1,4 @@
-import {useAuthContext} from "../../auth/AuthContext.jsx";
+import {useAuthContext} from "../../features/auth/context/AuthContext.jsx";
 import {normalizeRole} from "../../utils/normalizeRole.js";
 
 export default function AdminRoute({children}) {

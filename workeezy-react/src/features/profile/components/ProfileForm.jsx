@@ -2,9 +2,9 @@ import "./ProfileForm.css";
 import {useEffect, useState} from "react";
 import SectionHeader from "../../../shared/common/SectionHeader.jsx";
 import {toast} from "../../../shared/alert/workeezyAlert.js";
-import useMyInfo from "../../../hooks/useMyInfo.js";
+import useMyInfo from "../hooks/useMyInfo.js";
 import {useNavigate} from "react-router-dom";
-import {useAuthContext} from "../../../auth/AuthContext.jsx";
+import {useAuthContext} from "../../auth/context/AuthContext.jsx";
 
 export default function ProfileForm() {
     const navigate = useNavigate();

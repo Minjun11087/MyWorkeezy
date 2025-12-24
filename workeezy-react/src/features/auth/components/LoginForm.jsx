@@ -6,7 +6,7 @@ import SocialLoginButtons from "./SocialLoginButtons.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {toast} from "../../../shared/alert/workeezyAlert.js";
-import {useAuthContext} from "../../../auth/AuthContext.jsx";
+import {useAuthContext} from "../context/AuthContext.jsx";
 
 export default function LoginForm() {
     const navigate = useNavigate();

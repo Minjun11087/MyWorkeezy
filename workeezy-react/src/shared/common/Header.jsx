@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import "./Header.css";
-import {useAuthContext} from "../../auth/AuthContext.jsx";
+import {useAuthContext} from "../../features/auth/context/AuthContext.jsx";
 
 export default function Header({onOpenMenu}) {
     const {user, isAuthenticated, loading} = useAuthContext();
