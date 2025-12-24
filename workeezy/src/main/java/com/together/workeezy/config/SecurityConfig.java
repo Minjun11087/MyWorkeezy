@@ -56,7 +56,7 @@ public class SecurityConfig {
                         // 서버 상태 확인
                         .requestMatchers("/health", "/health/**").permitAll()
 
-                        // Auth 공개 API
+                        // Auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/refresh").permitAll()
@@ -67,15 +67,10 @@ public class SecurityConfig {
                         // User
                         .requestMatchers("/api/user/**").authenticated()
 
-                        // 공개 데이터 API
                         // Programs / Reviews (공개 범위)
                         .requestMatchers("/api/programs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews", "/api/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/reviews/**").permitAll()
-                        .requestMatchers("/api/recommendations/**").permitAll()
 
                         // Search / Recommend
                         .requestMatchers("/api/search/**").authenticated()
@@ -85,8 +80,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/reservations/draft/**").authenticated()
                         .requestMatchers("/api/reservations/me").authenticated()
                         .requestMatchers("/api/reservations/**").authenticated()
-
-                        .requestMatchers(("/api/payments/**")).authenticated()
 
 //                        .requestMatchers("/api/**").authenticated()
                         .requestMatchers("/api/payments/**").authenticated()
