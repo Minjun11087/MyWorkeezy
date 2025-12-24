@@ -62,7 +62,7 @@ export default function MenuBar({onClose}) {
         setOpenItems(activeParents);
     }, [currentPath, menu]);
 
-    if (loading) return null;
+    if (loading ) return null;
 
     const toggleItem = (title) => {
         setOpenItems((prev) =>
@@ -111,6 +111,7 @@ export default function MenuBar({onClose}) {
         navigate("/");
         onClose?.();
     };
+    console.log("📌 MenuBar", { user, loading });
 
     return (
         <div className="menu-bar">

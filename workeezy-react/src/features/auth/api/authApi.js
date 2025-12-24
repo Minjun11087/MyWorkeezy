@@ -1,4 +1,4 @@
-import api from "../../api/axios.js";
+import api from "../../../api/axios.js";
 
 // 로그인 API
 export const loginApi = async (email, password, autoLogin) => {
@@ -20,8 +20,4 @@ export const logoutApi = async () => {
 // 비밀번호 확인 API
 export const checkPasswordApi = (password) => {
     return api.post("/api/auth/check-password", {password});
-}
-
-export const refreshApi = async () => {
-    return api.post("/api/auth/refresh");
 }

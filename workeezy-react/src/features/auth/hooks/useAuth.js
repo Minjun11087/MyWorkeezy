@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {loginApi, logoutApi, refreshApi} from "../../api/authApi.js";
-import {getMyInfoApi} from "../../api/userApi.js";
+import {loginApi, logoutApi} from "../api/authApi.js";
+import {getMyInfoApi} from "../api/userApi.js";
 
 export default function useAuth() {
     const [user, setUser] = useState(null);
@@ -11,22 +11,23 @@ export default function useAuth() {
     // 앱 시작 시 인증 초기화
     useEffect(() => {
         async function initAuth() {
-            const auto = localStorage.getItem("autoLogin");
+            console.log("🟢 initAuth start");
 
             try {
-                // autoLogin 여부와 무관하게 refresh 한 번 시도
-                await refreshApi();          // refreshToken → accessToken 재발급
-
-                const {data} = await getMyInfoApi(); // 내 정보 조회
+                // accessToken 재발급 후 me
+                const res = await getMyInfoApi({meta: {silentAuth: true}});
+                console.log("🟢 me success", res.data);
 
                 setUser({
-                    name: data.username,
-                    role: data.role,
+                    name: res.data.name,
+                    role: res.data.role,
                 });
             } catch (e) {
-                // refresh / me 실패 → 비로그인 처리
+                // me 실패 → 비로그인
+                console.log("🔴 me fail", e?.response?.status);
                 setUser(null);
             } finally {
+                console.log("🟡 initAuth end");
                 setLoading(false);
             }
         }
@@ -36,10 +37,11 @@ export default function useAuth() {
 
     // 로그인
     const login = async ({email, password, autoLogin}) => {
+
         const {data} = await loginApi(email, password, autoLogin);
 
         setUser({
-            name: data.username,
+            name: data.name,
             role: data.role,
         });
 

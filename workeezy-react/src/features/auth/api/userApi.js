@@ -1,9 +1,9 @@
-import api from "../../api/axios.js";
+import api from "../../../api/axios.js";
 
 // 내 정보 조회
-export const getMyInfoApi = () => {
-    return api.get("/api/user/me");
-}
+export const getMyInfoApi = (config = {}) =>
+    api.get("/api/user/me", config);
+
 
 // 연락처 수정
 export const updatePhoneApi = (phone) => {
