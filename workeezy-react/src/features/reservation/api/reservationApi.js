@@ -9,5 +9,5 @@ export async function cancelReservation(reservationId) {
 
 // 확정서 presigned url 요청
 export function fetchConfirmDocUrl(reservationId) {
-  return axios.get(`/api/reservations/${reservationId}/confirm-doc`);
+    return axios.get(`/api/reservations/${reservationId}/confirm-doc`);
 }

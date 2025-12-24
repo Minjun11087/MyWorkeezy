@@ -1,4 +1,4 @@
-import api from "./axios.js";
+import api from "../../api/axios.js";
 
 // 내 정보 조회
 export const getMyInfoApi = () => {

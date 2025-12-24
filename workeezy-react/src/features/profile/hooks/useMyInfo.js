@@ -3,7 +3,7 @@ import {
     getMyInfoApi,
     updatePasswordApi,
     updatePhoneApi,
-} from "../api/userApi.js";
+} from "../../api/userApi.js";
 
 export default function useMyInfo() {
     const [myInfo, setMyInfo] = useState(null);

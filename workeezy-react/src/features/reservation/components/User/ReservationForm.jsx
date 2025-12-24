@@ -133,17 +133,21 @@ export default function ReservationForm({
     ========================= */
     useEffect(() => {
         const fetchUser = async () => {
-            const res = await axios.get("/api/user/me");
+            try {
+                const res = await axios.get("/api/user/me");
 
-            const userData = res.data;
+                const userData = res.data;
 
-            setForm((prev) => ({
-                ...prev,
-                userName: userData.name || prev.userName,
-                company: userData.company || prev.company,
-                email: userData.email || prev.email,
-                phone: userData.phone || prev.phone,
-            }));
+                setForm((prev) => ({
+                    ...prev,
+                    userName: userData.name || prev.userName,
+                    company: userData.company || prev.company,
+                    email: userData.email || prev.email,
+                    phone: userData.phone || prev.phone,
+                }));
+            } catch (e) {
+                console.error("유저 정보 조회 실패", e);
+            }
         };
 
         fetchUser();
