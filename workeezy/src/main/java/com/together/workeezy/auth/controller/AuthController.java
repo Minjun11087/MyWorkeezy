@@ -71,6 +71,10 @@ public class AuthController {
 
         String refreshToken = cookieService.extractRefreshToken(request);
 
+        if (refreshToken == null) {
+            return ResponseEntity.status(401).build();
+        }
+
         LoginResponse loginResponse = authService.refresh(refreshToken);
 
         // 새 accessToken 쿠키 재발급
