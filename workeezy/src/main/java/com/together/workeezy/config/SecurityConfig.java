@@ -79,6 +79,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/reservations/**").authenticated()
                         .requestMatchers("/api/payments/**").authenticated()
 
+                        // 관리자 전용
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                         // error
                         .requestMatchers("/error").permitAll()
 

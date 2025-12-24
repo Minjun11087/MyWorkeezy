@@ -9,6 +9,7 @@ import com.together.workeezy.auth.service.CookieService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -69,6 +70,11 @@ public class AuthController {
             HttpServletResponse response) {
 
         String refreshToken = cookieService.extractRefreshToken(request);
+
+        // refreshToken 없으면 그냥 401
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         LoginResponse loginResponse = authService.refresh(refreshToken);
 
