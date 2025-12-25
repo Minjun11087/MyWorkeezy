@@ -6,14 +6,15 @@ import com.together.workeezy.auth.dto.response.LoginResponse;
 import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.auth.service.AuthService;
 import com.together.workeezy.auth.service.CookieService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -74,8 +75,14 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
+        Cookie[] cookies = request.getCookies();
+        System.out.println("🍪 Cookie header = " + request.getHeader("Cookie"));
+        System.out.println("🍪 cookies[] = " + Arrays.toString(request.getCookies()));
+
+
         // 요청에 포함된 refreshToken 쿠키 추출
         String refreshToken = cookieService.extractRefreshToken(request);
+        System.out.println("🍪 refreshToken = " + refreshToken);
 
         if (refreshToken == null) {
             return ResponseEntity.status(401).build();

@@ -57,9 +57,7 @@ public class CookieService {
                 .secure(isProd)
                 .sameSite(isProd ? "None" : "Lax")
                 .path("/")
-                .maxAge(autoLogin
-                        ? jwtTokenProvider.getRefreshExpiration() / 1000
-                        : -1)
+                .maxAge(jwtTokenProvider.getRefreshExpiration() / 1000)
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
@@ -79,17 +77,19 @@ public class CookieService {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
-    public String extractAccessToken(HttpServletRequest request) {
-
-        if (request.getCookies() == null) return null;
-
-        for (Cookie cookie : request.getCookies()) {
-            if ("accessToken".equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
+    // 현재 인증은 JwtAuthenticationFilter에서 처리함
+    // 컨트롤러/서비스 레벨에서는 accessToken을 직접 사용하지 않음
+//    public String extractAccessToken(HttpServletRequest request) {
+//
+//        if (request.getCookies() == null) return null;
+//
+//        for (Cookie cookie : request.getCookies()) {
+//            if ("accessToken".equals(cookie.getName())) {
+//                return cookie.getValue();
+//            }
+//        }
+//        return null;
+//    }
 
     // request -> refresh 쿠키 추출
     public String extractRefreshToken(HttpServletRequest request) {
