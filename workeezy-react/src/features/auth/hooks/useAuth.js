@@ -1,39 +1,47 @@
 import {useEffect, useState} from "react";
 import {loginApi, logoutApi} from "../api/authApi.js";
 import {getMyInfoApi} from "../api/userApi.js";
+import {refreshAxios} from "../../../api/axios.js";
 
 export default function useAuth() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [initialized, setInitialized] = useState(false);
 
     const isAuthenticated = user !== null;
 
     // 앱 시작 시 인증 초기화
     useEffect(() => {
         async function initAuth() {
-            console.log("🟢 initAuth start");
+            console.log("initAuth start");
+
+            // 로그인 상태면 skip
+            if (initialized) {
+                console.log("initAuth skip (initialized)");
+                setLoading(false);
+                return;
+            }
 
             try {
-                // accessToken 재발급 후 me
-                const res = await getMyInfoApi({meta: {silentAuth: true}});
-                console.log("🟢 me success", res.data);
+                await refreshAxios.post("/api/auth/refresh");
+                const res = await getMyInfoApi();
+                console.log("me success", res.data);
 
                 setUser({
                     name: res.data.name,
                     role: res.data.role,
                 });
             } catch (e) {
-                // me 실패 → 비로그인
-                console.log("🔴 me fail", e?.response?.status);
-                setUser(null);
+                console.log("me fail", e?.response?.status);
             } finally {
-                console.log("🟡 initAuth end");
+                setInitialized(true);
                 setLoading(false);
+                console.log("initAuth end");
             }
         }
 
         initAuth();
-    }, []);
+    }, [initialized]);
 
     // 로그인
     const login = async ({email, password, autoLogin}) => {
@@ -50,7 +58,7 @@ export default function useAuth() {
         } else {
             localStorage.removeItem("autoLogin");
         }
-
+        setInitialized(true);
         return data;
     };
 

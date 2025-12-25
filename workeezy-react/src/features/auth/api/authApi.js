@@ -2,9 +2,11 @@ import api from "../../../api/axios.js";
 
 // 로그인 API
 export const loginApi = async (email, password, autoLogin) => {
-    return api.post("/api/auth/login",
+    return api.post(
+        "/api/auth/login",
         {email, password, autoLogin},
         {
+            withCredentials: true,
             headers: {
                 "Cache-Control": "no-cache",
                 Pragma: "no-cache",
