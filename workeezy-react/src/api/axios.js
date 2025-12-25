@@ -2,13 +2,13 @@ import axios from "axios";
 
 // 기본 API axios - 인증 정보는 HttpOnly Cookie로만 전달
 export const api = axios.create({
-    baseURL: "",
+    baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
 });
 
 // refresh 전용 axios - 쿠키만 사용
 export const refreshAxios = axios.create({
-    baseURL: "",
+    baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
 });
 
