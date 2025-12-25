@@ -1,32 +1,25 @@
 import TossPaymentWidget from "../components/TossPaymentWidget.jsx";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
+import api from "../../../api/axios.js";
 
 export default function CheckoutPage() {
     const {reservationId} = useParams();
     const [reservation, setReservation] = useState(null);
 
     useEffect(() => {
-        fetch(`/api/reservations/${reservationId}`, {
-            credentials: "include",
-        })
-            .then(async (res) => {
-                const ct = res.headers.get("content-type") || "";
-                if (!res.ok) {
-                    const text = await res.text();
-                    console.error("예약 조회 실패:", text);
-                    throw new Error("예약 조회 실패");
-                }
-                if (!ct.includes("application/json")) {
-                    const text = await res.text();
-                    console.error("JSON 아닌 응답:", text);
-                    throw new Error("예약조회 API가 JSON을 반환하지 않음");
-                }
-                return res.json();
-            })
-            .then(setReservation)
-            .catch(console.error);
+        const fetchReservation = async () => {
+            try {
+                const res = await api.get(`/api/reservations/${reservationId}`);
+                setReservation(res.data);
+            } catch (e) {
+                console.error("예약 조회 실패", e);
+            }
+        };
+
+        fetchReservation();
     }, [reservationId]);
+
 
     if (!reservation) return null;
 
