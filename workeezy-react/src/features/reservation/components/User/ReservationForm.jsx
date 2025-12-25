@@ -91,6 +91,10 @@ export default function ReservationForm({
                 const res = await axios.get(`/api/programs/${programId}/reservation`);
                 const data = res.data;
 
+                console.log("🔥 reservation API raw =", data);
+                console.log("🔥 rooms raw =", data.rooms);
+                console.log("🔥 rooms[0] =", data.rooms?.[0]);
+
                 // 사용자가 선택한 room 객체
                 const selectedRoom = data.rooms.find(
                     (r) => r.roomId === Number(roomId)
