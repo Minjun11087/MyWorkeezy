@@ -17,20 +17,23 @@ export const refreshAxios = axios.create({
 // refresh 성공 시 기존 요청 그대로 재시도
 api.interceptors.response.use(
     response => response,
-
     async (error) => {
         const originalRequest = error.config;
 
-        // 인증 상태 확인용 401은 조용히 처리
+        // refresh 요청 자체는 제외
+        if (originalRequest.url.includes("/api/auth/refresh")) {
+            return Promise.reject(error);
+        }
+
+        // silentAuth 요청은 refresh 시도 X
         if (
             error.response?.status === 401 &&
             originalRequest?.meta?.silentAuth
         ) {
-            // 아무 것도 안 함 = 비로그인 상태 확정
             return Promise.reject(error);
         }
 
-        // 일반 API에서만 refresh 시도
+        // 일반 API만 refresh 시도
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
@@ -41,6 +44,7 @@ api.interceptors.response.use(
                 return Promise.reject(error);
             }
         }
+
         return Promise.reject(error);
     }
 );
