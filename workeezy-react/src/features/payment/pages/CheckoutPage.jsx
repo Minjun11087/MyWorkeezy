@@ -19,6 +19,10 @@ export default function CheckoutPage() {
             .catch(console.error);
     }, [reservationId]);
 
+    if (!reservation) {
+        return <div>결제 정보를 불러오는 중...</div>;
+    }
+
     return (
         <div style={{maxWidth: 480, margin: "100px auto"}}>
             <h2>결제 진행</h2>
