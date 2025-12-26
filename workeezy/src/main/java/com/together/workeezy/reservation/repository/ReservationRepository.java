@@ -157,6 +157,8 @@ where r.id = :reservationId
     // 결제 시 예약 검증
     Optional<Reservation> findByIdAndUserId(Long reservationId, Long userId);
 
+    Optional<Reservation> findByReservationNo(String s);
+
     // 관리자 - 예약 상세 조회
 //    @Query("""
 //        select r

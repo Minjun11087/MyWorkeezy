@@ -32,7 +32,7 @@ public class PaymentConfirmUseCase {
         paymentValidator.validateBasic(cmd);
 
         // 예약 조회
-        Reservation reservation = reservationRepository.findById(cmd.reservationId())
+        Reservation reservation = reservationRepository.findByReservationNo(cmd.orderId())
                 .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
 
         // 예약 소유자 검증
