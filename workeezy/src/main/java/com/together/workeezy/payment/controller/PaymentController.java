@@ -26,6 +26,10 @@ public class PaymentController {
             @PathVariable Long reservationId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
+        System.out.println("🔥 PaymentReady 진입");
+        System.out.println("🔥 reservationId = " + reservationId);
+        System.out.println("🔥 user = " + user);
+
         return paymentFacade.getPaymentReadyInfo(
                 reservationId,
                 user.getUserId()
