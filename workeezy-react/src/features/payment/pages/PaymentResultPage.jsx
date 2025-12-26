@@ -7,14 +7,16 @@ export default function PaymentResultPage() {
 
     const status = params.get("status");
     const paymentKey = params.get("paymentKey");
+    const orderId = params.get("orderId");
+    const amount = params.get("amount");
 
-    const isFail = status === "fail";
-    const isSuccess = !!paymentKey;
+    let content = <Fail/>;
 
-    return (
-        <PageLayout>
-            {isFail && <Fail/>}
-            {isSuccess && <Success/>}
-        </PageLayout>
-    );
+    if (status === "fail") {
+        content = <Fail/>;
+    } else if (paymentKey && orderId && amount) {
+        content = <Success/>;
+    }
+
+    return <PageLayout>{content}</PageLayout>;
 }

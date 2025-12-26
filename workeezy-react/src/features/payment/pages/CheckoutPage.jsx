@@ -16,11 +16,14 @@ export default function CheckoutPage() {
                 return res.json();
             })
             .then(setReservation)
-            .catch(console.error);
+            .catch((e) => {
+                console.error(e);
+                alert("결제 정보를 불러오지 못했습니다.");
+            });
     }, [reservationId]);
 
     if (!reservation) {
-        return <div>결제 정보를 불러오는 중...</div>;
+        return <div style={{textAlign: "center", marginTop: 120}}>결제 정보 불러오는 중...</div>;
     }
 
     return (
