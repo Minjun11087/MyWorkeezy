@@ -3,6 +3,8 @@ package com.together.workeezy.payment.service;
 import com.together.workeezy.payment.dto.PaymentConfirmCommand;
 import com.together.workeezy.payment.dto.request.PaymentConfirmRequest;
 import com.together.workeezy.payment.dto.response.PaymentConfirmResponse;
+import com.together.workeezy.payment.dto.response.PaymentReadyResponse;
+import com.together.workeezy.reservation.domain.Reservation;
 import com.together.workeezy.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ public class PaymentFacade {
     private final PaymentValidator paymentValidator;
     private final ReservationRepository reservationRepository;
 
+    // 결제 진입
     public PaymentReadyResponse getPaymentReadyInfo(
             Long reservationId,
             Long userId
@@ -24,7 +27,7 @@ public class PaymentFacade {
 
         return new PaymentReadyResponse(
                 reservation.getReservationNo(),
-                reservation.getProgram().getProgramTitle(),
+                reservation.getProgram().getTitle(),
                 reservation.getTotalPrice()
         );
     }

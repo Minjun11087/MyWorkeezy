@@ -15,12 +15,14 @@ public class PaymentValidator {
 
     private final ReservationRepository reservationRepository;
 
+    // 결제 가능 여부
     public Reservation validatePayable(Long reservationId, Long userId) {
 
         Reservation reservation =
                 reservationRepository.findByIdAndUserId(reservationId, userId)
                         .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
 
+        // 관리자 승인 후에만 결제 가능
         if (!reservation.isPayable()) {
             throw new CustomException(PAYMENT_NOT_ALLOWED);
         }

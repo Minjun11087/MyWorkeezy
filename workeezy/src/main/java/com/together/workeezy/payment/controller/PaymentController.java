@@ -3,6 +3,7 @@ package com.together.workeezy.payment.controller;
 import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.payment.dto.request.PaymentConfirmRequest;
 import com.together.workeezy.payment.dto.response.PaymentConfirmResponse;
+import com.together.workeezy.payment.dto.response.PaymentReadyResponse;
 import com.together.workeezy.payment.service.PaymentFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,17 @@ public class PaymentController {
 
     private final PaymentFacade paymentFacade;
 
+    @GetMapping("/{reservationId}")
+    public PaymentReadyResponse getPaymentReady(
+            @PathVariable Long reservationId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        return paymentFacade.getPaymentReadyInfo(
+                reservationId,
+                user.getUserId()
+        );
+    }
+
     @PostMapping("/confirm")
     public ResponseEntity<PaymentConfirmResponse> confirmPayment(
             @RequestBody PaymentConfirmRequest request,
@@ -30,17 +42,6 @@ public class PaymentController {
 
         return ResponseEntity.ok(
                 paymentFacade.confirm(request, email));
-    }
-
-    @GetMapping("/{reservationId}")
-    public PaymentReadyResponse getPaymentReadyInfo(
-            @PathVariable Long reservationId,
-            @AuthenticationPrincipal CustomUserDetails user
-    ) {
-        return paymentFacade.getPaymentReadyInfo(
-                reservationId,
-                user.getUserId()
-        );
     }
 
 //    @GetMapping("/receipt/{reservationId}")

@@ -236,6 +236,11 @@ public class Reservation {
         }
     }
 
+    // 관리자 승인 후에만 결제 가능
+    public boolean isPayable() {
+        return this.status == ReservationStatus.approved;
+    }
+
     // ==================================== 관리자 행위 =================================
 
 
@@ -272,5 +277,6 @@ public class Reservation {
         this.status = ReservationStatus.confirmed;
         this.rejectReason = reason;
     }
+
 
 }
