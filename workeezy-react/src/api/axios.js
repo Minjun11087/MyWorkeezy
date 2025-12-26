@@ -21,9 +21,9 @@ api.interceptors.response.use(
         const originalRequest = error.config;
 
         // refresh 요청 자체는 제외
-        // if (originalRequest.url.includes("/api/auth/refresh")) {
-        //     return Promise.reject(error);
-        // }
+        if (originalRequest.url.includes("/api/auth/refresh")) {
+            return Promise.reject(error);
+        }
 
         // silentAuth 요청은 refresh 시도 X
         if (
