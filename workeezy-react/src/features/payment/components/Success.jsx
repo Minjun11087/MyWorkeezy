@@ -13,7 +13,7 @@ export function Success() {
             }
 
         const requestData = {
-            orderId: searchParams.get("orderId"),
+            orderId: searchParams.get("reservationNo"),
             amount: Number(searchParams.get("amount")),
             paymentKey: searchParams.get("paymentKey"),
             reservationId: Number(searchParams.get("reservationId")),
