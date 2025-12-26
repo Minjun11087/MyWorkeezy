@@ -8,12 +8,16 @@ export default function CheckoutPage() {
     const [reservation, setReservation] = useState(null);
 
     useEffect(() => {
-        api.get(`/api/payments/${reservationId}`)
-            .then(res => setReservation(res.data))
+        fetch(`/api/payments/${reservationId}`, {
+            credentials: "include",
+        })
+            .then(async (res) => {
+                if (!res.ok) throw new Error("결제 진입 실패");
+                return res.json();
+            })
+            .then(setReservation)
             .catch(console.error);
     }, [reservationId]);
-
-    if (!reservation) return null;
 
     return (
         <div style={{maxWidth: 480, margin: "100px auto"}}>

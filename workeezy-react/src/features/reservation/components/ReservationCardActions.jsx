@@ -98,7 +98,7 @@ export default function ReservationCardActions({ reservation }) {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/payments/${reservation.id}`);
+            navigate(`/payment/${reservation.id}`);
           }}
         >
           결제하기
