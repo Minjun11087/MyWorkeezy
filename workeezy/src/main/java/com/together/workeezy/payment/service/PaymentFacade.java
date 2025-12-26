@@ -8,6 +8,7 @@ import com.together.workeezy.reservation.domain.Reservation;
 import com.together.workeezy.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class PaymentFacade {
     private final ReservationRepository reservationRepository;
 
     // 결제 진입
+    @Transactional(readOnly = true)
     public PaymentReadyResponse getPaymentReadyInfo(
             Long reservationId,
             Long userId
