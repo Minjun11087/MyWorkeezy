@@ -25,6 +25,7 @@ public class CookieService {
                 .secure(isProd)                         // 로컬=false / 운영=true
                 .sameSite(isProd ? "None" : "Lax")      // 로컬=Lax / 운영=None
                 .path("/")                              // 모든 API에 전송
+                .domain(".workeezy.cloud")
                 .maxAge(jwtTokenProvider.getAccessExpiration() / 1000)
                 .build();
 
@@ -38,6 +39,7 @@ public class CookieService {
                 .secure(isProd)
                 .sameSite(isProd ? "None" : "Lax")
                 .path("/")
+                .domain(".workeezy.cloud")
                 .maxAge(0)
                 .build();
 
@@ -57,6 +59,7 @@ public class CookieService {
                 .secure(isProd)
                 .sameSite(isProd ? "None" : "Lax")
                 .path("/")
+                .domain(".workeezy.cloud")
                 .maxAge(jwtTokenProvider.getRefreshExpiration() / 1000)
                 .build();
 
@@ -71,6 +74,7 @@ public class CookieService {
                 .secure(isProd)
                 .sameSite(isProd ? "None" : "Lax")
                 .path("/")
+                .domain(".workeezy.cloud")
                 .maxAge(0)
                 .build();
 
