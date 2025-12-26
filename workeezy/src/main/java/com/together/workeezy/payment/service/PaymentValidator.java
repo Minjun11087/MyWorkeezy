@@ -3,12 +3,32 @@ package com.together.workeezy.payment.service;
 import com.together.workeezy.common.exception.CustomException;
 import com.together.workeezy.payment.dto.PaymentConfirmCommand;
 import com.together.workeezy.reservation.domain.Reservation;
+import com.together.workeezy.reservation.repository.ReservationRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import static com.together.workeezy.common.exception.ErrorCode.*;
 
 @Component
+@RequiredArgsConstructor
 public class PaymentValidator {
+
+    private final ReservationRepository reservationRepository;
+
+    // 결제 가능 여부
+    public Reservation validatePayable(Long reservationId, Long userId) {
+
+        Reservation reservation =
+                reservationRepository.findByIdAndUserId(reservationId, userId)
+                        .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
+
+        // 관리자 승인 후에만 결제 가능
+        if (!reservation.isPayable()) {
+            throw new CustomException(PAYMENT_NOT_ALLOWED);
+        }
+
+        return reservation;
+    }
 
     public void validateBasic(PaymentConfirmCommand cmd) {
         if (cmd.paymentKey() == null || cmd.paymentKey().isBlank())

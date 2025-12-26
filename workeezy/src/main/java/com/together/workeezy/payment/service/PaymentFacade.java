@@ -3,6 +3,9 @@ package com.together.workeezy.payment.service;
 import com.together.workeezy.payment.dto.PaymentConfirmCommand;
 import com.together.workeezy.payment.dto.request.PaymentConfirmRequest;
 import com.together.workeezy.payment.dto.response.PaymentConfirmResponse;
+import com.together.workeezy.payment.dto.response.PaymentReadyResponse;
+import com.together.workeezy.reservation.domain.Reservation;
+import com.together.workeezy.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +14,23 @@ import org.springframework.stereotype.Service;
 public class PaymentFacade {
 
     private final PaymentConfirmUseCase confirmUseCase;
+    private final PaymentValidator paymentValidator;
+    private final ReservationRepository reservationRepository;
+
+    // 결제 진입
+    public PaymentReadyResponse getPaymentReadyInfo(
+            Long reservationId,
+            Long userId
+    ) {
+        Reservation reservation =
+                paymentValidator.validatePayable(reservationId, userId);
+
+        return new PaymentReadyResponse(
+                reservation.getReservationNo(),
+                reservation.getProgram().getTitle(),
+                reservation.getTotalPrice()
+        );
+    }
 
     public PaymentConfirmResponse confirm(PaymentConfirmRequest request, String userEmail) {
 
