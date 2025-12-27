@@ -1,5 +1,5 @@
 .admin-reservation-list {
-  padding: 0px 24px 24px 24px;
+  padding: 0px;
 }
 
 .list-title {
@@ -67,7 +67,7 @@
 
 /* hover 시 강조 */
 .reservation-table tbody tr:hover {
-  background-color: #f9f9f9;
+  /* background-color: #7b4e4e; */
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -89,4 +89,55 @@
 
 .clickable-row:hover {
   background-color: #f9fafb;
+}
+/* ===== 버튼 공통 ===== */
+/* 행 선택시 */
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: #f9fafb;
+}
+
+/* ===== 버튼 공통 ===== */
+.action-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn-detail,
+.btn-delete {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  /* margin: 0p */
+}
+
+.btn-detail {
+  background-color: #f0f4ff;
+  color: #2f5cff;
+  border: 1px solid #d6e0ff;
+  margin-right: 10px;
+  height: 33px;
+}
+
+.btn-detail:hover {
+  background-color: #e2e9ff;
+}
+
+.btn-delete {
+  background-color: #fff1f1;
+  color: #e53935;
+  border: 1px solid #f3c2c2;
+  height: 33px;
+}
+.btn-delete:hover {
+  background-color: #ffe2e2;
 }

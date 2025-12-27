@@ -6,7 +6,7 @@ export default function DraftReservationPage() {
   return (
     <PageLayout>
       <AdminReservationSection>
-        <h2 className="page-title">📝 임시 저장된 예약</h2>
+        <h2 className="page-title">📝 작성 중인 예약</h2>
         <DraftReservationList />
       </AdminReservationSection>
     </PageLayout>

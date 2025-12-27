@@ -4,6 +4,9 @@ import "../../components/Admin/AdminReservationList.css"; // 기존 관리자 CS
 import Pagination from "../../../../shared/common/Pagination";
 import { fetchDraftList } from "../../api/draft.api.js";
 import { normalizeDraft } from "../../utils/draftNormalize.js";
+import { normalizeDraftToForm } from "../../utils/draftNormalize";
+import Swal from "sweetalert2";
+import { deleteDraft } from "../../api/draft.api.js";
 
 export default function DraftReservationList() {
   const [drafts, setDrafts] = useState([]);
@@ -18,21 +21,45 @@ export default function DraftReservationList() {
   }, [page]);
 
   const fetchDrafts = async () => {
-    try {
-      const res = await fetchDraftList({
-        page: page - 1,
-      });
+    const res = await fetchDraftList();
 
+    const normalized = res.data.map((draft) => {
+      const normalizedDraft = normalizeDraft(draft);
       console.log("📦 전체 응답 res:", res);
       console.log("📦 res.data:", res.data);
+      return {
+        ...normalizedDraft,
+        data: normalizeDraftToForm(normalizedDraft.data),
+      };
+    });
 
-      // 서버 응답 구조 예시:
-      // { content: [...], totalPages: 3 }
-      setDrafts(res.data.map(normalizeDraft));
-      setTotalPages(res.data.totalPages || 1);
-    } catch (e) {
-      console.error("임시저장 목록 조회 실패", e);
-    }
+    setDrafts(normalized);
+  };
+
+  const handleDelete = async (e, key) => {
+    e.stopPropagation();
+
+    const result = await Swal.fire({
+      title: "임시저장 삭제",
+      text: "이 임시저장을 삭제하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+    });
+
+    if (!result.isConfirmed) return;
+
+    await deleteDraft(key);
+    await fetchDrafts();
+
+    Swal.fire("삭제 완료", "임시저장이 삭제되었습니다.", "success");
+  };
+
+  // 프로그램 상세 이동
+  const goToProgramDetail = (e, programId) => {
+    e.stopPropagation();
+    navigate(`/programs/${programId}`);
   };
 
   return (
@@ -47,6 +74,7 @@ export default function DraftReservationList() {
             <th>기간</th>
             <th>인원</th>
             <th>저장일</th>
+            <th>작업</th>
           </tr>
         </thead>
 
@@ -75,13 +103,33 @@ export default function DraftReservationList() {
                 <td>{data.programTitle || "-"}</td>
                 <td>{data.stayName || "-"}</td>
                 <td>
-                  {data.startDate?.slice(0, 10)} ~ {data.endDate?.slice(0, 10)}
+                  {data.startDate?.toLocaleDateString()} ~{" "}
+                  {data.endDate?.toLocaleDateString()}
                 </td>
                 <td>{data.peopleCount ? `${data.peopleCount}명` : "-"}</td>
                 <td>
-                  {data.savedAt
-                    ? new Date(data.savedAt).toLocaleDateString()
-                    : "-"}
+                  {data.savedAt?.toLocaleString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </td>
+                <td className="action-cell">
+                  <button
+                    className="btn-detail"
+                    onClick={(e) => goToProgramDetail(e, data.programId)}
+                  >
+                    워케이션 정보
+                  </button>
+
+                  <button
+                    className="btn-delete"
+                    onClick={(e) => handleDelete(e, draft.key)}
+                  >
+                    삭제
+                  </button>
                 </td>
               </tr>
             );
