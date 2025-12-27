@@ -74,7 +74,7 @@ export default function DraftReservationList() {
             <th>기간</th>
             <th>인원</th>
             <th>저장일</th>
-            <th>작업</th>
+            {drafts.length > 0 && <th>작업</th>}
           </tr>
         </thead>
 
