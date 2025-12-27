@@ -119,7 +119,8 @@ select new com.together.workeezy.reservation.dto.AdminReservationListDto(
     r.reservationNo,
     p.title,
     u.userName,
-    r.status
+    r.status,
+    r.createdDate
 )
 from Reservation r
 join r.user u
