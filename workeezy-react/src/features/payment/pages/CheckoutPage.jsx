@@ -9,13 +9,6 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const status = new URLSearchParams(window.location.search).get("from");
-
-        if (status === "confirm-failed") {
-            navigate("/reservation/list", {replace: true});
-            return;
-        }
-
         fetch(`/api/payments/${reservationId}`, {
             credentials: "include",
         })
@@ -34,7 +27,6 @@ export default function CheckoutPage() {
             })
             .catch((e) => {
                 console.error(e);
-                alert("결제 정보를 불러오지 못했습니다.");
                 navigate("/reservation/list", {replace: true});
             })
             .finally(() => setLoading(false));
