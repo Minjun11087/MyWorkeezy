@@ -9,6 +9,13 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const status = new URLSearchParams(window.location.search).get("from");
+
+        if (status === "confirm-failed") {
+            navigate("/reservation/list", {replace: true});
+            return;
+        }
+
         fetch(`/api/payments/${reservationId}`, {
             credentials: "include",
         })
