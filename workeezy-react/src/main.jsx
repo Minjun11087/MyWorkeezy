@@ -5,11 +5,14 @@ import "./styles/global.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import {BrowserRouter} from "react-router-dom";
 import AuthProvider from "./auth/AuthProvider.jsx";
+import {SearchProvider} from "./features/search/context/SearchContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
         <AuthProvider>
-            <App/>
+            <SearchProvider>
+                <App/>
+            </SearchProvider>
         </AuthProvider>
     </BrowserRouter>
 );
