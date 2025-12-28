@@ -22,12 +22,9 @@ export function Fail() {
                     <p>{searchParams.get("message") ?? "알 수 없는 오류가 발생했습니다."}</p>
                 </div>
 
-                <button className="btn primary" onClick={() => navigate(-1)}>
-                    다시 시도하기
-                </button>
-
-                <button className="btn secondary" onClick={() => navigate("/")}>
-                    홈으로 이동
+                <button className="btn secondary"
+                    onClick={() => navigate("/reservation/list", {replace: true})}
+                >예약 목록으로 이동
                 </button>
             </div>
         </div>

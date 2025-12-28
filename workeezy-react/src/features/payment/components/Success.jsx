@@ -37,7 +37,8 @@ export function Success() {
                 });
 
                 if (!response.ok) {
-                    navigate("/payment/fail?code=CONFIRM_FAIL&message=결제 승인 실패");
+                    navigate("/payment/fail?code=CONFIRM_FAIL&message=결제 승인 중 오류가 발생했습니다.",
+                        {replace: true});
                     return;
                 }
 
