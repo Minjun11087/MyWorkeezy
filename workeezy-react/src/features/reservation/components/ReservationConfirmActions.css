@@ -45,3 +45,17 @@
 .confirm-actions .secondary:hover {
   background-color: #d1d5db;
 }
+@media print {
+  .confirm-actions {
+    display: none;
+  }
+
+  body {
+    background: white;
+  }
+
+  .confirm-preview {
+    box-shadow: none;
+    padding: 0;
+  }
+}
