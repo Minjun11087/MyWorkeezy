@@ -57,3 +57,5 @@ cloud:
       auto: false
     s3:
       bucket: workeezy
+      auto: false
+
