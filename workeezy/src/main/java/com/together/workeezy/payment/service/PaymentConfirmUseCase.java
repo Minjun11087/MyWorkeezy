@@ -97,12 +97,14 @@ public class PaymentConfirmUseCase {
                     PaymentLog.success(payment, json, 200)
             );
         } catch (Exception e) {
-
-            // 실패 로그 저장
-            paymentLogRepository.save(
-                    PaymentLog.fail(payment, e.getMessage(), 500)
-            );
-            throw e;
+            try {
+                // 실패 로그 저장
+                paymentLogRepository.save(
+                        PaymentLog.fail(payment, e.getMessage(), 500)
+                );
+            } catch (Exception logEx) {
+                log.error("결제 로그 저장 실패", logEx);
+            }
         }
 
         // 응답 생성
