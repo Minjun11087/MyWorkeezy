@@ -26,6 +26,7 @@ import NotFound from "./shared/error/NotFound.jsx";
 import PaymentResultPage from "./features/payment/pages/PaymentResultPage.jsx";
 import AdminRoute from "./shared/route/AdminRoute.jsx";
 import DraftReservationPage from "./features/reservation/pages/DraftReservationPage.jsx";
+import ReservationConfirmPage from "./features/reservation/pages/ReservationConfirmPage.jsx";
 
 export default function App() {
   if (window.Kakao && !window.Kakao.isInitialized()) {
@@ -87,6 +88,10 @@ export default function App() {
       />
 
       <Route path="/reservation/draftList" element={<DraftReservationPage />} />
+      <Route
+        path="/reservation/:id/confirmation"
+        element={<ReservationConfirmPage />}
+      ></Route>
 
       {/* 결제 */}
       <Route path="/payment/:reservationId" element={<CheckoutPage />} />
