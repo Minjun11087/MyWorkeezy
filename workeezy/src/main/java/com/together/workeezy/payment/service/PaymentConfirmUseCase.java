@@ -1,5 +1,6 @@
 package com.together.workeezy.payment.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.together.workeezy.common.exception.CustomException;
 import com.together.workeezy.payment.dto.PaymentConfirmCommand;
@@ -33,7 +34,7 @@ public class PaymentConfirmUseCase {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    public PaymentConfirmResponse confirm(PaymentConfirmCommand cmd) throws Exception {
+    public PaymentConfirmResponse confirm(PaymentConfirmCommand cmd) {
 
         // 기본 파라미터 검증
         paymentValidator.validateBasic(cmd);
@@ -69,7 +70,12 @@ public class PaymentConfirmUseCase {
                     cmd.amount()
             );
 
-            String json = objectMapper.writeValueAsString(api);
+            String json;
+            try {
+                json = objectMapper.writeValueAsString(api);
+            } catch (JsonProcessingException e) {
+                throw new CustomException(PAYMENT_LOG_SERIALIZE_FAILED);
+            }
 
             // Payment 도메인 메서드로 승인 처리
             payment.approve(
@@ -88,17 +94,13 @@ public class PaymentConfirmUseCase {
 
             // 성공 로그 저장
             paymentLogRepository.save(
-                    PaymentLog.success(
-                            payment,
-                            json,
-                            200)
+                    PaymentLog.success(payment, json, 200)
             );
         } catch (Exception e) {
+
+            // 실패 로그 저장
             paymentLogRepository.save(
-                    PaymentLog.fail(
-                            payment,
-                            e.getMessage(),
-                            500)
+                    PaymentLog.fail(payment, e.getMessage(), 500)
             );
             throw e;
         }

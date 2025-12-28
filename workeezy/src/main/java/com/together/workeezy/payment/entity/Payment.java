@@ -65,7 +65,7 @@ public class Payment {
         Payment p = new Payment();
         p.reservation = reservation;
         p.amount = amount;
-        p.method = "TOSS";
+        p.method = method;
         p.status = PaymentStatus.ready;
         reservation.linkPayment(p);
 

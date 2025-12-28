@@ -16,7 +16,6 @@ public class PaymentFacade {
 
     private final PaymentConfirmUseCase confirmUseCase;
     private final PaymentValidator paymentValidator;
-    private final ReservationRepository reservationRepository;
 
     // 결제 진입
     @Transactional(readOnly = true)
