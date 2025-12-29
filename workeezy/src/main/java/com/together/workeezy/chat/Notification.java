@@ -33,7 +33,7 @@ public class Notification {
     private String notiTitle;
 
     @Lob
-    @Column(name = "noti_msg")
+    @Column(name = "noti_msg", columnDefinition = "TEXT")
     private String notiMsg;
 
     @Enumerated(EnumType.STRING)

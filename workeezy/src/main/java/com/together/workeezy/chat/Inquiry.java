@@ -28,7 +28,7 @@ public class Inquiry {
     private ChatCategory category;
 
     @Lob
-    @Column(name = "inquiry_detail")
+    @Column(name = "inquiry_detail", columnDefinition = "TEXT")
     private String inquiryDetail;
 
     @CreationTimestamp

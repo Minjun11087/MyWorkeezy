@@ -25,7 +25,7 @@ public class Faq {
     private String intentName;
 
     @Lob
-    @Column(name = "example_phrases")
+    @Column(name = "example_phrases", columnDefinition = "TEXT")
     private String examplePhrases;
 
     @CreationTimestamp
