@@ -23,14 +23,15 @@ import static com.together.workeezy.common.exception.ErrorCode.*;
 public class PaymentConfirmUseCase {
 
     private final ReservationRepository reservationRepository;
-    private final PaymentRepository paymentRepository;
+    //    private final PaymentRepository paymentRepository;
     private final PaymentValidator paymentValidator;
     private final PaymentProcessor paymentProcessor;
 //    private final PaymentLogService paymentLogService;
 
     @Transactional
     public PaymentConfirmResponse confirm(PaymentConfirmCommand cmd) {
-        log.info("🔥 PaymentConfirmUseCase.confirm start");
+        log.info("🔥 confirm START orderId={}, amount={}, paymentKey={}, user={}",
+                cmd.orderId(), cmd.amount(), cmd.paymentKey(), cmd.userEmail());
 
         // 기본 파라미터 검증
         paymentValidator.validateBasic(cmd);
@@ -38,6 +39,9 @@ public class PaymentConfirmUseCase {
         // 예약 조회
         Reservation reservation = reservationRepository.findByReservationNo(cmd.orderId())
                 .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
+
+        log.info("🔥 reservation found id={}, no={}, status={}",
+                reservation.getId(), reservation.getReservationNo(), reservation.getStatus());
 
         // 예약 소유자 검증
         paymentValidator.validateReservationOwner(reservation, cmd.userEmail());
@@ -68,9 +72,10 @@ public class PaymentConfirmUseCase {
                 cmd.amount()
         );
 
-        PaymentMethod method = api.getMethod();
+        log.info("🔥 Toss confirm response orderId={}, amount={}, method={}, approvedAt={}",
+                api.getOrderId(), api.getAmount(), api.getMethod(), api.getApprovedAt());
 
-//        PaymentMethod method = PaymentMethod.from(api.getMethod());
+        PaymentMethod method = api.getMethod();
 
         payment.approve(
                 api.getOrderId(),
@@ -80,7 +85,13 @@ public class PaymentConfirmUseCase {
                 api.getApprovedAt()
         );
 
-//        reservation.markConfirmed();
+        log.info("🔥 payment approved paymentId={}, status={}, approvedAt={}",
+                payment.getId(), payment.getStatus(), payment.getApprovedAt());
+
+        reservation.markConfirmed();
+
+        log.info("🔥 reservation confirmed id={}, status={}",
+                reservation.getId(), reservation.getStatus());
 
         return PaymentConfirmResponse.of(payment, reservation);
     }
