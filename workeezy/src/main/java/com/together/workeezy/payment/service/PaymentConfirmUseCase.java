@@ -62,10 +62,9 @@ public class PaymentConfirmUseCase {
         if (payment == null) {
             log.info("🔥 creating payment");
             payment = Payment.create(reservation, cmd.amount());
-            reservation.linkPayment(payment);
-            log.info("🔥 payment before save = {}", payment.getId());
-            paymentRepository.save(payment);
-            log.info("🔥 payment after save = {}", payment.getId());
+//            log.info("🔥 payment before save = {}", payment.getId());
+//            paymentRepository.save(payment);
+//            log.info("🔥 payment after save = {}", payment.getId());
         }
 
         TossConfirmResponse api = paymentProcessor.confirm(
