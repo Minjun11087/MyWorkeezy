@@ -13,7 +13,9 @@ export default function PaymentResultPage() {
     let content = <Fail/>;
 
     if (status === "success") {
-        content = <Success/>;
+        content = <Success orderId={orderId}
+                           amount={amount}
+                           paymentKey={paymentKey}/>;
     } else {
         content = <Fail/>;
     }

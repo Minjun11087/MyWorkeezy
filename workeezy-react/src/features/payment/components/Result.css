@@ -52,7 +52,12 @@
     margin-top: 12px;
 }
 
-.btn.secondary {
+.btn.primary {
     background: #007aff;
+    color: white;
+}
+
+.btn.secondary {
+    background: #aaacaf;
     color: #111827;
 }

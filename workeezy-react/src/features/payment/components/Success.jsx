@@ -65,10 +65,6 @@ export function Success({orderId, amount, paymentKey}) {
                 <button className="btn primary" onClick={() => navigate("/reservation/list")}>
                     예약 현황 조회
                 </button>
-
-                <button className="btn secondary" onClick={() => navigate("/")}>
-                    홈으로 이동
-                </button>
             </div>
         </div>
     );
