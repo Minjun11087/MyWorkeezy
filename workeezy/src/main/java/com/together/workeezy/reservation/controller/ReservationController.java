@@ -1,8 +1,10 @@
 package com.together.workeezy.reservation.controller;
 
+import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
 import com.together.workeezy.reservation.dto.ReservationResponseDto;
 import com.together.workeezy.reservation.dto.ReservationUpdateDto;
+import com.together.workeezy.reservation.enums.ReservationStatus;
 import com.together.workeezy.reservation.service.ReservationConfirmationService;
 import com.together.workeezy.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -50,13 +52,10 @@ public class ReservationController {
         System.out.println("🎯 programTitle = " + dto.getProgramTitle());
          */
 
-        try {
+            Long userId = ((CustomUserDetails) authentication.getPrincipal()).getUserId();
+            reservationService.validateReservationCreate(userId);
             reservationService.createNewReservation(dto, authentication.getName());
             return ResponseEntity.ok("예약 성공");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("예약 실패: " + e.getMessage());
-        }
     }
 
     // 내 예약 목록 조회
@@ -88,6 +87,10 @@ public class ReservationController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime cursorDate,
             @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false)
+            String keyword,
+            @RequestParam(required = false)
+            ReservationStatus status,
             Authentication authentication
     ) {
         System.out.println("🧩 authentication = " + authentication);
@@ -102,7 +105,8 @@ public class ReservationController {
         String email = authentication.getName();
 
         Slice<ReservationResponseDto> result =
-                reservationService.getMyReservations(email, cursorDate, cursorId, size);
+                reservationService.getMyReservations(email, cursorDate, cursorId, size, keyword,
+                        status);
 
         return ResponseEntity.ok(result);
     }
