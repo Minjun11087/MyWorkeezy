@@ -30,7 +30,8 @@ public class PaymentConfirmUseCase {
 
     @Transactional
     public PaymentConfirmResponse confirm(PaymentConfirmCommand cmd) {
-        log.info("🔥 PaymentConfirmUseCase.confirm start");
+        log.info("🔥 confirm START orderId={}, amount={}, paymentKey={}, user={}",
+                cmd.orderId(), cmd.amount(), cmd.paymentKey(), cmd.userEmail());
 
         // 기본 파라미터 검증
         paymentValidator.validateBasic(cmd);
@@ -38,6 +39,9 @@ public class PaymentConfirmUseCase {
         // 예약 조회
         Reservation reservation = reservationRepository.findByReservationNo(cmd.orderId())
                 .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
+
+        log.info("🔥 reservation found id={}, no={}, status={}",
+                reservation.getId(), reservation.getReservationNo(), reservation.getStatus());
 
         // 예약 소유자 검증
         paymentValidator.validateReservationOwner(reservation, cmd.userEmail());
@@ -58,7 +62,10 @@ public class PaymentConfirmUseCase {
         if (payment == null) {
             log.info("🔥 creating payment");
             payment = Payment.create(reservation, cmd.amount());
+            paymentRepository.save(payment);
+//            log.info("🔥 payment before save = {}", payment.getId());
 //            paymentRepository.save(payment);
+//            log.info("🔥 payment after save = {}", payment.getId());
         }
 
         TossConfirmResponse api = paymentProcessor.confirm(
@@ -67,19 +74,32 @@ public class PaymentConfirmUseCase {
                 cmd.amount()
         );
 
-        PaymentMethod method = api.getMethod();
+        log.info("🔥 Toss confirm response orderId={}, amount={}, method={}, approvedAt={}",
+                api.getOrderId(), api.getAmount(), api.getMethod(), api.getApprovedAt());
 
-//        PaymentMethod method = PaymentMethod.from(api.getMethod());
+        PaymentMethod method = PaymentMethod.fromToss(api.getMethod());
 
         payment.approve(
                 api.getOrderId(),
                 api.getPaymentKey(),
-                api.getAmount(),
+                cmd.amount(),
                 method,
                 api.getApprovedAt()
         );
 
-//        reservation.markConfirmed();
+        if (api.getAmount() != null && !api.getAmount().equals(cmd.amount())) {
+            log.error("🔥 Toss amount mismatch toss={}, request={}", api.getAmount(), cmd.amount());
+            throw new CustomException(PAYMENT_AMOUNT_MISMATCH);
+        }
+
+        log.info("🔥 payment approved paymentId={}, status={}, approvedAt={}",
+                payment.getId(), payment.getStatus(), payment.getApprovedAt());
+
+        reservation.markConfirmed();
+        reservationRepository.save(reservation);
+
+        log.info("🔥 reservation confirmed id={}, status={}",
+                reservation.getId(), reservation.getStatus());
 
         return PaymentConfirmResponse.of(payment, reservation);
     }
