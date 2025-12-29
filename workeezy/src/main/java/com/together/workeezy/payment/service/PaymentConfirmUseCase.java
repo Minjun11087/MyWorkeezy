@@ -23,7 +23,7 @@ import static com.together.workeezy.common.exception.ErrorCode.*;
 public class PaymentConfirmUseCase {
 
     private final ReservationRepository reservationRepository;
-    //    private final PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
     private final PaymentValidator paymentValidator;
     private final PaymentProcessor paymentProcessor;
 //    private final PaymentLogService paymentLogService;
@@ -63,7 +63,9 @@ public class PaymentConfirmUseCase {
             log.info("🔥 creating payment");
             payment = Payment.create(reservation, cmd.amount());
             reservation.linkPayment(payment);
-//            paymentRepository.save(payment);
+            log.info("🔥 payment before save = {}", payment.getId());
+            paymentRepository.save(payment);
+            log.info("🔥 payment after save = {}", payment.getId());
         }
 
         TossConfirmResponse api = paymentProcessor.confirm(
