@@ -1,6 +1,7 @@
 import TossPaymentWidget from "../components/TossPaymentWidget.jsx";
 import {useParams, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
+import api from "../../../api/axios.js";
 
 export default function CheckoutPage() {
     const {reservationId} = useParams();
@@ -9,21 +10,17 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`/api/payments/${reservationId}`, {
-            credentials: "include",
-        })
-            .then(async (res) => {
-                if (!res.ok) throw new Error("결제 진입 실패");
-                return res.json();
-            })
-            .then((data) => {
+        api.get(`/payments/${reservationId}`)
+            .then((res) => {
+                const data = res.data;
+
                 if (data.status === "CONFIRMED") {
                     navigate("/payment/result/success", {replace: true});
                     return;
                 }
+
                 setReservation(data);
             })
-
             .catch((e) => {
                 console.error(e);
                 navigate("/reservation/list", {replace: true});
@@ -31,8 +28,31 @@ export default function CheckoutPage() {
             .finally(() => setLoading(false));
     }, [reservationId, navigate]);
 
+    // useEffect(() => {
+    //     fetch(`/api/payments/${reservationId}`, {
+    //         credentials: "include",
+    //     })
+    //         .then(async (res) => {
+    //             if (!res.ok) throw new Error("결제 진입 실패");
+    //             return res.json();
+    //         })
+    //         .then((data) => {
+    //             if (data.status === "CONFIRMED") {
+    //                 navigate("/payment/result/success", {replace: true});
+    //                 return;
+    //             }
+    //             setReservation(data);
+    //         })
+    //
+    //         .catch((e) => {
+    //             console.error(e);
+    //             navigate("/reservation/list", {replace: true});
+    //         })
+    //         .finally(() => setLoading(false));
+    // }, [reservationId, navigate]);
+
     if (loading) {
-        return <div style={{textAlign: "center", marginTop: 120}}>결제 정보 불러오는 중...</div>;
+        return <div stylef={{textAlign: "center", marginTop: 120}}>결제 정보 불러오는 중...</div>;
     }
 
     if (!reservation) return null;
