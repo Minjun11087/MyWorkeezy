@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/payments")
@@ -22,14 +23,14 @@ public class PaymentController {
 
     private final PaymentFacade paymentFacade;
 
-    @GetMapping("/{reservationId}")
+    @GetMapping("/{reservationId:\\d+}")
     public PaymentReadyResponse getPaymentReady(
             @PathVariable Long reservationId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         log.info("🔥 PaymentReady 진입");
-        log.info("🔥 reservationId = " + reservationId);
-        log.info("🔥 user = " + user);
+        log.info("🔥 reservationId = {}", reservationId);
+        log.info("🔥 user = {}", user);
 
         return paymentFacade.getPaymentReadyInfo(
                 reservationId,
