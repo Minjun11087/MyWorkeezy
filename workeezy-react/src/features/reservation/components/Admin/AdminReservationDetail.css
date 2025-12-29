@@ -1,117 +1,117 @@
 .admin-detail-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 /* 상단 */
 .detail-top {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .status-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .reservation-no {
-  font-size: 20px;
-  font-weight: 700;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 /* 본문 */
 .detail-body {
-  display: flex;
-  gap: 28px;
+    display: flex;
+    gap: 28px;
 }
 
 /* 이미지 */
 .image-box {
-  width: 260px;
-  height: 260px;
-  border-radius: 16px;
-  overflow: hidden;
-  flex-shrink: 0;
+    width: 260px;
+    height: 260px;
+    border-radius: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 .image-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* 정보 */
 .info-box {
-  flex: 1;
-  font-size: 15px;
-  line-height: 1.8;
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.8;
 }
 
 .info-box p {
-  margin: 0;
-  color: #555;
+    margin: 0;
+    color: #555;
 }
 
 .info-box strong {
-  color: #222;
+    color: #222;
 }
 
 /* 버튼 영역 */
 .detail-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 32px;
 }
 
 .btn-approve {
-  border: 1px solid #4caf50;
-  color: #4caf50;
-  background: #fff;
-  padding: 10px 26px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
+    border: 1px solid #4caf50;
+    color: #4caf50;
+    background: #fff;
+    padding: 10px 26px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .btn-reject {
-  border: 1px solid #ff4d4f;
-  color: #ff4d4f;
-  background: #fff;
-  padding: 10px 26px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
+    border: 1px solid #ff4d4f;
+    color: #ff4d4f;
+    background: #fff;
+    padding: 10px 26px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .btn-approve:disabled:hover {
-  background-color: #ccc;
+    background-color: #ccc;
 }
 
 .detail-actions button:disabled {
-  background-color: #ccc;
-  color: #888;
-  cursor: not-allowed;
-  opacity: 0.6;
-  border: none;
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.6;
+    border: none;
 }
 
 .reservation-detail {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 12px 24px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px 24px;
 }
 
 .reservation-detail dt {
-  font-weight: 600;
-  color: #666;
+    font-weight: 600;
+    color: #666;
 }
 
 .reservation-detail dd {
-  margin: 0;
-  color: #222;
+    margin: 0;
+    color: #222;
 }
