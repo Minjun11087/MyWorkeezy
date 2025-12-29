@@ -31,6 +31,7 @@ public class PaymentConfirmUseCase {
 
     @Transactional
     public PaymentConfirmResponse confirm(PaymentConfirmCommand cmd) {
+        log.info("🔥 PaymentConfirmUseCase.confirm start");
 
         // 기본 파라미터 검증
         paymentValidator.validateBasic(cmd);
@@ -56,6 +57,7 @@ public class PaymentConfirmUseCase {
         Payment payment = reservation.getPayment();
 
         if (payment == null) {
+            log.info("🔥 creating payment");
             payment = Payment.create(reservation, cmd.amount());
             reservation.linkPayment(payment);
             paymentRepository.save(payment);
