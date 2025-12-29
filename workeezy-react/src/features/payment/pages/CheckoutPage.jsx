@@ -10,7 +10,7 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.get(`/payments/${reservationId}`)
+        api.get(`/api/payments/${reservationId}`)
             .then((res) => {
                 const data = res.data;
 
