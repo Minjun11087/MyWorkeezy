@@ -27,7 +27,7 @@ public class PaymentConfirmUseCase {
     private final PaymentRepository paymentRepository;
     private final PaymentValidator paymentValidator;
     private final PaymentProcessor paymentProcessor;
-    private final PaymentLogService paymentLogService;
+//    private final PaymentLogService paymentLogService;
 
     @Transactional
     public PaymentConfirmResponse confirm(PaymentConfirmCommand cmd) {
@@ -61,44 +61,24 @@ public class PaymentConfirmUseCase {
             paymentRepository.save(payment);
         }
 
-        try {
-            TossConfirmResponse api = paymentProcessor.confirm(
-                    cmd.paymentKey(),
-                    cmd.orderId(),
-                    cmd.amount()
-            );
+        TossConfirmResponse api = paymentProcessor.confirm(
+                cmd.paymentKey(),
+                cmd.orderId(),
+                cmd.amount()
+        );
 
-            PaymentMethod paymentMethod = api.getMethod();
+        PaymentMethod method = api.getMethod();
 
-            // Payment 도메인 메서드로 승인 처리
-            payment.approve(
-                    api.getOrderId(),
-                    api.getPaymentKey(),
-                    api.getAmount(),
-                    paymentMethod,
-                    api.getApprovedAt()
-            );
+        payment.approve(
+                api.getOrderId(),
+                api.getPaymentKey(),
+                api.getAmount(),
+                method,
+                api.getApprovedAt()
+        );
 
-            // Reservation 상태 CONFIRMED
-            reservation.markConfirmed();
+        reservation.markConfirmed();
 
-            // 성공 로그 저장
-            paymentLogService.saveSuccess(payment, api);
-
-            return PaymentConfirmResponse.of(payment, reservation);
-        } catch (Exception e) {
-
-            log.error("결제 승인 실패", e);
-
-            try {
-                if (payment.getId() != null) {
-                    paymentLogService.saveFail(payment, e);
-                }
-            } catch (Exception logEx) {
-                log.error("결제 실패 로그 저장 실패", logEx);
-            }
-
-            throw e;
-        }
+        return PaymentConfirmResponse.of(payment, reservation);
     }
 }
