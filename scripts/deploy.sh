@@ -30,6 +30,15 @@ else
   echo "No process on port $PORT"
 fi
 
+echo "[2.5] Export IAM credentials"
+export IAM_ACCESS="${IAM_ACCESS:-}"
+export IAM_SECRET="${IAM_SECRET:-}"
+
+if [[ -z "$IAM_ACCESS" || -z "$IAM_SECRET" ]]; then
+  echo "ERROR: IAM_ACCESS or IAM_SECRET is not set"
+  exit 1
+fi
+
 echo "[3] Start Spring Boot"
 nohup java -jar "$JAR_PATH" \
   --spring.profiles.active="$PROFILE" \
