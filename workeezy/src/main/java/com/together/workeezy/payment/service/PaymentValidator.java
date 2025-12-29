@@ -5,10 +5,12 @@ import com.together.workeezy.payment.dto.PaymentConfirmCommand;
 import com.together.workeezy.reservation.domain.Reservation;
 import com.together.workeezy.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import static com.together.workeezy.common.exception.ErrorCode.*;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PaymentValidator {
@@ -17,7 +19,8 @@ public class PaymentValidator {
 
     // 결제 가능 여부
     public Reservation validatePayable(Long reservationId, Long userId) {
-        System.out.println("🔥 validatePayable reservationId=" + reservationId);
+        log.info("🔥 validatePayable reservationId=" + reservationId);
+
         Reservation reservation =
                 reservationRepository.findByIdAndUserId(reservationId, userId)
                         .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));

@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -76,13 +78,13 @@ public class AuthController {
             HttpServletResponse response) {
 
         Cookie[] cookies = request.getCookies();
-        System.out.println("🍪 Cookie header = " + request.getHeader("Cookie"));
-        System.out.println("🍪 cookies[] = " + Arrays.toString(request.getCookies()));
+        log.info("🍪 Cookie header = " + request.getHeader("Cookie"));
+        log.info("🍪 cookies[] = " + Arrays.toString(request.getCookies()));
 
 
         // 요청에 포함된 refreshToken 쿠키 추출
         String refreshToken = cookieService.extractRefreshToken(request);
-        System.out.println("🍪 refreshToken = " + refreshToken);
+        log.info("🍪 refreshToken = " + refreshToken);
 
         if (refreshToken == null) {
             return ResponseEntity.status(401).build();
@@ -100,7 +102,7 @@ public class AuthController {
                 IS_PROD
         );
 
-        System.out.println("🔥 refresh accessToken 발급");
+        log.info("🔥 refresh accessToken 발급");
 
         // 프론트 응답
         return ResponseEntity.ok(

@@ -79,7 +79,7 @@ public class PaymentConfirmUseCase {
                 api.getApprovedAt()
         );
 
-        reservation.markConfirmed();
+//        reservation.markConfirmed();
 
         return PaymentConfirmResponse.of(payment, reservation);
     }
