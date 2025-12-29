@@ -3,6 +3,8 @@ package com.together.workeezy.reservation.dto;
 import com.together.workeezy.reservation.enums.ReservationStatus;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class AdminReservationListDto {
 
@@ -11,18 +13,21 @@ public class AdminReservationListDto {
     private String programTitle;
     private String userName;
     private ReservationStatus status;
+    private LocalDateTime createdDate;
 
     public AdminReservationListDto(
             Long id,
             String reservationNo,
             String programTitle,
             String userName,
-            ReservationStatus status
+            ReservationStatus status,
+            LocalDateTime createdDate
     ) {
         this.id = id;
         this.reservationNo = reservationNo;
         this.programTitle = programTitle;
         this.userName = userName;
         this.status = status;
+        this.createdDate = createdDate;
     }
 }

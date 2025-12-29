@@ -27,16 +27,20 @@ public class ReservationResponseDto {
     private String programTitle;       // 워케이션 프로그램명
     private long programId;
     private String stayName;           // 숙소명
-    private String officeName;         // 오피스명 (null 가능)
+    private String officeName;
     private Long roomId;
     private RoomType roomType;           // 룸타입
 
     private Long totalPrice;        // 총 가격
     private Integer peopleCount;       // 인원수
 
-    //private String mainImage;           // 대표 이미지 (썸네일용)
-    //private List<String> subImages;     // 관련 이미지 (선택 시 표시)
-
     private String rejectReason;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdDate;
+
+    private String placePhoto1;
+    private String placePhoto2;
+    private String placePhoto3;
 
 }

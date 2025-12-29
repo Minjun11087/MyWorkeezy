@@ -3,11 +3,17 @@ package com.together.workeezy.reservation.controller;
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
 import com.together.workeezy.reservation.dto.ReservationResponseDto;
 import com.together.workeezy.reservation.dto.ReservationUpdateDto;
+import com.together.workeezy.reservation.service.ReservationConfirmationService;
 import com.together.workeezy.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Slice;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/reservations") // 기본 url
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final ReservationConfirmationService reservationConfirmationService;
 
     /* 예약 생성 */
     @PostMapping
@@ -53,9 +60,36 @@ public class ReservationController {
     }
 
     // 내 예약 목록 조회
-    @GetMapping("/me")
-    public ResponseEntity<?> getMyReservations(Authentication authentication) {
+//    @GetMapping("/me")
+//    public ResponseEntity<?> getMyReservations(Authentication authentication) {
+//
+//        System.out.println("🧩 authentication = " + authentication);
+//
+//        if (authentication != null) {
+//            System.out.println("🧩 principal = " + authentication.getPrincipal());
+//            System.out.println("🧩 name = " + authentication.getName());
+//            System.out.println("🧩 authorities = " + authentication.getAuthorities());
+//        } else {
+//            System.out.println("❌ authentication is NULL");
+//        }
+//
+//        String email = authentication.getName();
+//
+//        try {
+//            return ResponseEntity.ok(reservationService.getMyReservations(email));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().body("예약 조회 실패: " + e.getMessage());
+//        }
+//    }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyReservations(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime cursorDate,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication
+    ) {
         System.out.println("🧩 authentication = " + authentication);
 
         if (authentication != null) {
@@ -65,16 +99,14 @@ public class ReservationController {
         } else {
             System.out.println("❌ authentication is NULL");
         }
-
         String email = authentication.getName();
 
-        try {
-            return ResponseEntity.ok(reservationService.getMyReservations(email));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("예약 조회 실패: " + e.getMessage());
-        }
+        Slice<ReservationResponseDto> result =
+                reservationService.getMyReservations(email, cursorDate, cursorId, size);
+
+        return ResponseEntity.ok(result);
     }
+
 
 
     // 예약 단건 조회
@@ -111,5 +143,45 @@ public class ReservationController {
     ) {
         reservationService.cancelMyReservation(id, authentication.getName());
         return ResponseEntity.ok("예약 취소 완료");
+    }
+
+    /// =============== pdf ============= //
+    ///
+    // pdf 조회(미리보기용) JSON
+    @GetMapping("/{id}/confirmation")
+    public ResponseEntity<?> getConfirmation(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+
+        return ResponseEntity.ok(
+                reservationConfirmationService.getPreview(id, email)
+        );
+    }
+
+    /**
+     * 2) 생성/업데이트(재생성)
+     * - 확정 상태에서만
+     * - S3 업로드 후 confirm_pdf_key 갱신
+     */
+    @PostMapping("/{id}/confirmation")
+    public ResponseEntity<?> regenerateConfirmationPdf(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        reservationConfirmationService.regenerate(id, email);
+        return ResponseEntity.ok("확정서 PDF 생성/갱신 완료");
+    }
+
+    /** 3) 다운로드: PDF 파일 */
+    @GetMapping("/{id}/confirmation/pdf")
+    public ResponseEntity<InputStreamResource> downloadConfirmationPdf(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        return reservationConfirmationService.download(id, email);
     }
 }
