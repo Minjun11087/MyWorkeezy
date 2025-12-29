@@ -49,13 +49,14 @@ public class SecurityConfig {
                 // 경로별 권한 설정
                 .authorizeHttpRequests(auth -> auth
 
+                        // GET → 공개
+                        // POST / PUT / DELETE → 인증
+
                         // CORS Preflight 허용
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // health / actuator (로컬 확인용)
+                        // 서버 상태 확인
                         .requestMatchers("/health", "/health/**").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
-
 
                         // Auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
@@ -79,13 +80,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/reservations/draft/**").authenticated()
                         .requestMatchers("/api/reservations/me").authenticated()
                         .requestMatchers("/api/reservations/**").authenticated()
+
+//                        .requestMatchers("/api/**").authenticated()
                         .requestMatchers("/api/payments/**").authenticated()
 
                         // 관리자 전용
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // error
+                        // 에러 페이지
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
@@ -106,22 +110,22 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
+        // 허용 Origin
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://localhost:3000",
-                "http://localhost:4173",
                 "https://www.workeezy.cloud",
                 "https://workeezy.cloud",
-                "https://workeezy-react.vercel.app"
+                "https://workeezy-react.vercel.app",
+                "http://localhost:5173"
         ));
 
-
-        config.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
-        ));
+        // 허용 메서드 / 헤더
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+
+        // 쿠키(Refresh Token) 허용
         config.setAllowCredentials(true);
+
+        // 프론트에서 Authorization 헤더 접근 허용
         config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -135,8 +139,9 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // 테스트 끝나고 반드시 삭제
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.debug(true);
+        return (web) -> web.debug(false);
     }
 }

@@ -6,16 +6,19 @@ import com.together.workeezy.auth.dto.response.LoginResponse;
 import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.auth.service.AuthService;
 import com.together.workeezy.auth.service.CookieService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -24,8 +27,8 @@ public class AuthController {
     private final AuthService authService;
     private final CookieService cookieService;
 
-    // 환경 분기 (로컬)
-    private static final boolean IS_PROD = false;
+    // 환경 분기 (배포)
+    private static final boolean IS_PROD = true;
 
     // 로그인
     @PostMapping("/login")
@@ -74,11 +77,17 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
+        Cookie[] cookies = request.getCookies();
+        log.info("🍪 Cookie header = " + request.getHeader("Cookie"));
+        log.info("🍪 cookies[] = " + Arrays.toString(request.getCookies()));
+
+
         // 요청에 포함된 refreshToken 쿠키 추출
         String refreshToken = cookieService.extractRefreshToken(request);
+        log.info("🍪 refreshToken = " + refreshToken);
 
         if (refreshToken == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(401).build();
         }
 
         // refreshToken 검증 + Redis 대조 + 새 accessToken 생성
@@ -91,9 +100,9 @@ public class AuthController {
                 response,
                 result.accessToken(),
                 IS_PROD
-
         );
-        System.out.println("🔥 refresh accessToken 발급");
+
+        log.info("🔥 refresh accessToken 발급");
 
         // 프론트 응답
         return ResponseEntity.ok(

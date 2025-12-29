@@ -27,7 +27,6 @@ public class Inquiry {
     @Column(name = "category")
     private ChatCategory category;
 
-    @Lob
     @Column(name = "inquiry_detail")
     private String inquiryDetail;
 
