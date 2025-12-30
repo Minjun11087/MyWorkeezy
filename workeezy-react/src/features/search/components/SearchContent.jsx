@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSearch } from "../context/SearchContext.jsx";
-import MapView from "./MapView.jsx";
 import SearchResultGrid from "./SearchResultGrid.jsx";
 import SearchPagination from "./SearchPagination.jsx";
 import "./SearchContent.css";
