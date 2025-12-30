@@ -28,7 +28,7 @@ export default function PaymentSuccessPage() {
                 const response = await fetch("/api/payments/confirm", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
-                    credentials: "include",
+                    // credentials: "include",
                     body: JSON.stringify({orderId, amount, paymentKey}),
                 });
 
