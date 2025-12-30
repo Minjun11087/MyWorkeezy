@@ -33,9 +33,9 @@ public class ChatMessage {
     @Column(name = "sender_role", nullable = false)
     private ChatSenderRole senderRole;
 
-    @Lob
-    @Column(name = "msg_text")
+    @Column(name = "msg_text", columnDefinition = "TEXT")
     private String msgText;
+
 
     @CreationTimestamp
     @Column(name = "send_time", updatable = false)
