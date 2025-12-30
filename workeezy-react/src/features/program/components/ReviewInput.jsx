@@ -1,45 +1,26 @@
 import "./ReviewInput.css";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import publicApi from "../../../api/publicApi.js";
-import { useProgramDetail } from "../context/ProgramDetailContext.jsx";
 
-export default function ReviewInput({ onReviewSubmitted }) {
-    const { programId } = useProgramDetail();
-
+export default function ReviewInput({ programId, onSuccess }) {
     const [rating, setRating] = useState(0);
     const [reviewText, setReviewText] = useState("");
 
-    const navigate = useNavigate();
+    const handleSubmit = async () => {
+        if (!programId) return alert("프로그램 정보가 없어요.");
+        if (!rating) return alert("별점을 선택해주세요!");
+        if (!reviewText.trim()) return alert("리뷰 내용을 입력해주세요!");
 
-    let userId = null;
-
-    const handleSubmit = () => {
-        if (!rating) {
-            alert("별점을 선택해주세요!");
-            return;
+        try {
+            await publicApi.post("/api/reviews", { programId, rating, reviewText });
+            alert("리뷰가 등록되었습니다!");
+            setRating(0);
+            setReviewText("");
+            onSuccess?.();
+        } catch (err) {
+            console.error("리뷰 등록 실패:", err);
+            alert("리뷰 등록 실패");
         }
-        if (!reviewText.trim()) {
-            alert("리뷰 내용을 입력해주세요!");
-            return;
-        }
-
-        publicApi
-            .post("/api/reviews", {
-                programId,
-                rating,
-                reviewText,
-            })
-            .then(() => {
-                alert("리뷰가 등록되었습니다!");
-                setRating(0);
-                setReviewText("");
-                navigate("/reviews");
-                if (onReviewSubmitted) onReviewSubmitted();
-            })
-            .catch((err) => {
-                console.error("리뷰 등록 실패:", err);
-            });
     };
 
     return (

@@ -46,11 +46,6 @@ function ProgramDetailBody() {
                 <ActivityInfo />
             </section>
 
-            <section id="review-input">
-                <ReviewInput />
-            </section>
-
-            <FloatingButtons />
         </ProgramDetailSection>
     );
 }
