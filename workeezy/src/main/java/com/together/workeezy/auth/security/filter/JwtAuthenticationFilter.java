@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/programs/**",
             "/api/reviews",
             "/api/reviews/**",
-            "/api/payments/confirm",
+            "/api/payments/**",
             "/ping",              // debug
             "/error"
     );
@@ -53,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("🧪 WHITELIST = " + WHITELIST);
 
         // 화이트리스트 URL은 JWT 인증 스킵
         for (String pattern : WHITELIST) {
