@@ -68,6 +68,9 @@ public class SecurityConfig {
 
                         // Programs / Reviews (공개 범위)
                         .requestMatchers("/api/programs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/reviews").authenticated()
+
 
                         // Search / Recommend
                         .requestMatchers("/api/search/**").authenticated()
@@ -82,6 +85,7 @@ public class SecurityConfig {
 
                         // 관리자 전용
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
 
                         // error
                         .requestMatchers("/error").permitAll()

@@ -1,13 +1,13 @@
 spring:
+  security:
+    debug: true
   data:
     redis:
       host: localhost
       port: 6379
   elasticsearch:
     uris: http://localhost:9200
-  spring:
-    security:
-      debug: true
+
 
   jackson:
     time-zone: Asia/Seoul
