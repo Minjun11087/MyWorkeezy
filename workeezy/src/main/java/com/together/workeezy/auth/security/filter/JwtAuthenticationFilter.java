@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/programs/**",
             "/api/reviews",
             "/api/reviews/**",
-            "/api/payments/**",
+//            "/api/payments/**",
             "/ping",              // debug
             "/error"
     );
@@ -88,32 +88,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (auth != null) {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                     System.out.println("🔥 JWT 인증 성공: " + auth.getName());
-                    System.out.println("🔥 authorities = " + auth.getAuthorities());
+                    System.out.println("🔥 auth authorities = " + auth.getAuthorities());
+
+                    System.out.println("✅ SecurityContext 인증 세팅 완료");
                 } else {
                     SecurityContextHolder.clearContext();
-                    System.out.println("❌ getAuthentication()이 null 반환");
+                    System.out.println("❌ JWT 토큰 없음");
+                    System.out.println("========== JWT FILTER END ==========");
                 }
-
-                System.out.println("🔥 auth 객체 = " + auth);
-                System.out.println("🔥 auth name = " + auth.getName());
-                System.out.println("🔥 auth authorities = " + auth.getAuthorities());
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
-
-                System.out.println("🔥 JWT 인증 성공: " + auth.getName());
-                System.out.println("✅ SecurityContext 인증 세팅 완료");
-            } else {
-                System.out.println("❌ JWT 인증 실패 또는 없음");
             }
-        } else {
-            SecurityContextHolder.clearContext();
-            System.out.println("❌ JWT 토큰 없음");
-            System.out.println("========== JWT FILTER END ==========");
-        }
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
 
-        Authentication ctxAuth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("🧠 FILTER END Context auth = " + ctxAuth);
+            Authentication ctxAuth = SecurityContextHolder.getContext().getAuthentication();
+            System.out.println("🧠 FILTER END Context auth = " + ctxAuth);
+        }
+
     }
 
     // Authorization 헤더 + HttpOnly 쿠키
