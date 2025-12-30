@@ -31,7 +31,7 @@ public class Review {
     private User user;
 
     @Lob
-    @Column(name = "review_content")
+    @Column(name = "review_content", columnDefinition = "TEXT")
     private String content;
 
     @CreationTimestamp
