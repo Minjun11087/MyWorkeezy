@@ -10,23 +10,26 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-    api.get(`/api/payments/${reservationId}`)
-        .then((res) => {
-            const data = res.data;
+        console.log("🔥 CheckoutPage mounted, reservationId =", reservationId);
 
-            if (data.status !== "READY") {
-                navigate("/reservation/list", { replace: true });
-                return;
-            }
+        api.get(`/api/payments/${reservationId}`)
+            .then((res) => {
+                console.log("🔥 payment ready response", res.data);
 
-            setReservation(data);
-        })
-        .catch((e) => {
-            console.error(e);
-            navigate("/reservation/list", { replace: true });
-        })
-        .finally(() => setLoading(false));
-    }, [reservationId, navigate]);
+                if (res.data.status === "CONFIRMED") {
+                    navigate("/payment/result/success", {replace: true});
+                    return;
+                }
+
+                setReservation(res.data);
+            })
+            .catch((e) => {
+                console.error("🔥 payment ready error", e);
+                navigate("/reservation/list", {replace: true});
+            })
+            .finally(() => setLoading(false));
+    }, [reservationId]);
+
 
     // useEffect(() => {
     //     fetch(`/api/payments/${reservationId}`, {
@@ -52,7 +55,7 @@ export default function CheckoutPage() {
     // }, [reservationId, navigate]);
 
     if (loading) {
-        return <div stylef={{textAlign: "center", marginTop: 120}}>결제 정보 불러오는 중...</div>;
+        return <div style={{textAlign: "center", marginTop: 120}}>결제 정보 불러오는 중...</div>;
     }
 
     if (!reservation) return null;
