@@ -17,9 +17,10 @@ export default function CheckoutPage() {
                 console.log("🔥 payment ready response", res.data);
 
                 if (res.data.status === "CONFIRMED") {
-                    navigate("/payment/result/success", {replace: true});
+                    navigate("/reservation/list", { replace: true });
                     return;
                 }
+
 
                 setReservation(res.data);
             })

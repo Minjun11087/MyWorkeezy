@@ -1,16 +1,21 @@
-import "./Result.css";
+import "../components/Result.css";
 import {useEffect, useRef} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
-export function Success({orderId, amount, paymentKey}) {
+export default function PaymentSuccessPage() {
     const navigate = useNavigate();
+    const [params] = useSearchParams();
+
+    const orderId = params.get("orderId");
+    const paymentKey = params.get("paymentKey");
+    const amount = Number(params.get("amount"));
 
     const calledRef = useRef(false);
 
     useEffect(() => {
 
         if (!orderId || !paymentKey || !amount) {
-            navigate("/payment/fail?code=INVALID_RESULT_PARAMS");
+            navigate("/payment/fail?code=INVALID_RESULT_PARAMS", {replace: true});
             return;
         }
 
@@ -18,41 +23,29 @@ export function Success({orderId, amount, paymentKey}) {
         if (calledRef.current) return;
         calledRef.current = true;
 
-        // 개발 환경에서는 confirm 생략
-        // if (import.meta.env.DEV) {
-        //     console.log("DEV MODE - confirm 생략");
-        //     return;
-        // }
-
-        const requestData = {
-            orderId,
-            amount,
-            paymentKey,
-        };
-
         async function confirm() {
             try {
                 const response = await fetch("/api/payments/confirm", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     credentials: "include",
-                    body: JSON.stringify(requestData),
+                    body: JSON.stringify({orderId, amount, paymentKey}),
                 });
 
                 if (!response.ok) {
-                    navigate("/payment/fail?code=CONFIRM_FAILED");
+                    navigate("/payment/result/fail?code=CONFIRM_FAILED", {replace: true});
                     return;
                 }
 
                 await response.json();
 
             } catch {
-                navigate("/payment/fail?code=NETWORK_ERROR&message=네트워크 오류");
+                navigate("/payment/result/fail?code=NETWORK_ERROR", {replace: true});
             }
         }
 
         confirm();
-    }, [navigate, orderId, amount, paymentKey]);
+    }, [orderId, paymentKey, amount, navigate]);
 
     return (
         <div className="result-wrapper">
