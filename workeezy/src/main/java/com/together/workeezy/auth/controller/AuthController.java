@@ -25,7 +25,7 @@ public class AuthController {
     private final CookieService cookieService;
 
     // 환경 분기 (배포)
-    private static final boolean IS_PROD = true;
+    private static final boolean IS_PROD = false;
 
     // 로그인
     @PostMapping("/login")
