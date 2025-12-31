@@ -25,7 +25,9 @@ public class ReservationConfirmationService {
     private final UserRepository userRepository;
 
     private final OpenPdfReservationConfirmationGenerator pdfGenerator;
-    private final S3PdfStorage s3PdfStorage;
+    //    private final S3PdfStorage s3PdfStorage;
+    private final PdfStorage pdfStorage;
+
 
     /** 조회(미리보기 JSON) */
     @Transactional(readOnly = true)
@@ -52,7 +54,7 @@ public class ReservationConfirmationService {
 
         byte[] pdfBytes = pdfGenerator.generate(reservation);
 
-        s3PdfStorage.uploadPdf(pdfBytes, key);
+        pdfStorage.uploadPdf(pdfBytes, key);
 
         reservation.updateConfirmPdfKey(key); // 도메인 변경
         // JPA dirty checking으로 DB 반영
@@ -66,7 +68,7 @@ public class ReservationConfirmationService {
         reservation.ensureConfirmed();
         reservation.ensureHasConfirmPdf(); // pdfKey 없으면 예외
 
-        InputStream is = s3PdfStorage.downloadPdf(reservation.getConfirmPdfKey());
+        InputStream is = pdfStorage.downloadPdf(reservation.getConfirmPdfKey());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -102,9 +104,9 @@ public class ReservationConfirmationService {
 
         String key = buildKey(reservationId);
         byte[] pdfBytes = pdfGenerator.generate(reservation);
-        s3PdfStorage.uploadPdf(pdfBytes, key);
+        pdfStorage.uploadPdf(pdfBytes, key);
         reservation.updateConfirmPdfKey(key);
-    
+
         // 관리자 승인시
     //reservationConfirmationService.regenerateByAdmin(reservationId);
     }
