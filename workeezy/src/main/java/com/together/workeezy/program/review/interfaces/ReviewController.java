@@ -28,10 +28,20 @@ public class ReviewController {
             @RequestBody ReviewCreateRequest dto,
             Authentication authentication
     ) {
+        System.out.println("AUTH = " + authentication);
+        System.out.println("AUTH NAME = " + (authentication != null ? authentication.getName() : null));
 
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("로그인이 필요합니다.");
+        }
+
+        String email = authentication.getName();
+        reviewService.createReview(dto, email);
 
         return ResponseEntity.ok("리뷰 등록 완료");
     }
+
+
 
 
 }

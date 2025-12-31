@@ -2,7 +2,6 @@ package com.together.workeezy.reservation.controller;
 
 import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
-//import com.together.workeezy.reservation.dto.ReservationRequestDto;
 import com.together.workeezy.reservation.dto.ReservationResponseDto;
 import com.together.workeezy.reservation.dto.ReservationUpdateDto;
 import com.together.workeezy.reservation.enums.ReservationStatus;
