@@ -36,6 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
+.env
 .env.local
 
 # Node
@@ -57,4 +58,7 @@ Thumbs.db
 
 # env
 *.env
+*.yml
+
+
 *.env.local
