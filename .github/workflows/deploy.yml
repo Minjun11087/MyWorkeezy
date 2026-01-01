@@ -25,7 +25,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::020513637952:role/workeezy-ec2-role
+          role-to-assume: arn:aws:iam::020513637952:role/github-actions-ecr-role
           aws-region: ap-northeast-2
 
       - name: Login to ECR
