@@ -138,6 +138,44 @@ export default function ReservationForm({
     fetchProgramForReservation();
   }, [programId, roomId, checkIn, checkOut]);
 
+  useEffect(() => {
+    if (!form.startDate) return;
+
+    const end = new Date(form.startDate);
+    end.setDate(end.getDate() + 2); // 2박 3일
+
+    setForm((prev) => ({
+      ...prev,
+      endDate: end,
+    }));
+  }, [form.startDate]);
+
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [checking, setChecking] = useState(false);
+
+  useEffect(() => {
+    if (!form.roomId || !form.startDate || !form.endDate) return;
+
+    const checkAvailability = async () => {
+      try {
+        setChecking(true);
+        const res = await fetch(
+          `/api/reservations/availability?roomId=${
+            form.roomId
+          }&startDate=${form.startDate.toISOString()}&endDate=${form.endDate.toISOString()}`
+        );
+        const data = await res.json();
+        setIsAvailable(data.available);
+      } catch {
+        setIsAvailable(false);
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    checkAvailability();
+  }, [form.roomId, form.startDate, form.endDate]);
+
   // 🔥 rooms 로딩 후 roomId 기준으로 roomType 동기화
   useEffect(() => {
     if (!rooms.length || !form.roomId) return;
@@ -192,6 +230,11 @@ export default function ReservationForm({
   ========================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isAvailable) {
+      Swal.fire("이미 예약된 날짜입니다.");
+      return;
+    }
 
     try {
       if (mode === "edit") {
@@ -279,6 +322,8 @@ export default function ReservationForm({
           rooms={rooms}
           // offices={offices}
           onChange={handleChange}
+          isAvailable={isAvailable}
+          checking={checking}
         />
         <ReservationFormActions
           mode={mode}

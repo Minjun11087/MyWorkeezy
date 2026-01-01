@@ -20,10 +20,12 @@ export default function ReservationFields({
   officeName,
   stayName,
   stayId,
+  isAvailable,
+  checking,
 }) {
-    console.log("🔥 rooms =", rooms);
+  console.log("🔥 rooms =", rooms);
 
-    // 사용자가 select에서 옵션 바꿀 때마다 form에 roomId, roomType
+  // 사용자가 select에서 옵션 바꿀 때마다 form에 roomId, roomType
   const handleSelectChange = (type, e) => {
     // 사용자가 선택한 option의 value(roomId) 객체 구조 분해 할당
     const { value } = e.target;
@@ -149,43 +151,68 @@ export default function ReservationFields({
         <div className="div">예약 날짜</div>
         <div className="date">
           <div className="started-at">
-            <DatePicker
-              selected={startDate}
-              onChange={(date) =>
-                onChange({ target: { name: "startDate", value: date } })
-              }
-              showTimeSelect
-              dateFormat="yyyy-MM-dd HH:mm"
-              className="input-text"
-              minDate={startOfDay(now)}
-              minTime={
-                startDate &&
-                startOfDay(startDate).getTime() === startOfDay(now).getTime()
-                  ? now
-                  : startOfDay(now)
-              }
-              maxTime={endOfDay(startDate || now)}
-            />
+            {" "}
+            <div className="input">
+              <DatePicker
+                selected={startDate}
+                onChange={(date) =>
+                  onChange({ target: { name: "startDate", value: date } })
+                }
+                showTimeSelect
+                dateFormat="yyyy-MM-dd HH:mm"
+                className="input-text"
+                minDate={startOfDay(now)}
+                minTime={
+                  startDate &&
+                  startOfDay(startDate).getTime() === startOfDay(now).getTime()
+                    ? now
+                    : startOfDay(now)
+                }
+                maxTime={endOfDay(startDate || now)}
+              />
+            </div>
           </div>
 
           <div className="ended-at">
-            <DatePicker
-              selected={endDate}
-              onChange={(date) =>
-                onChange({ target: { name: "endDate", value: date } })
-              }
-              showTimeSelect
-              dateFormat="yyyy-MM-dd HH:mm"
-              className="input-text"
-              minDate={startDate ? startOfDay(startDate) : startOfDay(now)}
-              minTime={
-                startDate && isSameDay(startDate, endDate)
-                  ? startDate // 같은 날 → 시작시간 이후만
-                  : startOfDay(endDate || now) // 다른 날 → 00:00부터
-              }
-              maxTime={endOfDay(endDate || now)}
-            />
+            <div className="input">
+              {/* <DatePicker
+                selected={endDate}
+                onChange={(date) =>
+                  onChange({ target: { name: "endDate", value: date } })
+                }
+                showTimeSelect
+                dateFormat="yyyy-MM-dd HH:mm"
+                className="input-text"
+                minDate={startDate ? startOfDay(startDate) : startOfDay(now)}
+                minTime={
+                  startDate && isSameDay(startDate, endDate)
+                    ? startDate // 같은 날 → 시작시간 이후만
+                    : startOfDay(endDate || now) // 다른 날 → 00:00부터
+                }
+                maxTime={endOfDay(endDate || now)}
+              /> */}
+
+              <DatePicker
+                className="input-text"
+                selected={endDate}
+                readOnly
+                dateFormat="yyyy-MM-dd HH:mm"
+              />
+            </div>
           </div>
+        </div>
+        <div className="availability-wrapper">
+          {!checking && !isAvailable && (
+            <span className="availability-error">이미 예약된 날짜입니다.</span>
+          )}
+          {!checking && isAvailable && (
+            <span className="availability-success">
+              예약이 가능한 날짜입니다.
+            </span>
+          )}
+          {checking && (
+            <span className="availability-checking">확인 중...</span>
+          )}
         </div>
       </div>
 

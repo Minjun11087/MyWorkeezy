@@ -41,12 +41,41 @@
   flex: 1; /* 가능한 폭 전부 차지 */
   background: transparent;
   border: none;
-  border-bottom: 2px solid #b9b9b9; /* ✅ 밑줄 스타일 */
+  /* border-bottom: 2px solid #b9b9b9;✅ 밑줄 스타일 */
   padding: 8px 0;
   display: flex;
   align-items: center;
 }
 
+.input {
+  position: relative;
+  flex: 1;
+  background: transparent;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+/* 밑줄 커스텀 */
+.input::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%; /* 🔥 여기서 길이 조절 */
+  height: 2px;
+  background-color: #b9b9b9;
+  transition: background-color 0.2s;
+}
+
+/* 포커스 시 */
+.input:focus-within::after {
+  background-color: #f2ecd6;
+}
+
+.ended-at .react-datepicker-wrapper {
+  pointer-events: none;
+}
 /* 입력창 자체 */
 .value {
   border: none;
@@ -93,7 +122,7 @@
 .ended-at {
   flex: 1;
   border: none;
-  border-bottom: 2px solid #b9b9b9;
+  /* border-bottom: 2px solid #b9b9b9; */
   background: transparent;
   height: 35px;
   display: flex;
@@ -159,6 +188,7 @@ input[type="date"] {
   border: 1px solid #ddd; /* 기존 input 테두리와 통일 */
   border-radius: 4px;
   box-sizing: border-box;
+  padding-left: 8px;
 }
 
 /* 포커스 시 */
@@ -176,4 +206,47 @@ input[type="date"] {
 .started-at,
 .ended-at {
   flex: 1;
+}
+
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.res-date {
+  position: relative; /* 기준점 */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.date {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  margin-left: 10px;
+}
+
+/* 오른쪽에 띄우는 상태 메시지 */
+.availability-error,
+.availability-checking,
+.availability-success {
+  position: absolute;
+  right: -130px; /* 👉 오른쪽으로 빼기 */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.availability-error {
+  color: #e74c3c;
+}
+
+.availability-checking {
+  color: #999;
+}
+
+.availability-success {
+  color: #2ecc71;
 }
