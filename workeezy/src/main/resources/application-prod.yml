@@ -26,6 +26,11 @@ jwt:
   access-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS}
   refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS}
 
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+
 toss:
   payments:
     secret-key: ${TOSS_SECRET_KEY}
