@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+  security:
+    debug: true
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+  elasticsearch:
+    uris: http://localhost:9200
+
+  jackson:
+    time-zone: Asia/Seoul
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # create, update, validate, none 중 선택
+    show-sql: false  # SQL 쿼리 콘솔 출력
+    properties:
+      hibernate:
+        format_sql: true  # SQL 포맷팅
+        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false  # OSIV 비활성화 (선택)
+
+logging:
+  level:
+    root: DEBUG
+    org.hibernate.SQL: debug  # SQL 로깅
+    org.hibernate.type.descriptor.sql.BasicBinder: trace  # 파라미터 값 로깅
+    org.springframework.security: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS}   # 30분
+  refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS} # 7일
+
+toss:
+  payments:
+    secret-key: ${TOSS_SECRET_KEY}
+    client-key: ${TOSS_CLIENT_KEY} # 프론트에서 사용
+    base-url: https://api.tosspayments.com
+
+draft:
+  max-count: 5
+  ttl-days: 14
