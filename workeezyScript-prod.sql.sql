@@ -739,7 +739,7 @@ VALUES
 -- ===== Program 10 stay(46)
 (46, 101, 2, '한옥, 조식', 'economy'),
 (46, 102, 2, '한옥, 마당뷰', 'standard'),
-(46, 301, 6, '독채형 한옥', 'superior'),
+(46, 201, 4, '가족룸, 온돌', 'superior'),
 
 
 -- ===== Program 11 stay(51)

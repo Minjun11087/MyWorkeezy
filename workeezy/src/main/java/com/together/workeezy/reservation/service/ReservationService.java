@@ -1,5 +1,7 @@
 package com.together.workeezy.reservation.service;
 
+import com.together.workeezy.common.exception.CustomException;
+import com.together.workeezy.common.exception.ErrorCode;
 import com.together.workeezy.draft.service.DraftApplicationService;
 import com.together.workeezy.program.program.domain.model.entity.PlaceType;
 import com.together.workeezy.program.program.domain.model.entity.Program;
@@ -10,6 +12,7 @@ import com.together.workeezy.reservation.domain.Reservation;
 import com.together.workeezy.reservation.dto.ReservationCreateDto;
 import com.together.workeezy.reservation.dto.ReservationResponseDto;
 import com.together.workeezy.reservation.dto.ReservationUpdateDto;
+import com.together.workeezy.reservation.enums.ReservationStatus;
 import com.together.workeezy.reservation.repository.ReservationRepository;
 import com.together.workeezy.search.domain.model.repository.RoomRepository;
 import com.together.workeezy.user.entity.User;
@@ -30,6 +33,8 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import com.together.workeezy.program.program.domain.model.entity.Place;
 
+import static com.together.workeezy.reservation.enums.ReservationStatus.waiting_payment;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,7 +49,7 @@ public class ReservationService {
     private final DraftApplicationService draftApplicationService;
 
     // 동시 요청 방지를 위해 synchronized 추가 (멀티유저 환경 대비)
-    public synchronized Reservation createNewReservation(ReservationCreateDto dto, String email) {
+    public  Reservation createNewReservation(ReservationCreateDto dto, String email) {
 
         // *** 예약 번호 생성 ***
         // 오늘 날짜 문자열 (예: 20251209)
@@ -77,11 +82,24 @@ public class ReservationService {
         Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 룸이 존재하지 않습니다. roomId=" + dto.getRoomId()));
 
+        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
+        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
+
+        // 예약 중복 방지
+        // 신규
+        boolean available = isRoomAvailable(room.getId(),startDate);
+
+        // 수정
+        if (!available) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
+        }
+
         Place office = null;
         if (dto.getOfficeId() != null) {
             office = placeRepository.findById(dto.getOfficeId())
                     .orElseThrow(() -> new IllegalArgumentException("오피스 없음"));
         }
+
 
         // *** 도메인 생성 메서드 ***
         Reservation reservation = Reservation.create(
@@ -89,11 +107,16 @@ public class ReservationService {
                 program,
                 room,
                 office,
-                dto.getStartDate(),
-                dto.getEndDate(),
+//                dto.getStartDate(),
+//                dto.getEndDate(),
+                startDate,
+                endDate,
                 dto.getPeopleCount(),
                 newReservationNo
         );
+
+
+
 
 //        // 총 금액 계산 (프로그램 가격 * 인원수)
 //        Integer basePrice = program.getProgramPrice();
@@ -128,6 +151,44 @@ public class ReservationService {
         }
         return saved;
     }
+
+
+    // 신규 예약
+    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate) {
+        return isRoomAvailableInternal(roomId, startDate, null);
+    }
+
+    // 예약 수정
+    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate, Long excludeId) {
+        return isRoomAvailableInternal(roomId, startDate, excludeId);
+    }
+
+
+    // 기존 예약 수정용
+    private boolean isRoomAvailableInternal(
+            Long roomId,
+            LocalDateTime startDate,
+            Long excludeId
+    ) {
+        LocalDateTime endDate = startDate.plusDays(2);
+
+        boolean exists;
+        if (excludeId == null) {
+            exists = reservationRepository.existsOverlap(
+                    roomId, startDate, endDate
+            );
+        } else {
+            exists = reservationRepository.existsOverlapExcept(
+                    roomId, startDate, endDate, excludeId
+            );
+        }
+
+        log.info("🧩 [예약 체크] roomId={}, start={}, end={}, exists={}",
+                roomId, startDate, endDate, exists);
+
+        return !exists;
+    }
+
 
 //    /*  내 예약 목록 조회 (컨트롤러에서 /me로 호출) */
 //    @Transactional(readOnly = true) // 쓰기 감지 안해서 속도 향상
@@ -194,7 +255,9 @@ public class ReservationService {
             String email,
             LocalDateTime cursorDate,
             Long cursorId,
-            int size
+            int size,
+            String keyword,
+            ReservationStatus status
     ) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
@@ -206,6 +269,8 @@ public class ReservationService {
                         user.getId(),
                         cursorDate,
                         cursorId,
+                        keyword,
+                        status,
                         pageable
                 );
 
@@ -216,7 +281,7 @@ public class ReservationService {
     }
 
 
-    
+
     // 예약 단건 조회
     @Transactional(readOnly = true)
     public ReservationResponseDto getMyReservation(Long id, String email) {
@@ -239,14 +304,56 @@ public class ReservationService {
         // 외부 엔티티 조합 검증은 service 책임
         Room room = getValidRoom(dto.getRoomId(), reservation.getProgram());
 
+        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
+        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
+
+        boolean available = isRoomAvailable(
+                room.getId(),
+                startDate,
+                reservation.getId()
+        );
+
+        if (!available) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
+        }
+
         // 도메인 행위 호출
         reservation.update(
-                dto.getStartDate(),
-                dto.getEndDate(),
+                startDate,
+                endDate,
                 dto.getPeopleCount(),
                 room
         );
 
+    }
+
+    // 예약 재신청
+    @Transactional
+    public void resubmitReservation(Long id, String email, ReservationUpdateDto dto) {
+        Reservation reservation = getMyReservationOrThrow(id, email);
+
+        Room room = getValidRoom(dto.getRoomId(), reservation.getProgram());
+
+        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
+        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
+
+        boolean available = isRoomAvailable(
+                room.getId(),
+                startDate,
+                reservation.getId()
+        );
+
+        if (!available) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
+        }
+
+        // 도메인 행위 호출
+        reservation.resubmit(
+                startDate,
+                endDate,
+                dto.getPeopleCount(),
+                room
+        );
     }
 
     // 예약 취소
@@ -255,21 +362,8 @@ public class ReservationService {
 
         Reservation reservation = getMyReservationOrThrow(id, email);
 
-        reservation.cancel();
-
-        // 이전
-//        int diffDays =  reservation.daysUntilStart();
-//
-//        if (!reservation.getStatus().canDirectCancel(diffDays)) {
-//            throw new IllegalStateException("이 상태에서는 취소 불가");
-//        }
-//        if (diffDays < 0) {
-//            throw new IllegalStateException("이미 시작된 예약은 취소 불가");
-//        }
-//
-//        reservation.setStatus(ReservationStatus.cancelled);
+        reservation.cancelByUser();
     }
-
 
     // ============================================================================
 
@@ -303,6 +397,35 @@ public class ReservationService {
             throw new IllegalStateException("프로그램에 속한 숙소의 룸이 아닙니다.");
         }
         return room;
+    }
+
+    // 최대 예약 개수
+    public void validateReservationCreate(Long userId){
+        int waiting = reservationRepository.countByUserAndStatus(User.reference(userId), waiting_payment);
+        int approved = reservationRepository.countByUserAndStatus(User.reference(userId), ReservationStatus.approved);
+        int confirmed = reservationRepository.countByUserAndStatus(User.reference(userId), ReservationStatus.confirmed);
+
+        if (waiting >= 5)
+            throw new CustomException(ErrorCode.RESERVATION_WAITING_LIMIT_EXCEEDED);
+
+        if (approved >= 3)
+            throw new CustomException(ErrorCode.RESERVATION_APPROVED_LIMIT_EXCEEDED);
+
+        if (confirmed >= 3)
+            throw new CustomException(ErrorCode.RESERVATION_CONFIRMED_LIMIT_EXCEEDED);
+
+        if (waiting + approved + confirmed >= 8)
+            throw new CustomException(ErrorCode.RESERVATION_TOTAL_LIMIT_EXCEEDED);
+
+    }
+    
+    // 체크인 - 아웃 공통 유틸메서드
+    private LocalDateTime normalizeCheckIn(LocalDateTime date) {
+        return date.toLocalDate().atTime(15, 0);
+    }
+
+    private LocalDateTime normalizeCheckOut(LocalDateTime date) {
+        return date.toLocalDate().plusDays(2).atTime(11, 0);
     }
 
 }

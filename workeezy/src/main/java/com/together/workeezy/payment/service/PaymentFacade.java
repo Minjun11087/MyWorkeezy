@@ -5,7 +5,6 @@ import com.together.workeezy.payment.dto.request.PaymentConfirmRequest;
 import com.together.workeezy.payment.dto.response.PaymentConfirmResponse;
 import com.together.workeezy.payment.dto.response.PaymentReadyResponse;
 import com.together.workeezy.reservation.domain.Reservation;
-import com.together.workeezy.reservation.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

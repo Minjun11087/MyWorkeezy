@@ -2,18 +2,22 @@ package com.together.workeezy.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static com.together.workeezy.common.exception.ErrorCode.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // Custom 비즈니스 예외
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<?> handleCustomException(CustomException e) {
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+        ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity
                 .status(e.getErrorCode().getStatus())
-                .body(e.getMessage());
+                .body(new ErrorResponse(errorCode));
     }
 
     // 접근 권한 없음
@@ -37,5 +41,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("서버 오류가 발생했습니다.");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidation(
+            MethodArgumentNotValidException e
+    ) {
+        return  ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(VALIDATION_ERROR));
     }
 }

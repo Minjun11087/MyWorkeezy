@@ -30,7 +30,8 @@ public class Review {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "review_content")
+    @Lob
+    @Column(name = "review_content", columnDefinition = "TEXT")
     private String content;
 
     @CreationTimestamp

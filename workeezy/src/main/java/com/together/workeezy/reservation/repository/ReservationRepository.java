@@ -5,12 +5,14 @@ import com.together.workeezy.reservation.enums.ReservationStatus;
 import com.together.workeezy.reservation.dto.AdminReservationDetailDto;
 import com.together.workeezy.reservation.dto.AdminReservationListDto;
 import com.together.workeezy.reservation.dto.ReservationResponseDto;
+import com.together.workeezy.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +61,16 @@ join r.stay s
 join r.office o
 join r.room r2
 where r.user.id = :userId
+and (
+    :keyword is null
+    or p.title like concat('%', :keyword, '%')
+)
+
+and (
+    :status is null
+    or r.status = :status
+)
+
   and (
         :cursorDate is null
         or r.createdDate < :cursorDate
@@ -70,6 +82,8 @@ order by r.createdDate desc, r.id desc
             Long userId,
             LocalDateTime cursorDate,
             Long cursorId,
+            String keyword,
+            ReservationStatus status,
             Pageable pageable
     );
 
@@ -179,6 +193,8 @@ where r.id = :reservationId
 
     Optional<Reservation> findByReservationNo(String s);
 
+    int countByUserAndStatus(User user, ReservationStatus status);
+
     // 관리자 - 예약 상세 조회
 //    @Query("""
 //        select r
@@ -194,4 +210,43 @@ where r.id = :reservationId
 //            @Param("reservationId") Long reservationId
 //    );
 
+    // 신규 예약용
+    @Query("""
+SELECT COUNT(r) > 0 FROM Reservation r
+WHERE r.room.id = :roomId
+  AND r.status IN (
+    com.together.workeezy.reservation.enums.ReservationStatus.waiting_payment,
+    com.together.workeezy.reservation.enums.ReservationStatus.approved,
+    com.together.workeezy.reservation.enums.ReservationStatus.confirmed
+  )
+  AND r.startDate < :endDate
+  AND r.endDate > :startDate
+""")
+    boolean existsOverlap(
+            @Param("roomId") Long roomId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
+
+    // 수정용 (자기 자신 제외)
+    @Query("""
+SELECT COUNT(r) > 0 FROM Reservation r
+WHERE r.room.id = :roomId
+  AND r.status IN (
+    com.together.workeezy.reservation.enums.ReservationStatus.waiting_payment,
+    com.together.workeezy.reservation.enums.ReservationStatus.approved,
+    com.together.workeezy.reservation.enums.ReservationStatus.confirmed
+  )
+  AND r.startDate < :endDate
+  AND r.endDate > :startDate
+  AND r.id <> :excludeId
+""")
+    boolean existsOverlapExcept(
+            @Param("roomId") Long roomId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            @Param("excludeId") Long excludeId
+    );
+
 }
+

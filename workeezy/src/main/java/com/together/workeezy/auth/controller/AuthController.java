@@ -6,19 +6,16 @@ import com.together.workeezy.auth.dto.response.LoginResponse;
 import com.together.workeezy.auth.security.user.CustomUserDetails;
 import com.together.workeezy.auth.service.AuthService;
 import com.together.workeezy.auth.service.CookieService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -26,9 +23,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final CookieService cookieService;
-
-    // 환경 분기 (배포)
-    private static final boolean IS_PROD = true;
 
     // 로그인
     @PostMapping("/login")
@@ -47,8 +41,7 @@ public class AuthController {
         // 이후 모든 요청에서 이 쿠키가 자동 전송
         cookieService.addAccessCookie(
                 response,
-                result.accessToken(),
-                IS_PROD
+                result.accessToken()
         );
 
         // refreshToken을 쿠키로 내려줌
@@ -57,8 +50,7 @@ public class AuthController {
         cookieService.addRefreshCookie(
                 response,
                 result.refreshToken(),
-                result.autoLogin(),
-                IS_PROD
+                result.autoLogin()
         );
 
         // 프론트에 로그인 성공 응답 전달
@@ -77,17 +69,11 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        Cookie[] cookies = request.getCookies();
-        log.info("🍪 Cookie header = " + request.getHeader("Cookie"));
-        log.info("🍪 cookies[] = " + Arrays.toString(request.getCookies()));
-
-
         // 요청에 포함된 refreshToken 쿠키 추출
         String refreshToken = cookieService.extractRefreshToken(request);
-        log.info("🍪 refreshToken = " + refreshToken);
 
         if (refreshToken == null) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         // refreshToken 검증 + Redis 대조 + 새 accessToken 생성
@@ -98,11 +84,9 @@ public class AuthController {
         // 이후 요청부터는 이 new 토큰 사용됨
         cookieService.addAccessCookie(
                 response,
-                result.accessToken(),
-                IS_PROD
+                result.accessToken()
         );
-
-        log.info("🔥 refresh accessToken 발급");
+        System.out.println("🔥 refresh accessToken 발급");
 
         // 프론트 응답
         return ResponseEntity.ok(
@@ -125,8 +109,8 @@ public class AuthController {
         authService.logout(refreshToken);
 
         // access / refresh 쿠키 모두 삭제
-        cookieService.deleteAccessCookie(response, IS_PROD);
-        cookieService.deleteRefreshCookie(response, IS_PROD);
+        cookieService.deleteAccessCookie(response);
+        cookieService.deleteRefreshCookie(response);
 
         return ResponseEntity.ok("로그아웃 성공");
     }
