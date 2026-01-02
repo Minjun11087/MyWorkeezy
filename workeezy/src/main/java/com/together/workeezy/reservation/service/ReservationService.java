@@ -82,8 +82,8 @@ public class ReservationService {
         Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 룸이 존재하지 않습니다. roomId=" + dto.getRoomId()));
 
-        LocalDateTime startDate = dto.getStartDate();
-        LocalDateTime endDate = startDate.plusDays(2);
+        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
+        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
 
         // 예약 중복 방지
         // 신규
@@ -304,8 +304,8 @@ public class ReservationService {
         // 외부 엔티티 조합 검증은 service 책임
         Room room = getValidRoom(dto.getRoomId(), reservation.getProgram());
 
-        LocalDateTime startDate = dto.getStartDate();
-        LocalDateTime endDate = startDate.plusDays(2);
+        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
+        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
 
         boolean available = isRoomAvailable(
                 room.getId(),
@@ -319,8 +319,8 @@ public class ReservationService {
 
         // 도메인 행위 호출
         reservation.update(
-                dto.getStartDate(),
-                dto.getEndDate(),
+                startDate,
+                endDate,
                 dto.getPeopleCount(),
                 room
         );
@@ -334,9 +334,8 @@ public class ReservationService {
 
         Room room = getValidRoom(dto.getRoomId(), reservation.getProgram());
 
-        LocalDateTime startDate = dto.getStartDate();
-        LocalDateTime endDate = startDate.plusDays(2);
-
+        LocalDateTime startDate = normalizeCheckIn(dto.getStartDate());
+        LocalDateTime endDate = normalizeCheckOut(dto.getStartDate());
 
         boolean available = isRoomAvailable(
                 room.getId(),
@@ -350,8 +349,8 @@ public class ReservationService {
 
         // 도메인 행위 호출
         reservation.resubmit(
-                dto.getStartDate(),
-                dto.getEndDate(),
+                startDate,
+                endDate,
                 dto.getPeopleCount(),
                 room
         );
@@ -432,6 +431,15 @@ public class ReservationService {
         if (waiting + approved + confirmed >= 8)
             throw new CustomException(ErrorCode.RESERVATION_TOTAL_LIMIT_EXCEEDED);
 
+    }
+    
+    // 체크인 - 아웃 공통 유틸메서드
+    private LocalDateTime normalizeCheckIn(LocalDateTime date) {
+        return date.toLocalDate().atTime(15, 0);
+    }
+
+    private LocalDateTime normalizeCheckOut(LocalDateTime date) {
+        return date.toLocalDate().plusDays(2).atTime(11, 0);
     }
 
 }
