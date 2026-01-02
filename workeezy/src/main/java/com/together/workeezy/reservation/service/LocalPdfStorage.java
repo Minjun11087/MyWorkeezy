@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 @Profile("default")
 @Component
+@Profile("local")
 public class LocalPdfStorage implements PdfStorage {
 
     @Override

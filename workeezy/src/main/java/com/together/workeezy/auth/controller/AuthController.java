@@ -24,7 +24,7 @@ public class AuthController {
     private final AuthService authService;
     private final CookieService cookieService;
 
-    // 환경 분기 (로컬)
+    // 환경 분기 (배포)
     private static final boolean IS_PROD = false;
 
     // 로그인
