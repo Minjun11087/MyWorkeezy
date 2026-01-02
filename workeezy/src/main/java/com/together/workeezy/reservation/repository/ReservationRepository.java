@@ -210,52 +210,42 @@ where r.id = :reservationId
 //            @Param("reservationId") Long reservationId
 //    );
 
-    // 예약 중복 확인
+    // 신규 예약용
     @Query("""
-    SELECT COUNT(r)
-    FROM Reservation r
-    WHERE r.room.id = :roomId
-      AND r.status IN ('waiting_payment', 'approved', 'confirmed')
-      AND r.startDate < :endDate
-      AND r.endDate > :startDate
+SELECT COUNT(r) > 0 FROM Reservation r
+WHERE r.room.id = :roomId
+  AND r.status IN (
+    com.together.workeezy.reservation.enums.ReservationStatus.waiting_payment,
+    com.together.workeezy.reservation.enums.ReservationStatus.approved,
+    com.together.workeezy.reservation.enums.ReservationStatus.confirmed
+  )
+  AND r.startDate < :endDate
+  AND r.endDate > :startDate
 """)
-    long countOverlappingReservations(
+    boolean existsOverlap(
             @Param("roomId") Long roomId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
 
+    // 수정용 (자기 자신 제외)
     @Query("""
 SELECT COUNT(r) > 0 FROM Reservation r
 WHERE r.room.id = :roomId
-            AND r.status IN (
-          com.together.workeezy.reservation.enums.ReservationStatus.waiting_payment,\s
-          com.together.workeezy.reservation.enums.ReservationStatus.approved,\s
-          com.together.workeezy.reservation.enums.ReservationStatus.confirmed
-      )
-AND r.startDate < :endDate
-AND r.endDate > :startDate
-""")
-    boolean existsOverlap(Long roomId, LocalDateTime start, LocalDateTime end);
-
-
-    @Query("""
-SELECT COUNT(r) > 0 FROM Reservation r
-WHERE r.room.id = :roomId
-            AND r.status IN (
-          com.together.workeezy.reservation.enums.ReservationStatus.waiting_payment,\s
-          com.together.workeezy.reservation.enums.ReservationStatus.approved,\s
-          com.together.workeezy.reservation.enums.ReservationStatus.confirmed
-      )
-AND r.startDate < :endDate
-AND r.endDate > :startDate
-AND r.id <> :excludeId
+  AND r.status IN (
+    com.together.workeezy.reservation.enums.ReservationStatus.waiting_payment,
+    com.together.workeezy.reservation.enums.ReservationStatus.approved,
+    com.together.workeezy.reservation.enums.ReservationStatus.confirmed
+  )
+  AND r.startDate < :endDate
+  AND r.endDate > :startDate
+  AND r.id <> :excludeId
 """)
     boolean existsOverlapExcept(
-            Long roomId,
-            LocalDateTime start,
-            LocalDateTime end,
-            Long excludeId
+            @Param("roomId") Long roomId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            @Param("excludeId") Long excludeId
     );
 
 }

@@ -45,11 +45,9 @@ public class ReservationController {
             @RequestParam Long roomId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime endDate,
             @RequestParam(required = false) Long excludeId
     ) {
-        boolean available = reservationService.isRoomAvailable(roomId, startDate, endDate,excludeId);
+        boolean available = reservationService.isRoomAvailable(roomId, startDate,excludeId);
 
         return ResponseEntity.ok(
                 Map.of("available", available)

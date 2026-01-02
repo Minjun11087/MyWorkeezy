@@ -49,7 +49,7 @@ public class ReservationService {
     private final DraftApplicationService draftApplicationService;
 
     // 동시 요청 방지를 위해 synchronized 추가 (멀티유저 환경 대비)
-    public synchronized Reservation createNewReservation(ReservationCreateDto dto, String email) {
+    public  Reservation createNewReservation(ReservationCreateDto dto, String email) {
 
         // *** 예약 번호 생성 ***
         // 오늘 날짜 문자열 (예: 20251209)
@@ -82,9 +82,14 @@ public class ReservationService {
         Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 룸이 존재하지 않습니다. roomId=" + dto.getRoomId()));
 
-        // 예약 중복 방지
-        boolean available = isRoomAvailable(room.getId(), dto.getStartDate(), dto.getEndDate());
+        LocalDateTime startDate = dto.getStartDate();
+        LocalDateTime endDate = startDate.plusDays(2);
 
+        // 예약 중복 방지
+        // 신규
+        boolean available = isRoomAvailable(room.getId(),startDate);
+
+        // 수정
         if (!available) {
             throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
         }
@@ -95,8 +100,7 @@ public class ReservationService {
                     .orElseThrow(() -> new IllegalArgumentException("오피스 없음"));
         }
 
-        LocalDateTime startDate = dto.getStartDate();
-        LocalDateTime endDate = startDate.plusDays(2);
+
         // *** 도메인 생성 메서드 ***
         Reservation reservation = Reservation.create(
                 user,
@@ -149,41 +153,38 @@ public class ReservationService {
     }
 
 
-    // 신규 예약용 (excludeId 없음)
-    public boolean isRoomAvailable(
-            Long roomId,
-            LocalDateTime startDate,
-            LocalDateTime endDate
-    ) {
-
-        return isRoomAvailable(roomId, startDate, endDate, null);
+    // 신규 예약
+    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate) {
+        return isRoomAvailableInternal(roomId, startDate, null);
     }
 
-    // 예약 중복 방지
-    public boolean isRoomAvailable(
+    // 예약 수정
+    public boolean isRoomAvailable(Long roomId, LocalDateTime startDate, Long excludeId) {
+        return isRoomAvailableInternal(roomId, startDate, excludeId);
+    }
+
+
+    // 기존 예약 수정용
+    private boolean isRoomAvailableInternal(
             Long roomId,
             LocalDateTime startDate,
-            LocalDateTime endDate,
             Long excludeId
     ) {
+        LocalDateTime endDate = startDate.plusDays(2);
 
         boolean exists;
-
-        if (excludeId != null) {
-            // 수정 시 → 자기 자신 제외
-            exists = reservationRepository.existsOverlapExcept(
-                    roomId, startDate, endDate, excludeId
-            );
-        } else {
-            // 신규 예약
+        if (excludeId == null) {
             exists = reservationRepository.existsOverlap(
                     roomId, startDate, endDate
             );
+        } else {
+            exists = reservationRepository.existsOverlapExcept(
+                    roomId, startDate, endDate, excludeId
+            );
         }
 
-        log.info("중복 체크 시작 - roomId: {}, start: {}, end: {}", roomId, startDate, endDate);
-        // ... 중복 체크 로직
-        log.info("중복 체크 결과 - exists: {}", exists);
+        log.info("🧩 [예약 체크] roomId={}, start={}, end={}, exists={}",
+                roomId, startDate, endDate, exists);
 
         return !exists;
     }
@@ -303,6 +304,19 @@ public class ReservationService {
         // 외부 엔티티 조합 검증은 service 책임
         Room room = getValidRoom(dto.getRoomId(), reservation.getProgram());
 
+        LocalDateTime startDate = dto.getStartDate();
+        LocalDateTime endDate = startDate.plusDays(2);
+
+        boolean available = isRoomAvailable(
+                room.getId(),
+                startDate,
+                reservation.getId()
+        );
+
+        if (!available) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
+        }
+
         // 도메인 행위 호출
         reservation.update(
                 dto.getStartDate(),
@@ -319,6 +333,20 @@ public class ReservationService {
         Reservation reservation = getMyReservationOrThrow(id, email);
 
         Room room = getValidRoom(dto.getRoomId(), reservation.getProgram());
+
+        LocalDateTime startDate = dto.getStartDate();
+        LocalDateTime endDate = startDate.plusDays(2);
+
+
+        boolean available = isRoomAvailable(
+                room.getId(),
+                startDate,
+                reservation.getId()
+        );
+
+        if (!available) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE);
+        }
 
         // 도메인 행위 호출
         reservation.resubmit(
