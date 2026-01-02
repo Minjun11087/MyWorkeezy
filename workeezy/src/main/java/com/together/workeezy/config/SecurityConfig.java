@@ -80,10 +80,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/reservations/draft/**").authenticated()
                         .requestMatchers("/api/reservations/me").authenticated()
                         .requestMatchers("/api/reservations/**").authenticated()
-<<<<<<< HEAD
-=======
 
->>>>>>> d0b47da (🔧 예약 가능 날짜 filter, security 수정)
                         .requestMatchers("/api/payments/confirm").permitAll()
                         .requestMatchers("/api/payments/**").authenticated()
 
