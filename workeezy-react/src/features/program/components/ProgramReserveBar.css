@@ -1,254 +1,220 @@
 /* =========================================================
-   📌 기본 예약바 (초기 위치에서는 정상적으로 보임)
+   ✅ 기본 예약바: "작은 카드" 형태
    ========================================================= */
 .pd-reserve {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  gap: 1.2rem;
-  padding: 1.2rem;
+    gap: 1.2rem;
+    padding: 1.2rem;
 
-  border-radius: 18px;
-  border: 1px solid #eee;
-  background: #fff;
+    border-radius: 18px;
+    border: 1px solid #eee;
+    background: #fff;
 
-  transition: all 0.35s ease;
-  z-index: 20;
-  position: relative;
+    position: relative;
+    z-index: 20;
+
+    /* ✅ 작은 카드 + 가운데 */
+    width: min(980px, calc(100% - 48px));
+    margin: 0 auto;
+
+    /* ✅ 애니메이션 완전 제거 (미끄러짐 원인 제거) */
+    transition: none !important;
+}
+
+
+
+/* 버튼 제외 영역 */
+.reserve-fields {
+    display: flex;
+    gap: 1.6rem;
+    align-items: center;
 }
 
 /* =========================================================
-   📌 기존 예약바가 화면에서 사라지면 → 하단 고정
+   ✅ 스크롤 내려가면 → 같은 카드가 하단에 고정
    ========================================================= */
 .pd-reserve.bottom-fixed {
-  position: fixed;
-  bottom: 0;
-  align-items: center;
-  border-radius: 18px;
-  margin: 0;
-  justify-content: space-between;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.18);
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%); /* ✅ 중앙 고정만 */
+    bottom: 16px;
 
-  z-index: 9999;
+    width: min(980px, calc(100% - 48px));
+    margin: 0;
+
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.18);
+
+    z-index: 9999;
+
+    /* ✅ 여기서도 애니메이션 완전 제거 */
+    transition: none !important;
+}
+.pd-reserve.bottom-fixed.is-on {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }
 
 /* 예약 항목 공통 */
 .pd-reserve-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  min-width: 200px;
-  margin-top: -10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 200px;
+    margin-top: -10px;
 }
 
 .pd-reserve-item label {
-  font-size: 0.9rem;
-  color: #333;
+    font-size: 0.9rem;
+    color: #333;
 }
 
 /* Select */
 .pd-reserve-item select {
-  height: 48px;
-  padding: 0.8rem 1.6rem 0.8rem 1rem;
-
-  background: #e5e5e5;
-  border: none;
-  border-radius: 8px;
-
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
+    height: 48px;
+    padding: 0.8rem 1.6rem 0.8rem 1rem;
+    background: #e5e5e5;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
 }
 
-/* DatePicker */
+/* DatePicker Wrapper */
 .pd-input-wrap {
-  position: relative;
-  height: 48px;
-  display: flex;
-  align-items: center;
+    position: relative;
+    height: 48px;
+    display: flex;
+    align-items: center;
 
-  background: #e5e5e5;
-  padding: 0 0.7rem;
-  border-radius: 8px;
-  overflow: visible !important;
+    background: #e5e5e5;
+    padding: 0 0.7rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
 
 .calendar-icon {
-  position: absolute;
-  left: 10px;
-  font-size: 1.1rem;
-  color: #777;
-  pointer-events: none;
+    position: absolute;
+    left: 10px;
+    font-size: 1.1rem;
+    color: #777;
+    pointer-events: none;
 }
 
 .pd-datepicker {
-  width: 100%;
-  background: none;
-  border: none;
-  font-size: 0.95rem;
-
-  padding-left: 32px !important;
-  cursor: pointer;
-  caret-color: transparent !important;
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    padding-left: 32px !important;
+    cursor: pointer;
+    caret-color: transparent;
 }
 
 .pd-datepicker:focus {
-  outline: none !important; /* 포커스 표시 제거 */
-  box-shadow: none !important;
+    outline: none;
+    box-shadow: none;
+}
+
+/* 체크아웃 비활성 */
+.pd-input-wrap.disabled {
+    background: #f3f3f3;
+    border: 1px solid #d0d0d0;
+    cursor: not-allowed;
+}
+
+.pd-datepicker:disabled {
+    color: #999;
+    cursor: not-allowed;
+}
+
+.pd-input-wrap.disabled .calendar-icon {
+    color: #bbb;
+}
+
+/* 가짜 placeholder */
+.fake-placeholder {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: #aaa;
+    pointer-events: none;
+    white-space: nowrap;
 }
 
 /* 예약 버튼 */
 .pd-reserve-btn {
-  background-color: #557a46;
-  color: white;
-  border: none;
+    background-color: #557a46;
+    color: white;
+    border: none;
 
-  padding: 0.9rem 1.2rem;
-  min-width: 150px;
-  min-height: 70px;
+    padding: 0.9rem 1.2rem;
+    min-width: 150px;
+    min-height: 70px;
 
-  border-radius: 10px;
-  font-size: 1rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
 
-  cursor: pointer;
-  margin-left: auto;
+    /* ✅ 오른쪽 끝 유지 */
+    margin-left: auto;
 }
 
 .pd-reserve-btn:hover {
-  background-color: #46663a;
+    background-color: #46663a;
 }
+
 /* 달력 + 시간 패널 가로 정렬 */
 .react-datepicker {
-  display: flex !important;
-  flex-direction: row !important; /* 🔥 핵심 */
-  align-items: flex-start !important;
-  overflow: hidden !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    overflow: hidden !important;
 }
 
-/* 달력은 줄어들지 않게 */
 .react-datepicker__month-container {
-  flex-shrink: 0 !important;
+    flex-shrink: 0 !important;
 }
 
-/* 시간 패널도 옆으로 고정 */
 .react-datepicker__time-container {
-  flex-shrink: 0 !important; /* 🔥 절대 아래로 떨어지지 않게 */
-  width: 95px !important;
-  overflow: hidden !important;
+    flex-shrink: 0 !important;
+    width: 95px !important;
+    overflow: hidden !important;
 }
 
-/* 시간 리스트만 스크롤 */
 .react-datepicker__time-container .react-datepicker__time {
-  max-height: 230px !important;
-  overflow-y: auto !important;
+    max-height: 230px !important;
+    overflow-y: auto !important;
 }
 
-/* 메시지 */
-
-/* 날짜 영역 기준점 */
+/* 상태 메시지 위치(기존 방식 유지) */
 .date-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+    position: relative;
 }
 
-/* 상태 메시지 위치 */
 .availability-status {
-  position: absolute;
-  right: -90px; /* 👉 여기 조절 */
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  white-space: nowrap;
+    position: absolute;
+    right: -90px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    white-space: nowrap;
 }
 
-/* 상태 색상 */
 .availability-status .ok {
-  color: #2ecc71;
+    color: #2ecc71;
 }
-
 .availability-status .fail {
-  color: #e74c3c;
+    color: #e74c3c;
 }
-
 .availability-status .checking {
-  color: #999;
-}
-/* ================================
-   DatePicker Wrapper (공통)
-================================ */
-.pd-input-wrap {
-  position: relative;
-  height: 48px;
-  display: flex;
-  align-items: center;
-
-  background: #e5e5e5;
-  padding: 0 0.7rem;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-}
-
-/* 🔥 체크아웃 비활성 상태 */
-.pd-input-wrap.disabled {
-  background: #f3f3f3;
-  border: 1px solid #d0d0d0;
-  cursor: not-allowed;
-}
-
-/* input 자체는 투명 유지 */
-.pd-datepicker {
-  width: 100%;
-  background: transparent;
-  border: none;
-  font-size: 0.95rem;
-  padding-left: 32px !important;
-  cursor: pointer;
-  caret-color: transparent;
-}
-
-.pd-datepicker:focus {
-  outline: none;
-  box-shadow: none;
-}
-
-/* disabled input */
-.pd-datepicker:disabled {
-  color: #999;
-  cursor: not-allowed;
-}
-
-/* 아이콘 */
-.calendar-icon {
-  position: absolute;
-  left: 10px;
-  font-size: 1.1rem;
-  color: #777;
-  pointer-events: none;
-}
-
-/* disabled 상태 아이콘 */
-.pd-input-wrap.disabled .calendar-icon {
-  color: #bbb;
-}
-/* 가짜 placeholder */
-.fake-placeholder {
-  position: absolute;
-  left: 30px; /* 아이콘 오른쪽 */
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  color: #aaa;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-/* disabled 상태 강조 */
-.pd-input-wrap.disabled {
-  background: #f3f3f3;
-  border: 1px solid #d0d0d0;
+    color: #999;
 }
