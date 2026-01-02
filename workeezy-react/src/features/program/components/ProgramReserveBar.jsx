@@ -16,6 +16,8 @@ export default function ProgramReserveBar() {
   // 예약 가능 여부
   const [isAvailable, setIsAvailable] = useState(null);
   const [checking, setChecking] = useState(false);
+  const CHECK_IN_HOUR = 15;
+  const CHECK_OUT_HOUR = 11;
   const STAY_DAYS = 2; // 2박 3일
 
   const now = useMemo(() => new Date(), []);
@@ -106,11 +108,15 @@ export default function ProgramReserveBar() {
   const handleCheckInChange = (date) => {
     if (!date) return;
 
-    setCheckIn(date);
+    const checkIn = new Date(date);
+    checkIn.setHours(CHECK_IN_HOUR, 0, 0, 0);
 
-    const out = new Date(date);
-    out.setDate(out.getDate() + STAY_DAYS);
-    setCheckOut(out);
+    const checkOut = new Date(checkIn);
+    checkOut.setDate(checkOut.getDate() + STAY_DAYS);
+    checkOut.setHours(CHECK_OUT_HOUR, 0, 0, 0);
+
+    setCheckIn(checkIn);
+    setCheckOut(checkOut);
   };
 
   return (
@@ -136,12 +142,12 @@ export default function ProgramReserveBar() {
 
             <DatePicker
               className="pd-datepicker"
-              showTimeSelect
               selected={checkIn}
               onChange={handleCheckInChange}
               minDate={startOfDay(now)}
-              dateFormat="MM/dd (eee) HH:mm"
-              placeholderText="체크인 날짜"
+              dateFormat="yyyy-MM-dd HH:mm"
+              placeholderText="체크인 날짜 선택"
+              showTimeSelect={false}
             />
           </div>
         </div>
@@ -168,7 +174,7 @@ export default function ProgramReserveBar() {
 
             <DatePicker
               selected={checkOut}
-              dateFormat="MM/dd (eee) HH:mm"
+              dateFormat="yyyy-MM-dd HH:mm"
               disabled
               className="pd-datepicker"
             />
