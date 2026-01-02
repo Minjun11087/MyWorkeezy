@@ -27,7 +27,7 @@ export default function ProgramReserveBar() {
       try {
         setChecking(true);
         const res = await fetch(
-          `/api/reservations/availability?roomId=${roomId}&startDate=${checkIn.toISOString()}&endDate=${checkOut.toISOString()}`
+          `/api/reservations/availability?roomId=${roomId}&startDate=${checkIn.toISOString()}`
         );
         const data = await res.json();
         setIsAvailable(Boolean(data.available));
@@ -70,11 +70,11 @@ export default function ProgramReserveBar() {
   }, []);
 
   const inDay = checkIn ?? now;
-  const inMinTime =
-    startOfDay(inDay).getTime() === startOfDay(now).getTime()
-      ? now
-      : startOfDay(inDay);
-  const inMaxTime = endOfDay(inDay);
+  // const inMinTime =
+  //   startOfDay(inDay).getTime() === startOfDay(now).getTime()
+  //     ? now
+  //     : startOfDay(inDay);
+  // const inMaxTime = endOfDay(inDay);
 
   const outDay = checkOut ?? checkIn ?? now;
   const outSameDay =
@@ -82,8 +82,8 @@ export default function ProgramReserveBar() {
     !!outDay &&
     startOfDay(outDay).getTime() === startOfDay(checkIn).getTime();
 
-  const outMinTime = checkIn && outSameDay ? checkIn : startOfDay(outDay);
-  const outMaxTime = endOfDay(outDay);
+  // const outMinTime = checkIn && outSameDay ? checkIn : startOfDay(outDay);
+  // const outMaxTime = endOfDay(outDay);
 
   const onReserve = () => {
     if (!roomId || !checkIn || !checkOut) {
@@ -100,6 +100,7 @@ export default function ProgramReserveBar() {
       },
     });
   };
+  const canReserve = roomId && checkIn && isAvailable && !checking;
 
   // 체크인 선택시 자동으로 체크아웃 계산
   const handleCheckInChange = (date) => {
@@ -107,9 +108,9 @@ export default function ProgramReserveBar() {
 
     setCheckIn(date);
 
-    const checkOut = new Date(date);
-    checkOut.setDate(checkOut.getDate() + STAY_DAYS);
-    setCheckOut(checkOut);
+    const out = new Date(date);
+    out.setDate(out.getDate() + STAY_DAYS);
+    setCheckOut(out);
   };
 
   return (
@@ -132,24 +133,7 @@ export default function ProgramReserveBar() {
           <label>체크인</label>
           <div className="pd-input-wrap">
             <i className="fa-regular fa-calendar calendar-icon" />
-            {/* <DatePicker
-              selected={checkIn}
-              onChange={(date) => {
-                setCheckIn(date);
-                setCheckOut((prevOut) => {
-                  if (!date) return prevOut;
-                  if (prevOut && prevOut < date) return null;
-                  return prevOut;
-                });
-              }}
-              showTimeSelect
-              dateFormat="MM/dd (eee) HH:mm"
-              placeholderText="날짜 선택"
-              className="pd-datepicker"
-              minDate={startOfDay(now)}
-              minTime={inMinTime}
-              maxTime={inMaxTime}
-            /> */}
+
             <DatePicker
               className="pd-datepicker"
               showTimeSelect
@@ -161,45 +145,12 @@ export default function ProgramReserveBar() {
             />
           </div>
         </div>
-        {/* <div className="pd-reserve-item">
-          <label>체크아웃</label>
-          <div className="pd-input-wrap">
-            <i className="fa-regular fa-calendar calendar-icon" />
-            <DatePicker
-              selected={checkOut}
-              onChange={(date) => {
-                if (!date) return;
-
-                if (
-                  checkIn &&
-                  startOfDay(date).getTime() ===
-                    startOfDay(checkIn).getTime() &&
-                  date < checkIn
-                ) {
-                  setCheckOut(checkIn);
-                  return;
-                }
-
-                setCheckOut(date);
-              }}
-              showTimeSelect
-              dateFormat="MM/dd (eee) HH:mm"
-              placeholderText="날짜 선택"
-              className="pd-datepicker"
-              minDate={checkIn ? startOfDay(checkIn) : startOfDay(now)}
-              minTime={outMinTime}
-              maxTime={outMaxTime}
-            />
-          </div>
-        </div> */}
 
         <div className="availability-status">
           {checking && <span className="checking">확인 중...</span>}
-
           {!checking && isAvailable === true && (
             <span className="ok">예약 가능</span>
           )}
-
           {!checking && isAvailable === false && (
             <span className="fail">예약 불가</span>
           )}
@@ -207,26 +158,25 @@ export default function ProgramReserveBar() {
 
         <div className="pd-reserve-item">
           <label>체크아웃</label>
-          {/* <input
-            showTimeSelect
-            dateFormat="MM/dd (eee) HH:mm"
-            type="text"
-            className="pd-readonly"
-            value={checkOut ? checkOut.toLocaleDateString() : ""}
-            readOnly
-          /> */}
-          <DatePicker
-            selected={checkOut}
-            showTimeSelect
-            dateFormat="MM/dd (eee) HH:mm"
-            readOnly
-            disabled
-            className="pd-datepicker"
-          />
+          <div className={`pd-input-wrap ${!checkIn ? "disabled" : ""}`}>
+            {/* 가짜 placeholder */}
+            {!checkIn && (
+              <span className="fake-placeholder">
+                체크인 날짜를 선택해주세요.
+              </span>
+            )}
+
+            <DatePicker
+              selected={checkOut}
+              dateFormat="MM/dd (eee) HH:mm"
+              disabled
+              className="pd-datepicker"
+            />
+          </div>
         </div>
         <button
           className="pd-reserve-btn"
-          disabled={!isAvailable || checking}
+          disabled={!canReserve}
           onClick={onReserve}
         >
           {checking ? "확인 중..." : "예약하기"}

@@ -153,18 +153,32 @@ export default function ReservationForm({
   const [isAvailable, setIsAvailable] = useState(true);
   const [checking, setChecking] = useState(false);
 
+  // 예약 중복 체킹
   useEffect(() => {
-    if (!form.roomId || !form.startDate || !form.endDate) return;
+    if (!form.roomId || !form.startDate) return;
 
     const checkAvailability = async () => {
       try {
         setChecking(true);
-        const res = await fetch(
-          `/api/reservations/availability?roomId=${
-            form.roomId
-          }&startDate=${form.startDate.toISOString()}&endDate=${form.endDate.toISOString()}`
-        );
+
+        const params = new URLSearchParams({
+          roomId: form.roomId,
+          startDate: form.startDate.toISOString(),
+        });
+
+        // 날짜가 바뀐 경우에만 excludId
+        const isSameDate =
+          initialData?.startDate &&
+          new Date(initialData.startDate).getTime() ===
+            new Date(form.startDate).getTime();
+
+        if ((mode === "edit" || mode === "resubmit") && !isSameDate) {
+          params.append("excludeId", initialData.id);
+        }
+
+        const res = await fetch(`/api/reservations/availability?${params}`);
         const data = await res.json();
+
         setIsAvailable(data.available);
       } catch {
         setIsAvailable(false);
@@ -174,7 +188,7 @@ export default function ReservationForm({
     };
 
     checkAvailability();
-  }, [form.roomId, form.startDate, form.endDate]);
+  }, [form.roomId, form.startDate, mode, initialData?.id]);
 
   // 🔥 rooms 로딩 후 roomId 기준으로 roomType 동기화
   useEffect(() => {

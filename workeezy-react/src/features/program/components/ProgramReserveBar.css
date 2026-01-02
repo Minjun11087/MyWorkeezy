@@ -177,3 +177,78 @@
 .availability-status .checking {
   color: #999;
 }
+/* ================================
+   DatePicker Wrapper (공통)
+================================ */
+.pd-input-wrap {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+
+  background: #e5e5e5;
+  padding: 0 0.7rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+/* 🔥 체크아웃 비활성 상태 */
+.pd-input-wrap.disabled {
+  background: #f3f3f3;
+  border: 1px solid #d0d0d0;
+  cursor: not-allowed;
+}
+
+/* input 자체는 투명 유지 */
+.pd-datepicker {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-size: 0.95rem;
+  padding-left: 32px !important;
+  cursor: pointer;
+  caret-color: transparent;
+}
+
+.pd-datepicker:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* disabled input */
+.pd-datepicker:disabled {
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* 아이콘 */
+.calendar-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 1.1rem;
+  color: #777;
+  pointer-events: none;
+}
+
+/* disabled 상태 아이콘 */
+.pd-input-wrap.disabled .calendar-icon {
+  color: #bbb;
+}
+/* 가짜 placeholder */
+.fake-placeholder {
+  position: absolute;
+  left: 30px; /* 아이콘 오른쪽 */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: #aaa;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* disabled 상태 강조 */
+.pd-input-wrap.disabled {
+  background: #f3f3f3;
+  border: 1px solid #d0d0d0;
+}
