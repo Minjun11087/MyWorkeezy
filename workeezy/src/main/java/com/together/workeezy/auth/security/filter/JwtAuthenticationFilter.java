@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/recommendations/**",
             "/actuator/**",
             "/api/payments/confirm",
+            "/api/reservations/availability/**",
             "/ping",              // debug
             "/error"
     );

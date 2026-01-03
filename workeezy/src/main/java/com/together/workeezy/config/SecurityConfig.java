@@ -56,7 +56,6 @@ public class SecurityConfig {
                         .requestMatchers("/health", "/health/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
 
-
                         // Auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
