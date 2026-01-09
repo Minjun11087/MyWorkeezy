@@ -217,7 +217,7 @@ ERD: [ERD Cloud]
 
 ### 🙊 조원 백가영
 - 예약 신청
-- ![예약신청](https://github.com/user-attachments/assets/08a1ec49-5bf9-49ae-900f-faa24663d3b1)
+![예약신청](https://github.com/user-attachments/assets/08a1ec49-5bf9-49ae-900f-faa24663d3b1)
 
 - 예약 수정
 ![예약수정](https://github.com/user-attachments/assets/32d90996-243d-4955-a169-84ea49e1ca48)
@@ -247,7 +247,7 @@ ERD: [ERD Cloud]
 ![유저별임시저장데이터관리](https://github.com/user-attachments/assets/e597b23f-c036-4eb5-9423-305351d775bb)
 
 - 커서 기반 관리자 페이지 탐색 및 동작
-![Uploading 관리자페이지탐색및동작.gif…]()
+![관리자페이지탐색및동작](https://github.com/user-attachments/assets/d9c41cdc-2dda-4543-baf3-d4a31049ddb7)
 
 - 관리자 페이지 날짜별 및 키워드 및 필터링 조회
 ![관리자페이지키워드및필터링](https://github.com/user-attachments/assets/82e0701e-51a4-4666-90c2-1f27e9af888c)
