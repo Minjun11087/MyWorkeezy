@@ -2,7 +2,6 @@ package com.together.workeezy.user.entity;
 
 import com.together.workeezy.common.exception.CustomException;
 import com.together.workeezy.reservation.domain.Reservation;
-import com.together.workeezy.reservation.domain.ReservationModify;
 import com.together.workeezy.user.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -72,10 +71,6 @@ public class User {
     @OneToMany
     @JoinColumn(name = "user_id")
     private List<Reservation> reservations = new ArrayList<>();
-
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private List<ReservationModify> reservationModifys = new ArrayList<>();
 
     public static User reference(Long id) {
         User user = new User();

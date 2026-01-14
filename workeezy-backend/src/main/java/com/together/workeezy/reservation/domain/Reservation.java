@@ -102,12 +102,6 @@ public class Reservation {
     @Column(name = "confirm_pdf_key")
     private String confirmPdfKey;
 
-    @OneToMany(mappedBy = "reservation")
-    private List<ReservationModify> reservationModifys = new ArrayList<>();
-
-    @OneToMany(mappedBy = "reservation")
-    private List<ReservationPdf> reservationPdfs = new ArrayList<>();
-
     // 사용자 예약이 맞는지
     public boolean isOwnedBy(User user) {
         return this.user.getId().equals(user.getId());
