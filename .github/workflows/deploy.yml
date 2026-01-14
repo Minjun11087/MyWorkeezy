@@ -44,5 +44,5 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            chmod +x /home/ubuntu/workeezy-backend/scripts/deploy.sh
-            /home/ubuntu/workeezy-backend/scripts/deploy.sh
+            chmod +x /home/ubuntu/workeezy/workeezy-backend/scripts/deploy.sh
+            /home/ubuntu/workeezy/workeezy-backend/scripts/deploy.sh
