@@ -63,13 +63,13 @@ public class PaymentController {
         );
     }
 
-    @PostMapping("/{paymentId}/cancel")
+    @PostMapping("/reservations/{reservationId}/cancel")
     public ResponseEntity<PaymentCancelResponse> cancelPayment(
-            @PathVariable Long paymentId,
+            @PathVariable Long reservationId,
             @RequestBody @Valid PaymentCancelRequest request) {
 
         return ResponseEntity.ok(
-                paymentCancelService.cancel(paymentId, request));
+                paymentCancelService.cancel(reservationId, request));
     }
 
 //    @GetMapping("/receipt/{reservationId}")

@@ -6,6 +6,7 @@ import com.together.workeezy.payment.dto.request.PaymentCancelRequest;
 import com.together.workeezy.payment.dto.response.PaymentCancelResponse;
 import com.together.workeezy.payment.entity.Payment;
 import com.together.workeezy.payment.entity.Refund;
+import com.together.workeezy.payment.enums.PaymentStatus;
 import com.together.workeezy.payment.repository.PaymentRepository;
 import com.together.workeezy.reservation.domain.Reservation;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,15 @@ public class PaymentCancelService {
     private final TossPaymentClient tossPaymentClient;
 
     @Transactional
-    public PaymentCancelResponse cancel(Long paymentId, PaymentCancelRequest request) {
+    public PaymentCancelResponse cancel(Long reservationId, PaymentCancelRequest request) {
+
         // 결제 조회
-        Payment payment = paymentRepository.findById(paymentId)
+        Payment payment = paymentRepository
+                .findTopByReservationIdAndStatusOrderByIdDesc(reservationId, PaymentStatus.paid)
                 .orElseThrow(() -> new CustomException(PAYMENT_NOT_FOUND));
+
+        log.info("🔥 CANCEL reservationId={}, paymentId={}, paymentKey={}",
+                reservationId, payment.getId(), payment.getPaymentKey());
 
         Reservation reservation = payment.getReservation();
 

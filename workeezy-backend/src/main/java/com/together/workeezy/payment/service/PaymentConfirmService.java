@@ -68,7 +68,7 @@ public class PaymentConfirmService {
             );
 
             log.info("🔥 Toss confirm response orderId={}, amount={}, method={}, approvedAt={}",
-                    api.getOrderId(), api.getAmount(), api.getMethod(), api.getApprovedAt());
+                    api.getOrderId(), api.getTotalAmount(), api.getMethod(), api.getApprovedAt());
 
             // 승인
             payment.approve(
@@ -79,8 +79,8 @@ public class PaymentConfirmService {
                     api.getApprovedAt()
             );
 
-            log.info("🔥 payment approved paymentId={}, status={}, approvedAt={}",
-                    payment.getId(), payment.getStatus(), payment.getApprovedAt());
+            log.info("🔥 AFTER APPROVE paymentKey={}, status={}",
+                    payment.getPaymentKey(), payment.getStatus());
 
             // 예약 상태 변경
             reservation.markConfirmed();
